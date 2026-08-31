@@ -11,5 +11,5 @@ cd "~/(path)/Sorcerer Showdown V2/source/main"
 clang++ main.cpp -o main -std=c++23 
 # clang++ or g++ builds the project
 ./main 
-# or ./main.exe to run the project from the console
+# to run the game
 ```
