@@ -1,0 +1,1 @@
+#include "../../../header/CharacterType/CurseUser.hpp"
