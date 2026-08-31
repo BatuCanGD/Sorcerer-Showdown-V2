@@ -4,7 +4,7 @@
 #include <print>
 
 inline bool endgame() {
-    std::print("Continue Program?\n1 - Continue | 2 - Stop\n=> ");
+    std::print("Continue Game?\n1 - Continue | 2 - Stop\n=> ");
     return get_input<int>() == 1;
 }
 

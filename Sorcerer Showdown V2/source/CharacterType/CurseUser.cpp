@@ -1,1 +1,1 @@
-#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../header/CharacterType/CurseUser.hpp"

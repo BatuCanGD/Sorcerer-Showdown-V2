@@ -1,4 +1,4 @@
-#include "../../../header/CharacterType/Character.hpp"
+#include "../../header/CharacterType/Character.hpp"
 
 double Character::Health(Get type) const {
     switch (type) {
