@@ -20,7 +20,9 @@ struct CharState final {
 
 struct CharInv final {
     std::vector<std::unique_ptr<int>> inventory; // placeholder ints
+    std::unique_ptr<int> stored_tool{nullptr};
     std::unique_ptr<int> current_tool{nullptr};
+    bool has_access_to_inventory{false};
 };
 
 class Character {
