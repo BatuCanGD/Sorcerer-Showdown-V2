@@ -3,8 +3,8 @@
 
 #include <memory>
 
-struct CharSorcery final {
-    std::vector<std::unique_ptr<int>> binding_vows;
+struct Jujutsu final {
+    std::vector<std::unique_ptr<int>> binding_vows; // placeholder ints
     std::vector<std::unique_ptr<int>> shikigami;
     std::unique_ptr<int> technique{nullptr};
     std::unique_ptr<int> domain{nullptr};
@@ -12,6 +12,7 @@ struct CharSorcery final {
 };
 
 struct SorcerySystem final {
+    double max_output_potential{100.0};
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
     double previous_cursed_energy{1.0};
@@ -19,12 +20,17 @@ struct SorcerySystem final {
     bool amplification_is_active{false};
 };
 
+struct SorceryTrait final {
+    bool six_eyes{false};
+};
+
 class CurseUser : public Character {
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:
-    CharSorcery jujutsu;
+    Jujutsu jujutsu;
     SorcerySystem sorcery;
+    SorceryTrait traits;
     CEfficiency ce_efficiency = CEfficiency::Stable;
 public:
     double CursedEnergy(Get type = Get::Current) const noexcept;

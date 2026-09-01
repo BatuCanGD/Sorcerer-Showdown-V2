@@ -6,8 +6,8 @@
 #include <vector>
 
 struct CharIdentity final {
-    std::string name;
-    std::string color;
+    std::string name{""};
+    std::string color{""};
 };
 
 struct CharState final {
@@ -19,16 +19,17 @@ struct CharState final {
 };
 
 struct CharInv final {
-    std::vector<std::unique_ptr<int>> inventory; // placeholder int
-    std::unique_ptr<int> current_tool{nullptr}; // placeholder int
+    std::vector<std::unique_ptr<int>> inventory; // placeholder ints
+    std::unique_ptr<int> current_tool{nullptr};
 };
 
 class Character {
 protected:
     CharIdentity identity;
     CharState state;
-    CharInv equipment;   
+    CharInv equipment;
 public:
+    Character() : identity(), state(), equipment() {};
     enum class Get : std::uint8_t { Current, Max, Previous };
     enum class Set : std::uint8_t { Current, Max, Previous };
 
