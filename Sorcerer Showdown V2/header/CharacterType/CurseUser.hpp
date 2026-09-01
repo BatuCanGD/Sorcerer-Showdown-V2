@@ -11,7 +11,7 @@ struct Jujutsu final {
     std::unique_ptr<int> domain_neutralizer{nullptr};
 };
 
-struct SorcerySystem final {
+struct CurseUserSystem final {
     double max_output_potential{100.0};
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
@@ -29,7 +29,7 @@ public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:
     Jujutsu jujutsu;
-    SorcerySystem sorcery;
+    CurseUserSystem sorcery;
     SorceryTrait traits;
     CEfficiency ce_efficiency = CEfficiency::Stable;
 public:
