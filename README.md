@@ -4,7 +4,7 @@ This is a project that i have been thinking about for a long time, i have been w
 
 ### For future use
 
-To build the project, using clang or gcc that has the libraries for and supports c++23 is recommended 
+To build the project, using clang or gcc that has the libraries for and support for c++23 is recommended 
 ```bash
 cd "~/(path)/Sorcerer Showdown V2/source/main" 
 # selects the main directory
