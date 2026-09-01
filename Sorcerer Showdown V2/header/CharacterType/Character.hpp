@@ -20,11 +20,11 @@ struct CharState final {
 
 struct CharInv final {
     std::vector<std::unique_ptr<int>> inventory; // placeholder int
-    std::unique_ptr<int> current_tool; // placeholder int
+    std::unique_ptr<int> current_tool{nullptr}; // placeholder int
 };
 
 class Character {
-private:
+protected:
     CharIdentity identity;
     CharState state;
     CharInv equipment;   
@@ -32,6 +32,6 @@ public:
     enum class Get : std::uint8_t { Current, Max, Previous };
     enum class Set : std::uint8_t { Current, Max, Previous };
 
-    double Health(Get type = Get::Current) const;
+    double Health(Get type = Get::Current) const noexcept;
     void Health(Set type, double amount);
 };

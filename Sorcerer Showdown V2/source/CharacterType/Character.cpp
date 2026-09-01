@@ -1,6 +1,6 @@
 #include "../../header/CharacterType/Character.hpp"
 
-double Character::Health(Get type) const {
+double Character::Health(Get type) const noexcept {
     switch (type) {
         case Get::Current:  return state.health;
         case Get::Max:      return state.max_health;
