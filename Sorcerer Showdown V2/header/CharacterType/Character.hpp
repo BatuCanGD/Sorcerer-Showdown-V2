@@ -26,12 +26,14 @@ struct CharInv final {
 };
 
 class Character {
+    friend struct CharacterEditor;
 protected:
     CharIdentity identity;
     CharState state;
     CharInv equipment;
 public:
-    Character() : identity(), state(), equipment() {};
+    Character() {};
+    virtual ~Character();
     enum class Get : std::uint8_t { Current, Max, Previous };
     enum class Set : std::uint8_t { Current, Max, Previous };
 

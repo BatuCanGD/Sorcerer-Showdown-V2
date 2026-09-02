@@ -22,9 +22,11 @@ struct CurseUserSystem final {
 
 struct SorceryTrait final {
     bool six_eyes{false};
+    bool passive_healing{false};
 };
 
 class CurseUser : public Character {
+   friend struct CharacterEditor; 
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:
