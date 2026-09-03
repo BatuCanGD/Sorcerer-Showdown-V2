@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CharacterType/Sorcerer.hpp"
-#include "CharacterType/CurseUser.hpp"
+#include "../CharacterType/Sorcerer.hpp"
+#include "../CharacterType/CurseUser.hpp"
 
 #include <string_view>
 #include <memory>

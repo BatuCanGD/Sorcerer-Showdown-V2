@@ -5,6 +5,15 @@
 #include <memory>
 #include <vector>
 
+namespace enumtype {
+    enum class DamageType {
+        Normal, // can be stopped or negated by reinforcement
+        BypassTech, // techniques, infinity, etc...
+        BypassRein, // Cursed Energy Reinforcement
+        BypassAll // all of the above
+    };
+}
+
 struct CharIdentity final {
     std::string name{""};
     std::string color{""};
@@ -41,4 +50,6 @@ public:
 
     double Health(Get type = Get::Current) const noexcept;
     void Health(Set type, double amount);
+
+    void Damage(enumtype::DamageType dmg_type, double amount);
 };

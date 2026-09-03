@@ -1,4 +1,5 @@
 #include "../../header/CharacterType/Character.hpp"
+#include "../../header/CharacterUtils/CharacterHelper.hpp"
 
 Character::~Character() = default;
 
@@ -18,4 +19,11 @@ void Character::Health(Set type, double amount) {
         case Set::Max:      state.max_health        = amount;
         case Set::Previous: state.previous_health   = amount;
     }
+}
+
+void Character::Damage(enumtype::DamageType type, double amount){
+    if (state.is_invulnerable){
+        return;
+    }
+    this->state.health -= Helper::DealWithDamage(*this, type, amount);
 }

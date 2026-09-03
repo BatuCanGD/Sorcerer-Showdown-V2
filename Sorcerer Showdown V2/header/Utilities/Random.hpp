@@ -12,7 +12,7 @@ requires (std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>
 
     thread_local std::mt19937 gen([] {
         std::random_device rd;
-        std::seed_seq seed{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
+        std::seed_seq seed{rd(), rd(), rd(), rd()};
         return std::mt19937(seed);
     }());
 

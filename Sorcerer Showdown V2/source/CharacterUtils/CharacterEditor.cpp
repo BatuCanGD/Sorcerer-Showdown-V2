@@ -1,7 +1,7 @@
-#include "../header/CharacterEditor.hpp"
-#include "../header/CharacterType/Character.hpp"
-#include "../header/CharacterType/CurseUser.hpp"
-#include "../header/CharacterType/Sorcerer.hpp"
+#include "../../header/CharacterUtils/CharacterEditor.hpp"
+#include "../../header/CharacterType/Character.hpp"
+#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/CharacterType/Sorcerer.hpp"
 
 #include <print>
 #include <utility>

@@ -6,8 +6,8 @@ double CurseUser::CursedEnergy(Get type) const noexcept {
         case Get::Current:  return sorcery.cursed_energy;
         case Get::Max:      return sorcery.max_cursed_energy;
         case Get::Previous: return sorcery.previous_cursed_energy;
+        default:            return -1.0;
     }
-    return -1.0;
 }
 
 void CurseUser::CursedEnergy(Set type, double amount) {
