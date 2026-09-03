@@ -14,6 +14,8 @@ struct CharState final {
     double health{1.0};
     double max_health{1.0};
     double previous_health{1.0};
+    double durability{1.0};
+    double strength{1.0};
     bool is_stunned{false};
     bool is_invulnerable{false};
 };
@@ -26,7 +28,7 @@ struct CharInv final {
 };
 
 class Character {
-    friend struct CharacterEditor;
+    friend struct Editor;
 protected:
     CharIdentity identity;
     CharState state;

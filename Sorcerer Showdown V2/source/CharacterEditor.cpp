@@ -8,24 +8,29 @@
 #include <string_view>
 
 // identity
-void CharacterEditor::SetName(Character& c, std::string_view name){
+void Editor::SetName(Character& c, std::string_view name){
     c.identity.name = name;
 }
-void CharacterEditor::SetColor(Character& c, std::string_view color){
+void Editor::SetColor(Character& c, std::string_view color){
     c.identity.color = color;
 }
 // base state
-void CharacterEditor::SetMaxHealth(Character& c, double hp){
+void Editor::SetHealth(Character& c, double hp){
     c.state.max_health = hp;
-    if (c.state.health > c.state.max_health){
-        c.state.health = c.state.max_health;
-    }
+    c.state.health = hp;
+    c.state.previous_health = hp;
 }
-void CharacterEditor::SetInvulnerability(Character& c, bool t){
+void Editor::SetInvulnerability(Character& c, bool t){
     c.state.is_invulnerable = t;
 }
+void Editor::SetDurability(Character &c, double dr){
+    c.state.durability = dr;
+}
+void Editor::SetStrength(Character &c, double str){
+    c.state.strength = str;
+}
 // inventory
-void CharacterEditor::GiveCharacterTool(Character& c, std::unique_ptr<int> tool, ItemPlacement place){
+void Editor::GiveCharacterTool(Character& c, std::unique_ptr<int> tool, ItemPlacement place){
     switch(place){
         case ItemPlacement::OnHand:
             if (c.equipment.current_tool != nullptr){
@@ -44,40 +49,45 @@ void CharacterEditor::GiveCharacterTool(Character& c, std::unique_ptr<int> tool,
             break;
     }
 }
-void CharacterEditor::SetInventoryAccess(Character& c, bool t){
+void Editor::SetInventoryAccess(Character& c, bool t){
     c.equipment.has_access_to_inventory = t;
 }
 // inside curseuser
-void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency){
+void Editor::SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency){
     c.ce_efficiency = efficiency;
 }
 // curse user system
-void CharacterEditor::AddBindingVow(CurseUser& c, std::unique_ptr<int> vow){
+void Editor::SetCursedEnergy(CurseUser &c, double ce){
+    c.sorcery.max_cursed_energy = ce;
+    c.sorcery.cursed_energy = ce;
+    c.sorcery.previous_cursed_energy = ce;
+}
+void Editor::AddBindingVow(CurseUser& c, std::unique_ptr<int> vow){
     c.jujutsu.binding_vows.push_back(std::move(vow));
 }
-void CharacterEditor::AddShikigami(CurseUser& c, std::unique_ptr<int> shk){
+void Editor::AddShikigami(CurseUser& c, std::unique_ptr<int> shk){
     c.jujutsu.shikigami.push_back(std::move(shk));
 }
-void CharacterEditor::SetTechnique(CurseUser& c, std::unique_ptr<int> tech){
+void Editor::SetTechnique(CurseUser& c, std::unique_ptr<int> tech){
     c.jujutsu.technique = std::move(tech);
 }
-void CharacterEditor::SetDomain(CurseUser& c, std::unique_ptr<int> domain){
+void Editor::SetDomain(CurseUser& c, std::unique_ptr<int> domain){
     c.jujutsu.domain = std::move(domain);
 }
-void CharacterEditor::SetDomainNullifier(CurseUser& c, std::unique_ptr<int> dnf){
+void Editor::SetDomainNullifier(CurseUser& c, std::unique_ptr<int> dnf){
     c.jujutsu.domain_neutralizer = std::move(dnf);
 }
 // traits
-void CharacterEditor::SetTraitSixEyes(CurseUser& c, bool t){
+void Editor::SetTraitSixEyes(CurseUser& c, bool t){
     c.traits.six_eyes = t;
 }
-void CharacterEditor::SetTraitPassiveHealing(CurseUser& c, bool t){
+void Editor::SetTraitPassiveHealing(CurseUser& c, bool t){
     c.traits.passive_healing = t;
 }
 // sorcerer reverse cursed technique
-void CharacterEditor::SetReverseCursedTechnique(Sorcerer& c, bool t){
+void Editor::SetReverseCursedTechnique(Sorcerer& c, bool t){
     c.sorcerery.can_use_rct = t;
 }
-void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, Sorcerer::RCTLevel lvl){
+void Editor::SetReverseCursedTechniqueLevel(Sorcerer& c, Sorcerer::RCTLevel lvl){
     c.rct_level = lvl;
 }

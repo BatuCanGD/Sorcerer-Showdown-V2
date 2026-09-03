@@ -1,5 +1,8 @@
 #include "../../header/CharacterType/Character.hpp"
 
+Character::~Character() = default;
+
+
 double Character::Health(Get type) const noexcept {
     switch (type) {
         case Get::Current:  return state.health;
@@ -11,8 +14,8 @@ double Character::Health(Get type) const noexcept {
 
 void Character::Health(Set type, double amount) {
     switch (type) {
-        case Set::Current:  state.health = amount;
-        case Set::Max:      state.max_health = amount;
-        case Set::Previous: state.previous_health = amount;
+        case Set::Current:  state.health            = amount;
+        case Set::Max:      state.max_health        = amount;
+        case Set::Previous: state.previous_health   = amount;
     }
 }

@@ -10,26 +10,24 @@ class Character;
 class CurseUser;
 class Sorcerer;
 
-enum class ItemPlacement {
-    OnHand,
-    Offhand,
-    Inventory
-};
-
-struct CharacterEditor {
+struct Editor {
     // identity section
     static void SetName(Character& c, std::string_view name);
     static void SetColor(Character& c, std::string_view color);
     // base state section
-    static void SetMaxHealth(Character& c, double hp);
+    static void SetHealth(Character& c, double hp);
     static void SetInvulnerability(Character& c, bool t);
+    static void SetDurability(Character& c, double dr);
+    static void SetStrength(Character& c, double str);
     // inventory
+    enum class ItemPlacement { OnHand, Offhand, Inventory };
     static void GiveCharacterTool(Character& c, std::unique_ptr<int> tool, ItemPlacement place);
     static void SetInventoryAccess(Character& c, bool t);
     /*                        Character End                       */
     // inside curse user
     static void SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency);
     // curse user system
+    static void SetCursedEnergy(CurseUser& c, double ce);
     static void AddBindingVow(CurseUser& c, std::unique_ptr<int> vow);
     static void AddShikigami(CurseUser& c, std::unique_ptr<int> shk);
     static void SetTechnique(CurseUser& c, std::unique_ptr<int> tech);
@@ -42,4 +40,5 @@ struct CharacterEditor {
     // sorcerer system
     static void SetReverseCursedTechnique(Sorcerer& c, bool can_use);
     static void SetReverseCursedTechniqueLevel(Sorcerer& c, Sorcerer::RCTLevel lvl);
+    /*                        Sorcerer End                        */
 };

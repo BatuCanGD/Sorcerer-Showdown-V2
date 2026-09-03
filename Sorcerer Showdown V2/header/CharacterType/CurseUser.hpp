@@ -26,7 +26,7 @@ struct SorceryTrait final {
 };
 
 class CurseUser : public Character {
-   friend struct CharacterEditor; 
+   friend struct Editor; 
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:

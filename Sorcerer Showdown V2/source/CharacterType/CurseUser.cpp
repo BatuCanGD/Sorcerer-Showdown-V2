@@ -12,9 +12,9 @@ double CurseUser::CursedEnergy(Get type) const noexcept {
 
 void CurseUser::CursedEnergy(Set type, double amount) {
     switch (type) {
-        case Set::Current:  sorcery.cursed_energy = amount;
-        case Set::Max:      sorcery.max_cursed_energy = amount;
-        case Set::Previous: sorcery.previous_cursed_energy = amount;
+        case Set::Current:  sorcery.cursed_energy           = amount;
+        case Set::Max:      sorcery.max_cursed_energy       = amount;
+        case Set::Previous: sorcery.previous_cursed_energy  = amount;
     }
 }
 
