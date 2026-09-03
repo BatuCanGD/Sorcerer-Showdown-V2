@@ -27,3 +27,6 @@ void Character::Damage(double amount, enumtype::DamageType type){
     }
     this->state.health -= Helper::DealWithDamage(*this, type, amount);
 }
+void Character::Attack(Character& cc){
+    Helper::DealWithAttacking(*this, cc);
+}

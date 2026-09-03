@@ -62,6 +62,9 @@ void Editor::SetCursedEnergy(CurseUser &c, double ce){
     c.sorcery.cursed_energy = ce;
     c.sorcery.previous_cursed_energy = ce;
 }
+void Editor::SetBlackFlashChance(CurseUser& c, int ch){
+    c.sorcery.bf_chance = ch;
+}
 void Editor::AddBindingVow(CurseUser& c, std::unique_ptr<int> vow){
     c.jujutsu.binding_vows.push_back(std::move(vow));
 }

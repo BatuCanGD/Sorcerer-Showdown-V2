@@ -28,6 +28,7 @@ struct Editor {
     static void SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency);
     // curse user system
     static void SetCursedEnergy(CurseUser& c, double ce);
+    static void SetBlackFlashChance(CurseUser& c, int ch);
     static void AddBindingVow(CurseUser& c, std::unique_ptr<int> vow);
     static void AddShikigami(CurseUser& c, std::unique_ptr<int> shk);
     static void SetTechnique(CurseUser& c, std::unique_ptr<int> tech);
