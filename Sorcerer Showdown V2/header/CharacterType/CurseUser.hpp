@@ -16,9 +16,11 @@ struct CurseUserSystem final {
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
     double previous_cursed_energy{1.0};
+    int bf_chance{15};
     bool can_use_amplification{false};
     bool amplification_is_active{false};
 };
+
 
 struct SorceryTrait final {
     bool six_eyes{false};
@@ -27,6 +29,7 @@ struct SorceryTrait final {
 
 class CurseUser : public Character {
    friend struct Editor; 
+   friend struct Helper;
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:

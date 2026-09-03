@@ -8,6 +8,7 @@ struct SorcererSystem final {
 
 class Sorcerer : public CurseUser {
     friend struct Editor;
+    friend struct Helper;
 public:
     enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
 protected:

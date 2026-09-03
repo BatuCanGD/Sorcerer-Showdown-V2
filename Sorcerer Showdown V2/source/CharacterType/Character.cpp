@@ -21,7 +21,7 @@ void Character::Health(Set type, double amount) {
     }
 }
 
-void Character::Damage(enumtype::DamageType type, double amount){
+void Character::Damage(double amount, enumtype::DamageType type){
     if (state.is_invulnerable){
         return;
     }

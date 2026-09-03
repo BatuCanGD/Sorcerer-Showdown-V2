@@ -38,6 +38,7 @@ struct CharInv final {
 
 class Character {
     friend struct Editor;
+    friend struct Helper;
 protected:
     CharIdentity identity;
     CharState state;
@@ -51,5 +52,6 @@ public:
     double Health(Get type = Get::Current) const noexcept;
     void Health(Set type, double amount);
 
-    void Damage(enumtype::DamageType dmg_type, double amount);
+    void Damage(double amount, enumtype::DamageType dmg_type = enumtype::DamageType::Normal);
+    void Attack(Character& attacked);
 };
