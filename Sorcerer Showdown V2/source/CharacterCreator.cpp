@@ -61,6 +61,7 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     constexpr double strength = 185.0;
     constexpr double durability = 300.0;
     constexpr auto ce_efficiency = CurseUser::CEfficiency::Extreme;
+    constexpr auto rct_level = Sorcerer::RCTLevel::Absolute;
 
     Editor::SetName(*c, name);
     Editor::SetColor(*c, color);
@@ -73,6 +74,8 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     Editor::SetTechnique(*c, std::unique_ptr<int>()); // placeholder
     Editor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     Editor::SetTraitSixEyes(*c, true);
+    Editor::SetReverseCursedTechnique(*c, true);
+    Editor::SetReverseCursedTechniqueLevel(*c, rct_level);
 
     return c;
 }
