@@ -1,6 +1,5 @@
 #include "../header/Game.hpp"
 #include "../header/Utilities/Input.hpp"
-#include "../header/CharacterType/Character.hpp"
 #include "../header/Battlefield.hpp"
 
 #include <print>

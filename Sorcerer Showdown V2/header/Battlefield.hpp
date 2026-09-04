@@ -1,9 +1,8 @@
 #pragma once
+#include "CharacterType/Character.hpp"
 
 #include <memory>
 #include <vector>
-
-class Character;
 
 struct battlefield {
     std::vector<std::unique_ptr<Character>> battlefield;
