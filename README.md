@@ -4,12 +4,13 @@ This is a project that i have been thinking about for a long time, i have been w
 
 ### For future use
 
-To build the project, using clang or gcc that has the libraries for and support for c++23 is recommended 
+To build the project, using CMake with a compiler that has the libraries and support for c++23 is recommended \
+Opening a terminal in the project directory is required to properly compile the project and for cmake to work properly
 ```bash
-cd "~/(path)/Sorcerer Showdown V2/source/main" 
-# selects the main directory
-clang++ main.cpp -o main -std=c++23 
-# clang++ or g++ builds the project
-./main 
-# to run the game
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+# Configures the project and generates the build system using the Release configuration
+cmake --build build
+# builds the project
+./build/SorcererShowdownV2 
+# runs the project
 ```
