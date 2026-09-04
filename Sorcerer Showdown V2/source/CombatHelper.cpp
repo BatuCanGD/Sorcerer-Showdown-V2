@@ -25,7 +25,7 @@ AttackStruct CombatHelper::DealWithAttacking(Character &attacker, Character &att
     }
     attacked.Damage(attack_damage, attack_type);
 
-    const bool is_critical = attack_damage >= 100.0f;
+    const bool is_critical = attack_damage >= 100.0;
     
     return {attack_damage, is_critical,is_blackflash};
 }
