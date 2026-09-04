@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/LINES%20OF%20CODE-530-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/FILES-22-yellow?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/LINES%20OF%20CODE-566-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/FILES-24-yellow?style=for-the-badge" />
 </p>
 
 # Sorcerer Showdown V2 (Unfinished)
