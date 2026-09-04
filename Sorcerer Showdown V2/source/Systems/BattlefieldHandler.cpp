@@ -1,4 +1,5 @@
 #include "../../header/Systems/BattlefieldHandler.hpp"
+#include "../../header/Logger.hpp"
 #include "../../header/CharacterUtils/CharacterHelper.hpp"
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/Utilities/Input.hpp"
@@ -27,4 +28,11 @@ void BattlefieldHandler::SetupBattlefield(battlefield &bf) {
         PrintSetupValues(list);
         if (!ManageSetupChoices(get_input<int>())) break;
     }
+}
+
+void BattlefieldHandler::CheckForDeadPeople(battlefield &bf){
+    Log::Death(bf);
+    std::erase_if(bf.battlefield, [](const auto& s) { 
+        return s->Health() <= 0.0;
+    });
 }

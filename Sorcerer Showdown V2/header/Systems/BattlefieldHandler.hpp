@@ -11,4 +11,5 @@ class BattlefieldHandler final {
     static bool ManageSetupChoices(int x);
 public:
     static void SetupBattlefield(battlefield& bf);
+    static void CheckForDeadPeople(battlefield& bf);
 };
