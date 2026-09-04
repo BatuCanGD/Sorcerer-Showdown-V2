@@ -10,7 +10,7 @@ class Character;
 class CurseUser;
 class Sorcerer;
 
-struct Editor {
+struct Editor final {
     // identity section
     static void SetName(Character& c, std::string_view name);
     static void SetColor(Character& c, std::string_view color);

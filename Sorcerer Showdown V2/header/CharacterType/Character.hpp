@@ -5,12 +5,17 @@
 #include <memory>
 #include <vector>
 
+struct AttackStruct;
+
 namespace enumtype {
+    enum class Get : std::uint8_t { Current, Max, Previous };
+    enum class Set : std::uint8_t { Current, Max, Previous };
+
     enum class DamageType {
         Normal, // can be stopped or negated by reinforcement
         BypassTech, // techniques, infinity, etc...
         BypassRein, // Cursed Energy Reinforcement
-        BypassAll // all of the above
+        BypassAll // both bypasses apply
     };
 }
 
@@ -39,6 +44,7 @@ struct CharInv final {
 class Character {
     friend struct Editor;
     friend struct Helper;
+    friend struct CombatHelper;
 protected:
     CharIdentity identity;
     CharState state;
@@ -46,12 +52,10 @@ protected:
 public:
     Character() {};
     virtual ~Character();
-    enum class Get : std::uint8_t { Current, Max, Previous };
-    enum class Set : std::uint8_t { Current, Max, Previous };
 
-    double Health(Get type = Get::Current) const noexcept;
-    void Health(Set type, double amount);
+    double Health(enumtype::Get type = enumtype::Get::Current) const noexcept;
+    void Health(enumtype::Set type, double amount);
 
     void Damage(double amount, enumtype::DamageType dmg_type = enumtype::DamageType::Normal);
-    void Attack(Character& attacked);
+    AttackStruct Attack(Character& attacked);
 };

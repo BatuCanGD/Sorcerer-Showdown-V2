@@ -30,6 +30,7 @@ struct SorceryTrait final {
 class CurseUser : public Character {
    friend struct Editor; 
    friend struct Helper;
+   friend struct CombatHelper;
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
 protected:
@@ -38,8 +39,8 @@ protected:
     SorceryTrait traits;
     CEfficiency ce_efficiency = CEfficiency::Stable;
 public:
-    double CursedEnergy(Get type = Get::Current) const noexcept;
-    void CursedEnergy(Set type, double amount);
+    double CursedEnergy(enumtype::Get type = enumtype::Get::Current) const noexcept;
+    void CursedEnergy(enumtype::Set type, double amount);
 
     void Efficiency(CEfficiency type);
 };

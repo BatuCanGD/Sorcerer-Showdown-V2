@@ -1,20 +1,26 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 
 
-double CurseUser::CursedEnergy(Get type) const noexcept {
+double CurseUser::CursedEnergy(enumtype::Get type) const noexcept {
     switch (type) {
-        case Get::Current:  return sorcery.cursed_energy;
-        case Get::Max:      return sorcery.max_cursed_energy;
-        case Get::Previous: return sorcery.previous_cursed_energy;
-        default:            return -1.0;
+        case enumtype::Get::Current:  return sorcery.cursed_energy;
+        case enumtype::Get::Max:      return sorcery.max_cursed_energy;
+        case enumtype::Get::Previous: return sorcery.previous_cursed_energy;
     }
+    return -1.0;
 }
 
-void CurseUser::CursedEnergy(Set type, double amount) {
+void CurseUser::CursedEnergy(enumtype::Set type, double amount) {
     switch (type) {
-        case Set::Current:  sorcery.cursed_energy           = amount;
-        case Set::Max:      sorcery.max_cursed_energy       = amount;
-        case Set::Previous: sorcery.previous_cursed_energy  = amount;
+        case enumtype::Set::Current:  
+            sorcery.cursed_energy = amount;
+            break;
+        case enumtype::Set::Max:      
+            sorcery.max_cursed_energy = amount;
+            break;
+        case enumtype::Set::Previous: 
+            sorcery.previous_cursed_energy = amount;
+            break;
     }
 }
 

@@ -6,9 +6,10 @@ struct SorcererSystem final {
     bool can_use_rct{false};
 };
 
-class Sorcerer : public CurseUser {
+class Sorcerer final : public CurseUser {
     friend struct Editor;
     friend struct Helper;
+    friend struct CombatHelper;
 public:
     enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
 protected:

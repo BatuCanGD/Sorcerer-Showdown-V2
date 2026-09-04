@@ -1,25 +1,13 @@
 #include "../../header/CharacterUtils/CharacterHelper.hpp"
-#include "../../header/Utilities/Random.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/CharacterType/Character.hpp"
 
+#include <format>
 
-double Helper::DealWithDamage(Character& c, enumtype::DamageType type, double amount){
-    if ([[maybe_unused]] auto crs = dynamic_cast<CurseUser*>(&c)){
-        // add technique stuff and reinforcement checking here!!!
+std::string Helper::GetName(Character &c, NType type){
+    switch(type){
+    case NType::Name:   return c.identity.name;
+    case NType::Color:  return c.identity.color;
+    case NType::Both:   return std::format("{}{}\x1b[0m", c.identity.color, c.identity.name);
     }
-    return amount;
-}
-void Helper::DealWithAttacking(Character &attacker, Character &attacked) {
-    double attack_damage = attacker.state.strength;
-    auto attack_type = enumtype::DamageType::Normal;
-
-    if (auto crs = dynamic_cast<CurseUser*>(&attacker)) {
-        if (crs->sorcery.can_use_amplification && crs->sorcery.amplification_is_active){
-            attack_type = enumtype::DamageType::BypassTech;
-        }
-        if (get_random<int>(1, 100) <= crs->sorcery.bf_chance){
-            attack_damage *= 2.5;
-        }
-    }
-    attacked.Damage(attack_damage, attack_type);
+    return "";
 }

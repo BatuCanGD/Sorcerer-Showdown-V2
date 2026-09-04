@@ -1,7 +1,15 @@
 #pragma once
-#include "../CharacterType/Character.hpp"
+
+#include <string>
+
+class Character;
+
+enum class NType {
+    Name,
+    Color,
+    Both
+};
 
 struct Helper {
-    static double DealWithDamage(Character& c, enumtype::DamageType type, double amount);
-    static void DealWithAttacking(Character& attacker, Character& attacked);
+    static std::string GetName(Character& c, NType type = NType::Both);
 };
