@@ -1,4 +1,4 @@
-#include "../../header/CharacterUtils/CharacterCreator.hpp"
+#include "../../header/Creator.hpp"
 #include "../../header/CharacterUtils/CharacterEditor.hpp"
 #include "../../header/Utilities/Random.hpp"
 #include "../../header/CharacterType/Character.hpp"

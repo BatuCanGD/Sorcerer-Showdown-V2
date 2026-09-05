@@ -3,7 +3,7 @@
 #include "../header/CharacterType/CurseUser.hpp"
 
 
-double CombatHelper::DealWithDamage(Character& c, enumtype::DamageType type, double amount){
+double CombatHelper::DealWithDamage(Character& c, globalums::DamageType type, double amount){
     if ([[maybe_unused]] auto crs = dynamic_cast<CurseUser*>(&c)){
         // add technique stuff and reinforcement checking here!!!
     }
@@ -11,12 +11,12 @@ double CombatHelper::DealWithDamage(Character& c, enumtype::DamageType type, dou
 }
 AttackStruct CombatHelper::DealWithAttacking(Character &attacker, Character &attacked) {
     double attack_damage = attacker.state.strength;
-    auto attack_type = enumtype::DamageType::Normal;
+    auto attack_type = globalums::DamageType::Normal;
     bool is_blackflash{};
 
     if (auto crs = dynamic_cast<CurseUser*>(&attacker)) {
         if (crs->sorcery.can_use_amplification && crs->sorcery.amplification_is_active){
-            attack_type = enumtype::DamageType::BypassTech;
+            attack_type = globalums::DamageType::BypassTech;
         }
         if (get_random<int>(1, 100) <= crs->sorcery.bf_chance){
             attack_damage *= 2.5;

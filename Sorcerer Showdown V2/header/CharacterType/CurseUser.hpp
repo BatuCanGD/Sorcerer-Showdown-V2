@@ -1,5 +1,6 @@
 #pragma once
 #include "Character.hpp"
+#include "../Enums.hpp"
 
 #include <memory>
 
@@ -21,7 +22,6 @@ struct CurseUserSystem final {
     bool amplification_is_active{false};
 };
 
-
 struct SorceryTrait final {
     bool six_eyes{false};
     bool passive_healing{false};
@@ -39,8 +39,8 @@ protected:
     SorceryTrait traits;
     CEfficiency ce_efficiency = CEfficiency::Stable;
 public:
-    double CursedEnergy(enumtype::Get type = enumtype::Get::Current) const noexcept;
-    void CursedEnergy(enumtype::Set type, double amount);
+    double CursedEnergy(type::Get type = type::Get::Current) const noexcept;
+    void CursedEnergy(type::Set type, double amount);
 
     void Efficiency(CEfficiency type);
 };

@@ -1,15 +1,10 @@
 #pragma once
+#include "../Enums.hpp"
 
 #include <string>
 
 class Character;
 
-enum class NType {
-    Name,
-    Color,
-    Both
-};
-
 struct Helper {
-    static std::string GetName(Character& c, NType type = NType::Both);
+    static std::string GetName(Character& c, charenums::NameType type = charenums::NameType::Both);
 };

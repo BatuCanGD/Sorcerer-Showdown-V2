@@ -1,23 +1,12 @@
 #pragma once
 
+#include "../Enums.hpp"
+
 #include <string>
-#include <cstdint>
 #include <memory>
 #include <vector>
 
 struct AttackStruct;
-
-namespace enumtype {
-    enum class Get : std::uint8_t { Current, Max, Previous };
-    enum class Set : std::uint8_t { Current, Max, Previous };
-
-    enum class DamageType {
-        Normal, // can be stopped or negated by reinforcement
-        BypassTech, // techniques, infinity, etc...
-        BypassRein, // Cursed Energy Reinforcement
-        BypassAll // both bypasses apply
-    };
-}
 
 struct CharIdentity final {
     std::string name{""};
@@ -53,9 +42,9 @@ public:
     Character() {};
     virtual ~Character();
 
-    double Health(enumtype::Get type = enumtype::Get::Current) const noexcept;
-    void Health(enumtype::Set type, double amount);
+    double Health(type::Get type = type::Get::Current) const noexcept;
+    void Health(type::Set type, double amount);
 
-    void Damage(double amount, enumtype::DamageType dmg_type = enumtype::DamageType::Normal);
+    void Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
 };

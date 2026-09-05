@@ -5,6 +5,7 @@
 
 #include <string_view>
 #include <memory>
+#include <cstdint>
 
 class Character;
 class CurseUser;
@@ -20,7 +21,7 @@ struct Editor final {
     static void SetDurability(Character& c, double dr);
     static void SetStrength(Character& c, double str);
     // inventory
-    enum class ItemPlacement { OnHand, Offhand, Inventory };
+    enum class ItemPlacement : std::uint8_t { OnHand, Offhand, Inventory };
     static void GiveCharacterTool(Character& c, std::unique_ptr<int> tool, ItemPlacement place);
     static void SetInventoryAccess(Character& c, bool t);
     /*                        Character End                       */

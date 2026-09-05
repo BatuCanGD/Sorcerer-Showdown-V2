@@ -30,7 +30,7 @@ void BattlefieldHandler::SetupBattlefield(battlefield &bf) {
     }
 }
 
-void BattlefieldHandler::CheckForDeadPeople(battlefield &bf){
+void BattlefieldHandler::HandleDeadPeople(battlefield &bf){
     Log::Death(bf);
     std::erase_if(bf.battlefield, [](const auto& s) { 
         return s->Health() <= 0.0;
