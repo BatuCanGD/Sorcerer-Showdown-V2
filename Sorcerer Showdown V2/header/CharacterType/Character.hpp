@@ -31,8 +31,7 @@ struct CharInv final {
 };
 
 class Character {
-    friend struct Editor;
-    friend struct Helper;
+    friend struct CharacterEditor;
     friend struct CombatHelper;
 protected:
     CharIdentity identity;
@@ -41,6 +40,9 @@ protected:
 public:
     Character() {};
     virtual ~Character();
+
+    std::string Name(charenums::NameType type = charenums::NameType::Both);
+    void Name(std::string str, charenums::NameType nt = charenums::NameType::Name);
 
     double Health(type::Get type = type::Get::Current) const noexcept;
     void Health(type::Set type, double amount);

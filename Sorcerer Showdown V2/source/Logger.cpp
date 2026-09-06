@@ -1,7 +1,6 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
 #include "../header/CombatHelper.hpp"
-#include "../header/CharacterUtils/CharacterHelper.hpp"
 
 #include <print>
 #include <string>
@@ -10,7 +9,7 @@
 
 void Log::Attack(AttackStruct ats, Character& c1, Character& c2) {
     std::string word{};
-    const std::string info = std::format("{} took {:.1f} damage from {}!", Helper::GetName(c1), ats.damage, Helper::GetName(c2));
+    const std::string info = std::format("{} took {:.1f} damage from {}!", c1.Name(), ats.damage, c2.Name());
     
     if (ats.is_critical){
         word.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
@@ -40,7 +39,7 @@ void Log::Death(battlefield& bf){
         }
 
         msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2}\x1b[0m)", color, severity, c->Health()));
-        msg.append(std::format(" {} has been defeated\n", Helper::GetName(*c)));
+        msg.append(std::format(" {} has been defeated\n", c->Name()));
         death_messages.push_back(msg);
     }
     if (death_messages.empty()){

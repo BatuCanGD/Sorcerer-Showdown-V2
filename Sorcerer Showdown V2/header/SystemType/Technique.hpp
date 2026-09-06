@@ -13,13 +13,14 @@ struct TechIdentity final {
 
 struct TechAbility final {
     double damage{1.0};
-    std::string name;
-    std::string color;
-    globalums::DamageType damage_type = globalums::DamageType::Normal;
+    double output{1.0};
+    std::string name{""};
+    std::string color{""};
+    globalums::DamageType damage_type{globalums::DamageType::Normal};
 };
 
 class Technique final {
-    friend struct Editor;
+    friend struct TechniqueEditor;
 protected:
     std::vector<TechAbility> abilities;
     TechIdentity identity;

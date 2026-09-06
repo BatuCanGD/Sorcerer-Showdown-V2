@@ -15,6 +15,7 @@ struct Jujutsu final {
 
 struct CurseUserSystem final {
     double max_output_potential{100.0};
+    double current_output{0.0};
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
     double previous_cursed_energy{1.0};
@@ -29,8 +30,7 @@ struct SorceryTrait final {
 };
 
 class CurseUser : public Character {
-   friend struct Editor; 
-   friend struct Helper;
+   friend struct CharacterEditor; 
    friend struct CombatHelper;
 public:
     enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
