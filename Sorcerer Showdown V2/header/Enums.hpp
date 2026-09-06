@@ -7,7 +7,7 @@ namespace type {
     enum class Set : std::uint8_t { Current, Max, Previous };
 }
 
-namespace charenums // character enum type
+namespace charenums // character enums
 { 
     enum class NameType : std::uint8_t {
         Name,

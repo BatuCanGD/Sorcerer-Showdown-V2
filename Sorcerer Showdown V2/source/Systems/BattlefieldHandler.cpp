@@ -1,6 +1,5 @@
 #include "../../header/Systems/BattlefieldHandler.hpp"
 #include "../../header/Logger.hpp"
-#include "../../header/CharacterUtils/CharacterHelper.hpp"
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Battlefield.hpp"
@@ -11,7 +10,7 @@
 
 void BattlefieldHandler::PrintSetupValues(const std::unordered_map<int, std::unique_ptr<Character>>& list) {
     for (auto const& [count, character] : list){
-        std::println("{}:{}", count, Helper::GetName(*character));
+        std::println("{}:{}", count, character->Name());
     }
 }
 
