@@ -1,11 +1,11 @@
-#include "../../header/Creator.hpp"
-#include "../../header/CharacterUtils/CharacterEditor.hpp"
-#include "../../header/Utilities/Random.hpp"
-#include "../../header/CharacterType/Character.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
-#include "../../header/CharacterType/Sorcerer.hpp"
-#include "../../header/SystemType/Technique.hpp"
-#include "../../header/Enums.hpp"
+#include "../header/Creator.hpp"
+#include "../header/CharacterUtils/CharacterEditor.hpp"
+#include "../header/Utilities/Random.hpp"
+#include "../header/CharacterType/Character.hpp"
+#include "../header/CharacterType/CurseUser.hpp"
+#include "../header/CharacterType/Sorcerer.hpp"
+#include "../header/SystemType/Technique.hpp"
+#include "../header/Enums.hpp"
 
 #include <memory>
 
