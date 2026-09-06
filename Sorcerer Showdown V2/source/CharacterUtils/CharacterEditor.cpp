@@ -71,7 +71,7 @@ void Editor::AddBindingVow(CurseUser& c, std::unique_ptr<int> vow){
 void Editor::AddShikigami(CurseUser& c, std::unique_ptr<int> shk){
     c.jujutsu.shikigami.push_back(std::move(shk));
 }
-void Editor::SetTechnique(CurseUser& c, std::unique_ptr<int> tech){
+void Editor::SetTechnique(CurseUser& c, std::unique_ptr<Technique> tech){
     c.jujutsu.technique = std::move(tech);
 }
 void Editor::SetDomain(CurseUser& c, std::unique_ptr<int> domain){

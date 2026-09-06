@@ -4,6 +4,8 @@
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/CharacterType/Sorcerer.hpp"
+#include "../../header/SystemType/Technique.hpp"
+#include "../../header/Enums.hpp"
 
 #include <memory>
 
@@ -37,6 +39,8 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double durability = 75.0;
     constexpr auto ce_efficiency = CurseUser::CEfficiency::Stable;
 
+    auto technique = Create::IdleTransfiguration();
+
     Editor::SetName(*c, name);
     Editor::SetColor(*c, color);
     Editor::SetHealth(*c, health);
@@ -44,7 +48,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     Editor::SetStrength(*c, strength);
     Editor::SetCursedEnergy(*c, cursed_energy);
     Editor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
-    Editor::SetTechnique(*c, std::unique_ptr<int>()); // placeholder
+    Editor::SetTechnique(*c, std::move(technique)); // placeholder
     Editor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     Editor::SetTraitPassiveHealing(*c, true);
 
@@ -63,6 +67,8 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     constexpr auto ce_efficiency = CurseUser::CEfficiency::Extreme;
     constexpr auto rct_level = Sorcerer::RCTLevel::Absolute;
 
+    auto technique = Create::Limitless();
+
     Editor::SetName(*c, name);
     Editor::SetColor(*c, color);
     Editor::SetHealth(*c, health);
@@ -71,11 +77,26 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     Editor::SetCursedEnergy(*c, cursed_energy);
     Editor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
     Editor::SetDomainNullifier(*c, std::unique_ptr<int>()); // placeholder
-    Editor::SetTechnique(*c, std::unique_ptr<int>()); // placeholder
+    Editor::SetTechnique(*c, std::move(technique)); // placeholder
     Editor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     Editor::SetTraitSixEyes(*c, true);
     Editor::SetReverseCursedTechnique(*c, true);
     Editor::SetReverseCursedTechniqueLevel(*c, rct_level);
 
+    return c;
+}
+
+// techniques
+
+std::unique_ptr<Technique> Create::Limitless() {
+    auto c = std::make_unique<Technique>();
+    auto type = globalums::DamageType::Normal;
+    return c;
+}
+
+std::unique_ptr<Technique> Create::IdleTransfiguration() {
+    auto c = std::make_unique<Technique>();
+
+    auto type = globalums::DamageType::BypassRein;
     return c;
 }

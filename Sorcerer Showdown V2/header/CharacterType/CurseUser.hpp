@@ -1,5 +1,6 @@
 #pragma once
 #include "Character.hpp"
+#include "../SystemType/Technique.hpp"
 #include "../Enums.hpp"
 
 #include <memory>
@@ -7,7 +8,7 @@
 struct Jujutsu final {
     std::vector<std::unique_ptr<int>> binding_vows; // placeholder ints
     std::vector<std::unique_ptr<int>> shikigami;
-    std::unique_ptr<int> technique{nullptr};
+    std::unique_ptr<Technique> technique{nullptr};
     std::unique_ptr<int> domain{nullptr};
     std::unique_ptr<int> domain_neutralizer{nullptr};
 };

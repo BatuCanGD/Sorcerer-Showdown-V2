@@ -32,7 +32,7 @@ struct Editor final {
     static void SetBlackFlashChance(CurseUser& c, int ch);
     static void AddBindingVow(CurseUser& c, std::unique_ptr<int> vow);
     static void AddShikigami(CurseUser& c, std::unique_ptr<int> shk);
-    static void SetTechnique(CurseUser& c, std::unique_ptr<int> tech);
+    static void SetTechnique(CurseUser& c, std::unique_ptr<Technique> tech);
     static void SetDomain(CurseUser& c, std::unique_ptr<int> domain);
     static void SetDomainNullifier(CurseUser& c, std::unique_ptr<int> dnull);
     // traits

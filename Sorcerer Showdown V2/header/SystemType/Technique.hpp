@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-struct TechIdentity{
+struct TechIdentity final {
     std::string name{""};
     std::string color{""};
     std::string description{""};
@@ -17,7 +17,6 @@ struct TechAbility final {
     std::string color;
     globalums::DamageType damage_type = globalums::DamageType::Normal;
 };
-
 
 class Technique final {
     friend struct Editor;
