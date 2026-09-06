@@ -24,4 +24,7 @@ class Technique final {
 protected:
     std::vector<TechAbility> abilities;
     TechIdentity identity;
+public:
+    void PrintAbilities() const;
+    TechAbility GetAbility(size_t idx);
 };

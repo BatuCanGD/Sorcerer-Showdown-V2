@@ -9,7 +9,7 @@ std::string Character::Name(charenums::NameType type){
     switch(type){
         case charenums::NameType::Name:  return identity.name;
         case charenums::NameType::Color: return identity.color;
-        case charenums::NameType::Both:  return std::format("{}{}\x1b[0m", identity.color, identity.name);
+        case charenums::NameType::Both:  return std::format("{}{}{}", identity.color, identity.name, identity.color.empty() ? "" : "\x1b[0m");
     }
 }
 void Character::Name(std::string str, charenums::NameType nt){

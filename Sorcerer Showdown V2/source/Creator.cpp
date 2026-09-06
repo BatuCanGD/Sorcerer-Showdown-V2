@@ -134,7 +134,7 @@ std::unique_ptr<Technique> Create::IdleTransfiguration() {
     auto c = std::make_unique<Technique>();
 
     constexpr const char* name = "Idle Transfiguration";
-    constexpr const char* color = "";
+    constexpr const char* color = "\x1b[38;5;129m";
     constexpr const char* descr = "A Technique that grants the user the manipulation of the shape of souls";
 
     TechniqueEditor::SetName(*c, name);
