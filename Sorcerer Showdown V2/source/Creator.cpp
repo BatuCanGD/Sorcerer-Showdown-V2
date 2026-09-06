@@ -5,7 +5,7 @@
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
 #include "../header/CharacterType/Sorcerer.hpp"
-#include "../header/SystemType/Technique.hpp"
+#include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 
 #include <memory>

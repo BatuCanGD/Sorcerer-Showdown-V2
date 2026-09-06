@@ -1,5 +1,5 @@
 #include "../../header/Editors/TechniqueEditor.hpp"
-#include "../../header/SystemType/Technique.hpp"
+#include "../../header/Sorcery/Technique.hpp"
 
 void TechniqueEditor::SetName(Technique& t, std::string_view n){
     t.identity.name = n;

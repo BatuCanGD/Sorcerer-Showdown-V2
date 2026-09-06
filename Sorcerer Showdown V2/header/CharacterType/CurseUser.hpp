@@ -1,6 +1,6 @@
 #pragma once
 #include "Character.hpp"
-#include "../SystemType/Technique.hpp"
+#include "../Sorcery/Technique.hpp"
 #include "../Enums.hpp"
 
 #include <memory>
