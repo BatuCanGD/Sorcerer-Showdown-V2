@@ -18,7 +18,6 @@ void CharacterEditor::SetColor(Character& c, std::string_view color){
 void CharacterEditor::SetHealth(Character& c, double hp){
     c.state.max_health = hp;
     c.state.health = hp;
-    c.state.previous_health = hp;
 }
 void CharacterEditor::SetInvulnerability(Character& c, bool t){
     c.state.is_invulnerable = t;
@@ -60,7 +59,6 @@ void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEffici
 void CharacterEditor::SetCursedEnergy(CurseUser &c, double ce){
     c.sorcery.max_cursed_energy = ce;
     c.sorcery.cursed_energy = ce;
-    c.sorcery.previous_cursed_energy = ce;
 }
 void CharacterEditor::SetBlackFlashChance(CurseUser& c, int ch){
     c.sorcery.bf_chance = ch;

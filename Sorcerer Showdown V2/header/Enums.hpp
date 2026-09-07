@@ -3,8 +3,13 @@
 #include <cstdint>
 
 namespace type {
-    enum class Get : std::uint8_t { Current, Max, Previous };
-    enum class Set : std::uint8_t { Current, Max, Previous };
+    enum class Get : std::uint8_t { Current, Max };
+    enum class Set : std::uint8_t { Current, Max };
+
+    enum class Expend : std::uint8_t { Current, Max };
+    enum class Add    : std::uint8_t { Current, Max };
+
+    enum class Type : std::uint8_t { Get, Set, Add, Expend };
 }
 
 namespace charenums // character enums
@@ -15,7 +20,8 @@ namespace charenums // character enums
         Both
     };
 }
-namespace globalums
+
+namespace globalums // used by many enums
 {
     enum class DamageType : std::uint8_t {
         Normal, // can be stopped or negated by reinforcement

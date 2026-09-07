@@ -1,15 +1,16 @@
-#include "../header/CombatHelper.hpp"
-#include "../header/Utilities/Random.hpp"
-#include "../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Systems/Fighting/Combat.hpp"
+#include "../../../header/Utilities/Random.hpp"
+#include "../../../header/CharacterType/CurseUser.hpp"
 
 
-double CombatHelper::DealWithDamage(Character& c, globalums::DamageType type, double amount){
+double Combat::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
     if ([[maybe_unused]] auto crs = dynamic_cast<CurseUser*>(&c)){
         // add technique stuff and reinforcement checking here!!!
     }
     return amount;
 }
-AttackStruct CombatHelper::DealWithAttacking(Character &attacker, Character &attacked) {
+
+AttackStruct Combat::ResolveAttacking(Character &attacker, Character &attacked) {
     double attack_damage = attacker.state.strength;
     auto attack_type = globalums::DamageType::Normal;
     bool is_blackflash{};
@@ -27,5 +28,5 @@ AttackStruct CombatHelper::DealWithAttacking(Character &attacker, Character &att
 
     const bool is_critical = attack_damage >= 100.0;
     
-    return {attack_damage, is_critical,is_blackflash};
+    return {attack_damage, is_critical, is_blackflash};
 }

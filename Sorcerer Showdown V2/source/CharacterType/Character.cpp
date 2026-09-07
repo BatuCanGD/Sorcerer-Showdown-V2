@@ -1,5 +1,5 @@
 #include "../../header/CharacterType/Character.hpp"
-#include "../../header/CombatHelper.hpp"
+#include "../../header/Systems/Fighting/Combat.hpp"
 
 #include <format>
 
@@ -11,6 +11,7 @@ std::string Character::Name(charenums::NameType type){
         case charenums::NameType::Color: return identity.color;
         case charenums::NameType::Both:  return identity.color.empty() ? identity.name : std::format("{}{}\x1b[0m", identity.color, identity.name);
     }
+    return "";
 }
 void Character::Name(std::string str, charenums::NameType nt){
     switch(nt){
@@ -21,8 +22,8 @@ void Character::Name(std::string str, charenums::NameType nt){
             identity.color = str;
             break;
         case charenums::NameType::Both:  
-            identity.color = str;
-            identity.name = str;
+            identity.color  = str;
+            identity.name   = str;
             break;
     }
 }
@@ -31,7 +32,6 @@ double Character::Health(type::Get type) const noexcept {
     switch (type) {
         case type::Get::Current:  return state.health;
         case type::Get::Max:      return state.max_health;
-        case type::Get::Previous: return state.previous_health;
     }
     return -1.0;
 }
@@ -44,8 +44,25 @@ void Character::Health(type::Set type, double amount) {
         case type::Set::Max:
             state.max_health = amount;
             break;
-        case type::Set::Previous: 
-            state.previous_health = amount;
+    }
+}
+void Character::Health(type::Expend type, double amount) {
+        switch (type) {
+        case type::Expend::Current:  
+            state.health -= amount;
+            break;
+        case type::Expend::Max:
+            state.max_health -= amount;
+            break;
+    }
+}
+void Character::Health(type::Add type, double amount){
+    switch (type) {
+        case type::Add::Current:  
+            state.health += amount;
+            break;
+        case type::Add::Max:
+            state.max_health += amount;
             break;
     }
 }
@@ -54,8 +71,8 @@ void Character::Damage(double amount, globalums::DamageType type){
     if (state.is_invulnerable){
         return;
     }
-    this->state.health -= CombatHelper::DealWithDamage(*this, type, amount);
+    this->state.health -= Combat::ResolveDamage(*this, type, amount);
 }
 AttackStruct Character::Attack(Character& cc){
-    return CombatHelper::DealWithAttacking(*this, cc);
+    return Combat::ResolveAttacking(*this, cc);
 }

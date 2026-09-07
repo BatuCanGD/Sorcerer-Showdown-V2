@@ -16,7 +16,6 @@ struct CharIdentity final {
 struct CharState final {
     double health{1.0};
     double max_health{1.0};
-    double previous_health{1.0};
     double durability{1.0};
     double strength{1.0};
     bool is_stunned{false};
@@ -32,7 +31,7 @@ struct CharInv final {
 
 class Character {
     friend struct CharacterEditor;
-    friend struct CombatHelper;
+    friend struct Combat;
 protected:
     CharIdentity identity;
     CharState state;
@@ -46,7 +45,11 @@ public:
 
     double Health(type::Get type = type::Get::Current) const noexcept;
     void Health(type::Set type, double amount);
+    void Health(type::Expend t, double amount);
+    void Health(type::Add type, double amount);
 
     void Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
+
+    virtual bool CanUseSorcery() const;
 };

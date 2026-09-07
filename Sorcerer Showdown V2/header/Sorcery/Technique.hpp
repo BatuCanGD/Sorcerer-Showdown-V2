@@ -21,6 +21,7 @@ struct TechAbility final {
 
 class Technique final {
     friend struct TechniqueEditor;
+    friend struct Tech;
 protected:
     std::vector<TechAbility> abilities;
     TechIdentity identity;
