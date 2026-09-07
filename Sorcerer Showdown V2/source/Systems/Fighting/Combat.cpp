@@ -30,3 +30,7 @@ AttackStruct Combat::ResolveAttacking(Character &attacker, Character &attacked) 
     
     return {attack_damage, is_critical, is_blackflash};
 }
+
+TechStruct Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
+    
+}
