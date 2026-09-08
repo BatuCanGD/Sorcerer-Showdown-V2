@@ -76,7 +76,7 @@ void CurseUser::Output(type::Set t, double amount){
     }
 }
 
-const Technique* CurseUser::Technique() const {
+Technique* CurseUser::Technique() const {
     return jujutsu.technique.get();
 }
 

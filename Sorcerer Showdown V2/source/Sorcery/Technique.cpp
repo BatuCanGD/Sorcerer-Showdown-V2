@@ -4,11 +4,15 @@
 #include <cstdint>
 #include <stdexcept>
 
+void Technique::PrintName() const {
+    std::println("{}{}{}", identity.color, identity.name, identity.color.empty() ? "" : "\x1b[0m");
+}
+
 void Technique::PrintAbilities() const {
     std::uint8_t z = 0;
-    for ([[maybe_unused]] auto [damage, output, name, clr, at_type] : abilities){
-        std::println("{}:[{}{}{}] {:.1f} damage | {:.1f} output cost", 
-            ++z, clr, name, clr.empty() ? "" : "\x1b[0m", damage, output);
+    for ([[maybe_unused]] const auto& [damage, cost, output, name, clr, at_type] : abilities){
+        std::println("{}:[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
+            ++z, clr, name, clr.empty() ? "" : "\x1b[0m", damage, cost, output);
     }
 }
 TechAbility Technique::GetAbility(size_t idx){

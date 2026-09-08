@@ -11,6 +11,7 @@ struct AttackStruct;
 struct CharIdentity final {
     std::string name{""};
     std::string color{""};
+    bool is_player{false};
 };
 
 struct CharState final {

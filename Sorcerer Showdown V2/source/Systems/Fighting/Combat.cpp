@@ -32,8 +32,20 @@ AttackStruct Combat::ResolveAttacking(Character &attacker, Character &attacked) 
     return {attack_damage, is_critical, is_blackflash};
 }
 
-TechStruct Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
-    bool enough_output = Tech::ResolveCursedEnergy(attacker, , attacked)
+void Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
+    TechAbility chosen_ct;
 
-    return {};
+    if (attacker.identity.is_player){
+        chosen_ct = Tech::ChooseAbility(*attacker.Technique());
+    }else{
+
+    }
+
+    const auto [enough_output, output] = Tech::ResolveOutput(chosen_ct , attacker);
+    const auto [enough_ce, ce] = Tech::ResolveCursedEnergy(attacker, chosen_ct , attacked);
+
+    if (!(enough_output && enough_ce)) return;
+
+    attacker.CursedEnergy(type::Expend::Current, ce);
+    attacker.Output(type::Type::Add, output);
 }
