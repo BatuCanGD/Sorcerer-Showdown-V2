@@ -1,9 +1,23 @@
 #include "../../header/CharacterType/Character.hpp"
-#include "../../header/Systems/Fighting/Combat.hpp"
+#include "../../header/Systems/Fighting/CombatSystem.hpp"
 
 #include <format>
 
 Character::~Character() = default;
+
+
+const CharIdentity& Character::Identity() const {
+    return identity;
+}
+const CharState& Character::State() const noexcept {
+    return state;
+}
+const CharInv& Character::Equipment() const {
+    return equipment;
+}
+const CharCtrl& Character::Control() const noexcept{
+    return control;
+}
 
 std::string Character::Name(charenums::NameType type){
     switch(type){
@@ -71,10 +85,10 @@ void Character::Damage(double amount, globalums::DamageType type){
     if (state.is_invulnerable){
         return;
     }
-    this->state.health -= Combat::ResolveDamage(*this, type, amount);
+    this->state.health -= CombatSystem::ResolveDamage(*this, type, amount);
 }
 AttackStruct Character::Attack(Character& cc){
-    return Combat::ResolveAttacking(*this, cc);
+    return CombatSystem::ResolveAttacking(*this, cc);
 }
 
 bool Character::CanUseSorcery() const {

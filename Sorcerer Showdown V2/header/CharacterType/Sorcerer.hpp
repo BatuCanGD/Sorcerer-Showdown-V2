@@ -4,17 +4,16 @@
 struct SorcererSystem final {
     double rct_output{0.0};
     bool can_use_rct{false};
+    enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
 };
 
 class Sorcerer final : public CurseUser {
     friend struct CharacterEditor;
-    friend struct Combat;
-public:
-    enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
+    friend struct CombatSystem;
 protected:
-    SorcererSystem sorcerery;
-    RCTLevel rct_level = RCTLevel::Adept;
+    SorcererSystem rct_system;
+    SorcererSystem::RCTLevel rct_level = SorcererSystem::RCTLevel::Adept;
 public:
     void ReverseCursedTechnique(double amount);
-    void ReverseCursedTechnique(RCTLevel type);
+    void ReverseCursedTechnique(SorcererSystem::RCTLevel type);
 };

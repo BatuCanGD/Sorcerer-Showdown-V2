@@ -1,6 +1,16 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 
 
+const JujutsuSystem& CurseUser::Jujutsu() const {
+    return jujutsu;
+}
+const CurseUserSystem& CurseUser::Sorcery() const noexcept {
+    return sorcery;
+}
+const SorceryTrait& CurseUser::Traits() const noexcept {
+    return traits;
+}
+
 double CurseUser::CursedEnergy(type::Get type) const noexcept {
     switch (type) {
         case type::Get::Current:  return sorcery.cursed_energy;
@@ -41,7 +51,6 @@ void CurseUser::CursedEnergy(type::Add type, double amount) {
     }
 }
 
-
 double CurseUser::Output(type::Get t) const noexcept {
     switch(t){
         case type::Get::Current:    return sorcery.current_output;
@@ -80,10 +89,10 @@ Technique* CurseUser::technique() const {
     return jujutsu.technique.get();
 }
 
-void CurseUser::Efficiency(CEfficiency type){
+void CurseUser::Efficiency(CurseUserSystem::Efficiency type){
     ce_efficiency = type;
 }
-CurseUser::CEfficiency CurseUser::Efficiency() const noexcept {
+CurseUserSystem::Efficiency CurseUser::Efficiency() const noexcept {
     return ce_efficiency;
 }
 

@@ -14,17 +14,16 @@
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
 
-    constexpr const char* name = "Transfigured Human";
-    constexpr const char* color = "\x1b[38;5;22m";
+    const CharIdentity id = {"Transfigured Human", "\x1b[38;5;22m"};
+
     const double health = get_random<double>(1.0, 100.0);
     const double strength = get_random<double>(1.0, 100.0);
     const double durability = get_random<double>(1.0, 100.0);
 
-    CharacterEditor::SetName(*c, name);
-    CharacterEditor::SetColor(*c, color);
-    CharacterEditor::SetHealth(*c, health);
-    CharacterEditor::SetDurability(*c, durability);
-    CharacterEditor::SetStrength(*c, strength);
+    const CharState stats {health, health, durability, strength};
+
+    CharacterEditor::SetIdentity(*c, id);
+    CharacterEditor::SetStats(*c, stats);
 
     return c;
 }
@@ -32,25 +31,25 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 std::unique_ptr<CurseUser> Create::Mahito() {
     auto c = std::make_unique<CurseUser>();
 
-    constexpr const char* name = "Mahito";
-    constexpr const char* color = "\x1b[38;5;129m";
+    const CharIdentity id {"Mahito", "\x1b[38;5;129m"};
+    
     constexpr double health = 550.0;
-    constexpr double cursed_energy = 4000.0;
     constexpr double strength = 115.0;
     constexpr double durability = 75.0;
-    constexpr auto ce_efficiency = CurseUser::CEfficiency::Stable;
+
+    const CharState stats {health, health, durability, strength};
+
+    constexpr double cursed_energy = 4000.0;
+    constexpr auto ce_efficiency = CurseUserSystem::Efficiency::Stable;
 
     auto technique = Create::IdleTransfiguration();
 
-    CharacterEditor::SetName(*c, name);
-    CharacterEditor::SetColor(*c, color);
-    CharacterEditor::SetHealth(*c, health);
-    CharacterEditor::SetDurability(*c, durability);
-    CharacterEditor::SetStrength(*c, strength);
+    CharacterEditor::SetIdentity(*c, id);
+    CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
+    CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     CharacterEditor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
     CharacterEditor::SetTechnique(*c, std::move(technique)); // placeholder
-    CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     CharacterEditor::SetTraitPassiveHealing(*c, true);
 
     return c;
@@ -59,22 +58,23 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 std::unique_ptr<Sorcerer> Create::Gojo() {
     auto c = std::make_unique<Sorcerer>();
 
-    constexpr const char* name = "Gojo";
-    constexpr const char* color = "\x1b[38;5;117m";
+    const CharIdentity id {"Gojo", "\x1b[38;5;117m"};
+
     constexpr double health = 1000.0;
-    constexpr double cursed_energy = 5000.0;
     constexpr double strength = 185.0;
     constexpr double durability = 300.0;
-    constexpr auto ce_efficiency = CurseUser::CEfficiency::Extreme;
-    constexpr auto rct_level = Sorcerer::RCTLevel::Absolute;
+
+    const CharState stats = {health, health, durability, strength};
+
+    constexpr double cursed_energy = 5000.0;
+
+    constexpr auto ce_efficiency = CurseUserSystem::Efficiency::Extreme;
+    constexpr auto rct_level = SorcererSystem::RCTLevel::Absolute;
 
     auto technique = Create::Limitless();
 
-    CharacterEditor::SetName(*c, name);
-    CharacterEditor::SetColor(*c, color);
-    CharacterEditor::SetHealth(*c, health);
-    CharacterEditor::SetDurability(*c, durability);
-    CharacterEditor::SetStrength(*c, strength);
+    CharacterEditor::SetIdentity(*c, id);
+    CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
     CharacterEditor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
     CharacterEditor::SetDomainNullifier(*c, std::unique_ptr<int>()); // placeholder
@@ -92,40 +92,21 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 std::unique_ptr<Technique> Create::Limitless() {
     auto c = std::make_unique<Technique>();
 
-    constexpr const char* name  = "Limitless";
-    constexpr const char* color = "\x1b[38;5;14m";
-    constexpr const char* descr = "An Inherited Technique that grants the user control over space itself";
-
-    TechniqueEditor::SetName(*c, name);
-    TechniqueEditor::SetColor(*c, color);
-    TechniqueEditor::SetDescription(*c, descr);
-
+    TechIdentity id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
+    TechIdentity blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
+    TechIdentity red_id = {"Red", "\x1b[48;5;9m", "The power to repel"};
+    TechIdentity purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
+    
+    TechniqueEditor::SetIdentity(*c, id);
 
     constexpr auto at_type = globalums::DamageType::Normal;
+    constexpr double blue_damage = 125.0, blue_cost = 335.0, blue_output = 55.0;
+    constexpr double red_damage = 175.0, red_cost = 650.0, red_output = 120.0;
+    constexpr double purple_damage = 300.0, purple_cost = 1250.0, purple_output = 200.0;
 
-    constexpr const char* blue_str = "Blue";
-    constexpr const char* red_str = "Red";
-    constexpr const char* purple_str = "Purple";
-
-    constexpr const char* blue_clr = "\x1b[38;5;14m";
-    constexpr const char* red_clr = "\x1b[48;5;9m";
-    constexpr const char* purple_clr = "\x1b[38;5;129m";
-
-    constexpr double blue_damage = 125.0;
-    constexpr double red_damage = 175.0;
-    constexpr double purple_damage = 300.0;
-
-    constexpr double blue_cost = 335.0;
-    constexpr double red_cost = 650.0;
-    constexpr double purple_cost = 1250.0;
-
-    constexpr double blue_output = 55.0;
-    constexpr double red_output = 120.0;
-    constexpr double purple_output = 200.0;
-
-    TechAbility blue    = {blue_damage, blue_cost,blue_output, blue_str, blue_clr, at_type}; 
-    TechAbility red     = {red_damage, red_cost,red_output,red_str, red_clr, at_type}; 
-    TechAbility purple  = {purple_damage, purple_cost,purple_output, purple_str, purple_clr, at_type};
+    TechAbility blue    =  {blue_damage,     blue_cost,  blue_output,    blue_id,    at_type}; 
+    TechAbility red     =  {red_damage,      red_cost,   red_output,     red_id,     at_type}; 
+    TechAbility purple  = {purple_damage,   purple_cost,purple_output,  purple_id,  at_type};
     
     TechniqueEditor::AddAbility(*c, blue);
     TechniqueEditor::AddAbility(*c, red);
@@ -137,24 +118,16 @@ std::unique_ptr<Technique> Create::Limitless() {
 std::unique_ptr<Technique> Create::IdleTransfiguration() {
     auto c = std::make_unique<Technique>();
 
-    constexpr const char* name = "Idle Transfiguration";
-    constexpr const char* color = "\x1b[38;5;129m";
-    constexpr const char* descr = "A Technique that grants the user the manipulation of the shape of souls";
-
-    TechniqueEditor::SetName(*c, name);
-    TechniqueEditor::SetColor(*c, color);
-    TechniqueEditor::SetDescription(*c, descr);
+    TechIdentity id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
+    TechIdentity tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
+    
+    TechniqueEditor::SetIdentity(*c, id);
 
     constexpr auto at_type = globalums::DamageType::BypassRein;
+    constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
-    constexpr const char* tfig_str = "Transfiguration";
-    constexpr const char* tfig_clr = "\x1b[38;5;238m";
-    constexpr double tfig_damage = 100.0;
-    constexpr double tfig_cost = 225.0;
-    constexpr double tfig_output = 45.0;
-
-    TechAbility transfiguration = {tfig_damage, tfig_cost ,tfig_output,tfig_str, tfig_clr, at_type};
-
+    TechAbility transfiguration = {tfig_damage, tfig_cost ,tfig_output,tfig_id, at_type};
+    
     TechniqueEditor::AddAbility(*c, transfiguration);
     
     return c;

@@ -3,7 +3,6 @@
 #include "../CharacterType/Sorcerer.hpp"
 #include "../CharacterType/CurseUser.hpp"
 
-#include <string_view>
 #include <memory>
 #include <cstdint>
 
@@ -13,9 +12,9 @@ class Sorcerer;
 
 struct CharacterEditor final {
     // identity section
-    static void SetName(Character& c, std::string_view name);
-    static void SetColor(Character& c, std::string_view color);
+    static void SetIdentity(Character& c, CharIdentity cd);
     // base state section
+    static void SetStats(Character& c, CharState cs);
     static void SetHealth(Character& c, double hp);
     static void SetInvulnerability(Character& c, bool t);
     static void SetDurability(Character& c, double dr);
@@ -26,8 +25,9 @@ struct CharacterEditor final {
     static void SetInventoryAccess(Character& c, bool t);
     /*                        Character End                       */
     // inside curse user
-    static void SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency);
+    static void SetCursedEnergyEfficiency(CurseUser& c, CurseUserSystem::Efficiency efficiency);
     // curse user system
+    static void SetCurseUserSystem(CurseUser& c, CurseUserSystem cus);
     static void SetCursedEnergy(CurseUser& c, double ce);
     static void SetBlackFlashChance(CurseUser& c, int ch);
     static void AddBindingVow(CurseUser& c, std::unique_ptr<int> vow);
@@ -41,6 +41,6 @@ struct CharacterEditor final {
     /*                        CurseUser End                       */
     // sorcerer system
     static void SetReverseCursedTechnique(Sorcerer& c, bool can_use);
-    static void SetReverseCursedTechniqueLevel(Sorcerer& c, Sorcerer::RCTLevel lvl);
+    static void SetReverseCursedTechniqueLevel(Sorcerer& c, SorcererSystem::RCTLevel lvl);
     /*                        Sorcerer End                        */
 };

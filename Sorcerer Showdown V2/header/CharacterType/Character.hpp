@@ -35,7 +35,7 @@ struct CharInv final {
 
 class Character {
     friend struct CharacterEditor;
-    friend struct Combat;
+    friend struct CombatSystem;
 protected:
     CharIdentity identity;
     CharCtrl control;
@@ -44,6 +44,11 @@ protected:
 public:
     Character() {};
     virtual ~Character();
+
+    const CharIdentity& Identity() const;
+    const CharCtrl& Control() const noexcept;
+    const CharState& State() const noexcept;
+    const CharInv& Equipment() const;
 
     std::string Name(charenums::NameType type = charenums::NameType::Both);
     void Name(std::string str, charenums::NameType nt = charenums::NameType::Name);

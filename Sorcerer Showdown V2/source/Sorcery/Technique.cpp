@@ -10,9 +10,9 @@ void Technique::PrintName() const {
 
 void Technique::PrintAbilities() const {
     std::uint8_t z = 0;
-    for ([[maybe_unused]] const auto& [damage, cost, output, name, clr, at_type] : abilities){
+    for ([[maybe_unused]] const auto& [damage, cost, output, t_identity, at_type] : abilities){
         std::println("{}:[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
-            ++z, clr, name, clr.empty() ? "" : "\x1b[0m", damage, cost, output);
+            ++z, t_identity.color, t_identity.name, t_identity.color.empty() ? "" : "\x1b[0m", damage, cost, output);
     }
 }
 TechAbility Technique::GetAbility(size_t idx){
@@ -20,4 +20,7 @@ TechAbility Technique::GetAbility(size_t idx){
         throw std::invalid_argument("Invalid Value");
     }
     return abilities[idx];
+}
+size_t Technique::GetAbility() const{
+    return abilities.size();
 }

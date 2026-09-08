@@ -2,6 +2,6 @@
 #include "../CharacterType/CurseUser.hpp"
 
 namespace Sorcery {
-    double EfficiencyMultiplier(CurseUser::CEfficiency type) noexcept;
+    double EfficiencyMultiplier(CurseUserSystem::Efficiency type) noexcept;
     double ApplySixEyes(double amount);
 }

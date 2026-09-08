@@ -5,7 +5,7 @@
 
 #include <memory>
 
-struct Jujutsu final {
+struct JujutsuSystem final {
     std::vector<std::unique_ptr<int>> binding_vows; // placeholder ints
     std::vector<std::unique_ptr<int>> shikigami;
     std::unique_ptr<Technique> technique{nullptr};
@@ -18,9 +18,13 @@ struct CurseUserSystem final {
     double current_output{0.0};
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
-    int bf_chance{15};
+    int bf_chance{1};
     bool can_use_amplification{false};
     bool amplification_is_active{false};
+    enum class Efficiency : std::uint8_t { 
+        Wasteful, Rough, Unstable, Stable, 
+        Expert, Extreme, Ultimate, Absolute 
+    };
 };
 
 struct SorceryTrait final {
@@ -30,15 +34,17 @@ struct SorceryTrait final {
 
 class CurseUser : public Character {
    friend struct CharacterEditor; 
-   friend struct Combat;
-public:
-    enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Extreme, Ultimate, Absolute };
+   friend struct CombatSystem;
 protected:
-    Jujutsu jujutsu;
+    JujutsuSystem jujutsu;
     CurseUserSystem sorcery;
     SorceryTrait traits;
-    CEfficiency ce_efficiency = CEfficiency::Stable;
+    CurseUserSystem::Efficiency ce_efficiency = CurseUserSystem::Efficiency::Stable;
 public:
+    const JujutsuSystem& Jujutsu() const;
+    const CurseUserSystem& Sorcery() const noexcept;
+    const SorceryTrait& Traits() const noexcept;
+
     double CursedEnergy(type::Get type = type::Get::Current) const noexcept;
     void CursedEnergy(type::Set type, double amount);
     void CursedEnergy(type::Expend t, double amount);
@@ -48,8 +54,8 @@ public:
     double Output(type::Type t, double amount = 0.0);
     void Output(type::Set t, double amount); 
 
-    void Efficiency(CEfficiency type);
-    CEfficiency Efficiency() const noexcept;
+    void Efficiency(CurseUserSystem::Efficiency type);
+    CurseUserSystem::Efficiency Efficiency() const noexcept;
 
     Technique* technique() const;
 

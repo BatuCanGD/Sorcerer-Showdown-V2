@@ -5,16 +5,15 @@
 
 #include <print>
 #include <utility>
-#include <string_view>
 
 // identity
-void CharacterEditor::SetName(Character& c, std::string_view name){
-    c.identity.name = name;
-}
-void CharacterEditor::SetColor(Character& c, std::string_view color){
-    c.identity.color = color;
+void CharacterEditor::SetIdentity(Character &c, CharIdentity cd){
+    c.identity = cd;
 }
 // base state
+void CharacterEditor::SetStats(Character& c, CharState cs) {
+    c.state = cs;
+}
 void CharacterEditor::SetHealth(Character& c, double hp){
     c.state.max_health = hp;
     c.state.health = hp;
@@ -52,10 +51,13 @@ void CharacterEditor::SetInventoryAccess(Character& c, bool t){
     c.equipment.has_access_to_inventory = t;
 }
 // inside curseuser
-void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CurseUser::CEfficiency efficiency){
+void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CurseUserSystem::Efficiency efficiency){
     c.ce_efficiency = efficiency;
 }
 // curse user system
+void CharacterEditor::SetCurseUserSystem(CurseUser &c, CurseUserSystem cus){
+    c.sorcery = cus;
+}
 void CharacterEditor::SetCursedEnergy(CurseUser &c, double ce){
     c.sorcery.max_cursed_energy = ce;
     c.sorcery.cursed_energy = ce;
@@ -87,8 +89,8 @@ void CharacterEditor::SetTraitPassiveHealing(CurseUser& c, bool t){
 }
 // sorcerer reverse cursed technique
 void CharacterEditor::SetReverseCursedTechnique(Sorcerer& c, bool t){
-    c.sorcerery.can_use_rct = t;
+    c.rct_system.can_use_rct = t;
 }
-void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, Sorcerer::RCTLevel lvl){
+void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, SorcererSystem::RCTLevel lvl){
     c.rct_level = lvl;
 }

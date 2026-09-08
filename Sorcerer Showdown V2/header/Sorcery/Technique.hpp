@@ -15,14 +15,13 @@ struct TechAbility final {
     double damage{1.0};
     double cost{1.0};
     double output{1.0};
-    std::string name{""};
-    std::string color{""};
+    TechIdentity identity{};
     globalums::DamageType damage_type{globalums::DamageType::Normal};
 };
 
 class Technique final {
     friend struct TechniqueEditor;
-    friend struct Tech;
+    friend struct TechniqueSystem;
 protected:
     std::vector<TechAbility> abilities;
     TechIdentity identity;
@@ -30,4 +29,5 @@ public:
     void PrintName() const;
     void PrintAbilities() const;
     TechAbility GetAbility(size_t idx);
+    size_t GetAbility() const;
 };

@@ -1,6 +1,6 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
-#include "../header/Systems/Fighting/Combat.hpp"
+#include "../header/Systems/Fighting/CombatSystem.hpp"
 
 #include <print>
 #include <string>
