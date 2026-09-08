@@ -48,4 +48,6 @@ void Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
 
     attacker.CursedEnergy(type::Expend::Current, ce);
     attacker.Output(type::Type::Add, output);
+
+    attacked.Damage(chosen_ct.damage);
 }
