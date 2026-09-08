@@ -11,6 +11,9 @@ struct AttackStruct;
 struct CharIdentity final {
     std::string name{""};
     std::string color{""};
+};
+
+struct CharCtrl final {
     bool is_player{false};
 };
 
@@ -35,6 +38,7 @@ class Character {
     friend struct Combat;
 protected:
     CharIdentity identity;
+    CharCtrl control;
     CharState state;
     CharInv equipment;
 public:
