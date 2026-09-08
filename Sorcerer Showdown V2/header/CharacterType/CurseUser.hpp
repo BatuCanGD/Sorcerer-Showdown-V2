@@ -51,7 +51,7 @@ public:
     void Efficiency(CEfficiency type);
     CEfficiency Efficiency() const noexcept;
 
-    Technique* Technique() const;
+    Technique* technique() const;
 
     bool CanUseSorcery() const override;
     bool HasSixEyes() const noexcept;

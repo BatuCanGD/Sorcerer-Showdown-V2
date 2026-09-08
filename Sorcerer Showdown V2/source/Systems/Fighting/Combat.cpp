@@ -36,7 +36,7 @@ void Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
     TechAbility chosen_ct;
 
     if (attacker.control.is_player){
-        chosen_ct = Tech::ChooseAbility(*attacker.Technique());
+        chosen_ct = Tech::ChooseAbility(*attacker.technique());
     }else{
 
     }

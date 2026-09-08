@@ -76,3 +76,7 @@ void Character::Damage(double amount, globalums::DamageType type){
 AttackStruct Character::Attack(Character& cc){
     return Combat::ResolveAttacking(*this, cc);
 }
+
+bool Character::CanUseSorcery() const {
+    return false;
+}
