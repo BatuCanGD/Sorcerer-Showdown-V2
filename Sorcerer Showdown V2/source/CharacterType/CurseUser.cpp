@@ -76,14 +76,20 @@ void CurseUser::Output(type::Set t, double amount){
     }
 }
 
+const Technique* CurseUser::Technique() const {
+    return jujutsu.technique.get();
+}
 
 void CurseUser::Efficiency(CEfficiency type){
     ce_efficiency = type;
 }
-CurseUser::CEfficiency CurseUser::Efficiency() const noexcept{
+CurseUser::CEfficiency CurseUser::Efficiency() const noexcept {
     return ce_efficiency;
 }
 
 bool CurseUser::CanUseSorcery() const {
     return true;
+}
+bool CurseUser::HasSixEyes() const noexcept {
+    return traits.six_eyes;
 }

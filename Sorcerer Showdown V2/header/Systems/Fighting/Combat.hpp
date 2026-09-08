@@ -3,6 +3,7 @@
 
 class Character;
 class CurseUser;
+struct TechStruct;
 
 struct AttackStruct final {
     double damage;
@@ -12,8 +13,7 @@ struct AttackStruct final {
 
 struct TechStruct final {
     double damage;
-    bool user_technique_nullified;
-    bool target_technique_bypassed;
+    bool bypasses_target_tech;
 };
 
 struct Combat final  {

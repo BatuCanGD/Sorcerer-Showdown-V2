@@ -115,13 +115,17 @@ std::unique_ptr<Technique> Create::Limitless() {
     constexpr double red_damage = 175.0;
     constexpr double purple_damage = 300.0;
 
-    constexpr double blue_output = 75.0;
-    constexpr double red_output = 150.0;
-    constexpr double purple_output = 300.0;
+    constexpr double blue_cost = 335.0;
+    constexpr double red_cost = 650.0;
+    constexpr double purple_cost = 1250.0;
 
-    TechAbility blue    = {blue_damage, blue_output, blue_str, blue_clr, at_type}; 
-    TechAbility red     = {red_damage, red_output,red_str, red_clr, at_type}; 
-    TechAbility purple  = {purple_damage, purple_output, purple_str, purple_clr, at_type};
+    constexpr double blue_output = 55.0;
+    constexpr double red_output = 120.0;
+    constexpr double purple_output = 200.0;
+
+    TechAbility blue    = {blue_damage, blue_cost,blue_output, blue_str, blue_clr, at_type}; 
+    TechAbility red     = {red_damage, red_cost,red_output,red_str, red_clr, at_type}; 
+    TechAbility purple  = {purple_damage, purple_cost,purple_output, purple_str, purple_clr, at_type};
     
     TechniqueEditor::AddAbility(*c, blue);
     TechniqueEditor::AddAbility(*c, red);
@@ -146,9 +150,10 @@ std::unique_ptr<Technique> Create::IdleTransfiguration() {
     constexpr const char* tfig_str = "Transfiguration";
     constexpr const char* tfig_clr = "\x1b[38;5;238m";
     constexpr double tfig_damage = 100.0;
+    constexpr double tfig_cost = 225.0;
     constexpr double tfig_output = 45.0;
 
-    TechAbility transfiguration = {tfig_damage, tfig_output,tfig_str, tfig_clr, at_type};
+    TechAbility transfiguration = {tfig_damage, tfig_cost ,tfig_output,tfig_str, tfig_clr, at_type};
 
     TechniqueEditor::AddAbility(*c, transfiguration);
     

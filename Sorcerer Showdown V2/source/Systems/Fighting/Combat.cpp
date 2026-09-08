@@ -1,4 +1,5 @@
 #include "../../../header/Systems/Fighting/Combat.hpp"
+#include "../../../header/Systems/Fighting/Tech.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
@@ -32,5 +33,7 @@ AttackStruct Combat::ResolveAttacking(Character &attacker, Character &attacked) 
 }
 
 TechStruct Combat::ResolveTechnique(CurseUser& attacker, Character& attacked){
-    
+    bool enough_output = Tech::ResolveCursedEnergy(attacker, , attacked)
+
+    return {};
 }

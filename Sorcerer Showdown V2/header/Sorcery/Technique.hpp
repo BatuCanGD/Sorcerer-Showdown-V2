@@ -13,6 +13,7 @@ struct TechIdentity final {
 
 struct TechAbility final {
     double damage{1.0};
+    double cost{1.0};
     double output{1.0};
     std::string name{""};
     std::string color{""};

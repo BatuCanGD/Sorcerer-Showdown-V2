@@ -32,7 +32,7 @@ class CurseUser : public Character {
    friend struct CharacterEditor; 
    friend struct Combat;
 public:
-    enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Ultimate, Extreme };
+    enum class CEfficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Extreme, Ultimate, Absolute };
 protected:
     Jujutsu jujutsu;
     CurseUserSystem sorcery;
@@ -51,5 +51,8 @@ public:
     void Efficiency(CEfficiency type);
     CEfficiency Efficiency() const noexcept;
 
+    const Technique* Technique() const;
+
     bool CanUseSorcery() const override;
+    bool HasSixEyes() const noexcept;
 };
