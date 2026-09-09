@@ -25,20 +25,22 @@ void Log::Attack(AttackStruct ats, Character& c1, Character& c2) {
 void Log::Death(battlefield& bf){
     std::vector<std::string> death_messages;
     for (const auto& c : bf.battlefield){
-        if (c->Health() > 0.0) continue;
-        std::string msg, severity{"DEADLY"}, color{"\x1b[38;5;9m"};
+        const double hp = c->Health();
+        if (hp > 0.0) continue;
+        std::string msg{""}, severity{"DEATH"}, color{"\x1b[38;5;237m"};
         
-        if (c->Health() <= -500.0){
+        if (hp <= -500.0){
             severity = "EXTREME";
             color = "\x1b[38;5;124m";
-        }else if (c->Health() <= -250.0){
+        }else if (hp <= -250.0){
             severity = "BRUTAL";
             color = "\x1b[38;5;160m";
-        }else if (c->Health() <= -100.0){
+        }else if (hp <= -100.0){
             severity = "OVERKILL";
+            color = "\x1b[38;5;9m";
         }
 
-        msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2}\x1b[0m)", color, severity, c->Health()));
+        msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2}\x1b[0m)", color, severity, hp));
         msg.append(std::format(" {} has been defeated\n", c->Name()));
         death_messages.push_back(msg);
     }
