@@ -1,7 +1,7 @@
 #include "../../header/Editors/TechniqueEditor.hpp"
 #include "../../header/Sorcery/Technique.hpp"
 
-void TechniqueEditor::SetIdentity(Technique& t, TechIdentity id){
+void TechniqueEditor::SetIdentity(Technique& t, EntityInfo id){
     t.identity = id;
 }
 void TechniqueEditor::AddAbility(Technique& t, TechAbility& tb){

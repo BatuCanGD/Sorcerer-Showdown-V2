@@ -14,7 +14,7 @@
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
 
-    const CharIdentity id = {"Transfigured Human", "\x1b[38;5;22m"};
+    const EntityId id = {"Transfigured Human", "\x1b[38;5;22m"};
 
     const double health = get_random<double>(1.0, 100.0);
     const double strength = get_random<double>(1.0, 100.0);
@@ -31,7 +31,7 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 std::unique_ptr<CurseUser> Create::Mahito() {
     auto c = std::make_unique<CurseUser>();
 
-    const CharIdentity id {"Mahito", "\x1b[38;5;129m"};
+    const EntityId id {"Mahito", "\x1b[38;5;129m"};
     
     constexpr double health = 550.0;
     constexpr double strength = 115.0;
@@ -58,7 +58,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 std::unique_ptr<Sorcerer> Create::Gojo() {
     auto c = std::make_unique<Sorcerer>();
 
-    const CharIdentity id {"Gojo", "\x1b[38;5;117m"};
+    const EntityId id {"Gojo", "\x1b[38;5;117m"};
 
     constexpr double health = 1000.0;
     constexpr double strength = 185.0;
@@ -92,10 +92,10 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 std::unique_ptr<Technique> Create::Limitless() {
     auto c = std::make_unique<Technique>();
 
-    TechIdentity id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
-    TechIdentity blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
-    TechIdentity red_id = {"Red", "\x1b[48;5;9m", "The power to repel"};
-    TechIdentity purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
+    EntityInfo id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
+    EntityInfo blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
+    EntityInfo red_id = {"Red", "\x1b[48;5;9m", "The power to repel"};
+    EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
     TechniqueEditor::SetIdentity(*c, id);
 
@@ -118,8 +118,8 @@ std::unique_ptr<Technique> Create::Limitless() {
 std::unique_ptr<Technique> Create::IdleTransfiguration() {
     auto c = std::make_unique<Technique>();
 
-    TechIdentity id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
-    TechIdentity tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
+    EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
+    EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
     
     TechniqueEditor::SetIdentity(*c, id);
 

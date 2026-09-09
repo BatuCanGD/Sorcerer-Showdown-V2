@@ -6,7 +6,7 @@
 Character::~Character() = default;
 
 
-const CharIdentity& Character::Identity() const {
+const EntityId& Character::Identity() const {
     return identity;
 }
 const CharState& Character::State() const noexcept {

@@ -7,7 +7,7 @@
 #include <utility>
 
 // identity
-void CharacterEditor::SetIdentity(Character &c, CharIdentity cd){
+void CharacterEditor::SetIdentity(Character &c, EntityId cd){
     c.identity = cd;
 }
 // base state

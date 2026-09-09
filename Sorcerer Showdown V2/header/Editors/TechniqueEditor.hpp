@@ -1,10 +1,11 @@
 #pragma once
 
 class Technique;
+struct EntityInfo;
 struct TechAbility;
 struct TechIdentity;
 
 struct TechniqueEditor final {
-    static void SetIdentity(Technique& t, TechIdentity id);
+    static void SetIdentity(Technique& t, EntityInfo id);
     static void AddAbility(Technique& t, TechAbility& tb);
 };

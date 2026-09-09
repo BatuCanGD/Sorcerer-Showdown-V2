@@ -1,17 +1,13 @@
 #pragma once
 
 #include "../Enums.hpp"
+#include "../Structs.hpp"
 
 #include <string>
 #include <memory>
 #include <vector>
 
 struct AttackStruct;
-
-struct CharIdentity final {
-    std::string name{""};
-    std::string color{""};
-};
 
 struct CharCtrl final {
     bool is_player{false};
@@ -37,7 +33,7 @@ class Character {
     friend struct CharacterEditor;
     friend struct CombatSystem;
 protected:
-    CharIdentity identity;
+    EntityId identity;
     CharCtrl control;
     CharState state;
     CharInv equipment;
@@ -45,7 +41,7 @@ public:
     Character() {};
     virtual ~Character();
 
-    const CharIdentity& Identity() const;
+    const EntityId& Identity() const;
     const CharCtrl& Control() const noexcept;
     const CharState& State() const noexcept;
     const CharInv& Equipment() const;

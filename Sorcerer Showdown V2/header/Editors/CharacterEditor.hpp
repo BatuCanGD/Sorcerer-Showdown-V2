@@ -9,10 +9,11 @@
 class Character;
 class CurseUser;
 class Sorcerer;
+struct EntityId;
 
 struct CharacterEditor final {
     // identity section
-    static void SetIdentity(Character& c, CharIdentity cd);
+    static void SetIdentity(Character& c, EntityId cd);
     // base state section
     static void SetStats(Character& c, CharState cs);
     static void SetHealth(Character& c, double hp);

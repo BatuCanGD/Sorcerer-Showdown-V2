@@ -3,8 +3,10 @@
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
+#include <cmath>
 
 double CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
+    amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
     if ([[maybe_unused]] auto crs = dynamic_cast<CurseUser*>(&c)){
         // add technique stuff and reinforcement checking here!!!
     }
@@ -49,6 +51,5 @@ void CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
 
     attacker.CursedEnergy(type::Expend::Current, ce);
     attacker.Output(type::Type::Add, output);
-
     attacked.Damage(chosen_ct.damage);
 }
