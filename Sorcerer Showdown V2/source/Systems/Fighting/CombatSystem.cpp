@@ -5,12 +5,18 @@
 
 #include <cmath>
 
-double CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
+DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
+    DamageStruct ds{};
     amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
-    if ([[maybe_unused]] auto crs = dynamic_cast<CurseUser*>(&c)){
-        // add technique stuff and reinforcement checking here!!!
+    if (auto crs = dynamic_cast<CurseUser*>(&c)){
+        if (const auto& tech = crs->technique()){
+            if (tech->HasBarrier()){
+                ds.attack_blocked = true;
+            }
+        }
     }
-    return amount;
+    ds.damage = amount;
+    return ds;
 }
 
 AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &attacked) {

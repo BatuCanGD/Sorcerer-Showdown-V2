@@ -16,5 +16,5 @@ double Sorcery::EfficiencyMultiplier(CurseUserSystem::Efficiency type) noexcept 
 }
 
 double Sorcery::ApplySixEyes(double amount){
-    return amount * 0.3;
+    return amount * 0.25;
 }

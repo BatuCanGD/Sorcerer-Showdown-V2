@@ -11,8 +11,13 @@ struct AttackStruct final {
     bool is_blackflash;
 };
 
+struct DamageStruct final {
+    double damage;
+    bool attack_blocked;
+};
+
 struct CombatSystem final  {
-    static double ResolveDamage(Character& c, globalums::DamageType type, double amount);
+    static DamageStruct ResolveDamage(Character& c, globalums::DamageType type, double amount);
     static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
     static void ResolveTechnique(CurseUser& attacker, Character& attacked);
 };
