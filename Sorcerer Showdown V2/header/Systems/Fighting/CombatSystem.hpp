@@ -13,6 +13,7 @@ struct AttackStruct final {
 
 struct DamageStruct final {
     double damage;
+    double negated_damage;
     bool attack_blocked;
 };
 

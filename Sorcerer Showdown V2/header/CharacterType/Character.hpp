@@ -8,6 +8,7 @@
 #include <vector>
 
 struct AttackStruct;
+struct DamageStruct;
 
 struct CharCtrl final {
     bool is_player{false};
@@ -54,7 +55,7 @@ public:
     void Health(type::Expend t, double amount);
     void Health(type::Add type, double amount);
 
-    void Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
+    DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
 
     virtual bool CanUseSorcery() const;

@@ -7,15 +7,17 @@
 
 DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
     DamageStruct ds{};
+    ds.negated_damage = amount;
     amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
     if (auto crs = dynamic_cast<CurseUser*>(&c)){
         if (const auto& tech = crs->technique()){
-            if (tech->HasBarrier()){
+            if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 ds.attack_blocked = true;
             }
         }
     }
     ds.damage = amount;
+    ds.negated_damage = ds.negated_damage - ds.damage; 
     return ds;
 }
 
@@ -34,9 +36,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
         }
     }
     attacked.Damage(attack_damage, attack_type);
-
     const bool is_critical = attack_damage >= 100.0;
-    
     return {attack_damage, is_critical, is_blackflash};
 }
 

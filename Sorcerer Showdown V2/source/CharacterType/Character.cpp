@@ -81,15 +81,16 @@ void Character::Health(type::Add type, double amount){
     }
 }
 
-void Character::Damage(double amount, globalums::DamageType type){
+DamageStruct Character::Damage(double amount, globalums::DamageType type){
     if (state.is_invulnerable){
-        return;
+        return {.attack_blocked = true};
     }
-    const auto& [damage, blocked] = CombatSystem::ResolveDamage(*this, type, amount);
-    if (blocked){
-        return;
+    const auto& ds = CombatSystem::ResolveDamage(*this, type, amount);
+    if (ds.attack_blocked){
+        return ds;
     }
-    this->state.health -= damage;
+    this->state.health -= ds.damage;
+    return ds;
 }
 AttackStruct Character::Attack(Character& cc){
     return CombatSystem::ResolveAttacking(*this, cc);
