@@ -1,14 +1,14 @@
-#include "../../../header/Systems/Fighting/TechniqueSystem.hpp"
+#include "../../../header/Systems/System/TechniqueSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Utilities/Input.hpp"
 #include "../../../header/Sorcery/Sorcery.hpp"
 #include "../../../header/Sorcery/Technique.hpp"
 
 std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {
-    const double efficiency = Sorcery::EfficiencyMultiplier(user.Efficiency());
+    const double efficiency = Sorcery::EfficiencyMultiplier(user.CursedEnergySys().efficiency);
     const double op = chosen_ct.output * efficiency;
 
-    if (user.Output() + op > user.Output(type::Get::Max)){
+    if (user.Output().current_output + op > user.Output().max_output_potential){
         return {false, 0.0};
     }
     return {true, op};

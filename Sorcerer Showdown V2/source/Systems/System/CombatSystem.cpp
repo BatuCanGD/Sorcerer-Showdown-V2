@@ -1,5 +1,5 @@
-#include "../../../header/Systems/Fighting/CombatSystem.hpp"
-#include "../../../header/Systems/Fighting/TechniqueSystem.hpp"
+#include "../../../header/Systems/System/CombatSystem.hpp"
+#include "../../../header/Systems/System/TechniqueSystem.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
@@ -10,7 +10,7 @@ DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType typ
     ds.negated_damage = amount;
     amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
     if (auto crs = dynamic_cast<CurseUser*>(&c)){
-        if (const auto& tech = crs->technique()){
+        if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 ds.attack_blocked = true;
             }
@@ -24,13 +24,13 @@ DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType typ
 AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &attacked) {
     double attack_damage = attacker.State().strength;
     auto attack_type = globalums::DamageType::Normal;
-    bool is_blackflash{};
+    bool is_blackflash{false};
 
     if (auto crs = dynamic_cast<CurseUser*>(&attacker)) {
-        if (crs->Sorcery().can_use_amplification && crs->Sorcery().amplification_is_active){
+        if (crs->Amplification().is_usable && crs->Amplification().is_active){
             attack_type = globalums::DamageType::BypassTech;
         }
-        if (get_random<int>(1, 100) <= crs->Sorcery().bf_chance){
+        if (get_random<int>(1, 100) <= crs->CursedEnergySys().bf_chance){
             attack_damage *= 2.5;
             is_blackflash = true;
         }
@@ -41,11 +41,11 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
 }
 
 void CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
-    auto tech = attacker.technique();
+    auto& tech = attacker.Jujutsu().technique;
     TechAbility chosen_ct;
 
     if (attacker.Control().is_player){
-        chosen_ct = TechniqueSystem::ChooseAbility(*attacker.technique());
+        chosen_ct = TechniqueSystem::ChooseAbility(tech.value());
     }else{
         chosen_ct = tech->GetAbility(get_random<size_t>(0 ,tech->GetAbility() - 1));
     }
@@ -55,7 +55,7 @@ void CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
 
     if (!(enough_output && enough_ce)) return;
 
-    attacker.CursedEnergy(type::Expend::Current, ce);
-    attacker.Output(type::Type::Add, output);
+    attacker.CursedEnergy(type::Type::Expend, ce);
+    attacker.Output().current_output += output;
     attacked.Damage(chosen_ct.damage);
 }

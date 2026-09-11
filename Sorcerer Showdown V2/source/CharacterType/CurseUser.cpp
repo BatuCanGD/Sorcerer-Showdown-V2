@@ -1,11 +1,12 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 
+#include <stdexcept>
 
-const JujutsuSystem& CurseUser::Jujutsu() const {
+const JujutsuSystem& CurseUser::Jujutsu() const noexcept {
     return jujutsu;
 }
-const CurseUserSystem& CurseUser::Sorcery() const noexcept {
-    return sorcery;
+const CursedEnergySystem& CurseUser::CursedEnergySys() const noexcept {
+    return ce_system;
 }
 const SorceryTrait& CurseUser::Traits() const noexcept {
     return traits;
@@ -13,92 +14,60 @@ const SorceryTrait& CurseUser::Traits() const noexcept {
 
 double CurseUser::CursedEnergy(type::Get type) const noexcept {
     switch (type) {
-        case type::Get::Current:  return sorcery.cursed_energy;
-        case type::Get::Max:      return sorcery.max_cursed_energy;
+        case type::Get::Current:  return ce_system.cursed_energy;
+        case type::Get::Max:      return ce_system.max_cursed_energy;
     }
     return -1.0;
 }
 
-void CurseUser::CursedEnergy(type::Set type, double amount) {
+void CurseUser::CursedEnergy(type::Type type, double amount) {
+    if (amount <= 0.0){
+        throw std::range_error("Cannot use 0 or negative amounts");
+    }
     switch (type) {
-        case type::Set::Current:  
-            sorcery.cursed_energy = amount;
+        case type::Type::Add:  
+            state.health += amount;
             break;
-        case type::Set::Max:      
-            sorcery.max_cursed_energy = amount;
+        case type::Type::Expend:
+            state.health -= amount;
             break;
+        case type::Type::Set:
+            state.health = amount;
+            break;
+        case type::Type::Get:
+            throw std::invalid_argument("This overload function is not a getter");
+    }
+    if (ce_system.cursed_energy > ce_system.max_cursed_energy){
+        ce_system.cursed_energy = ce_system.max_cursed_energy;
     }
 }
 
-void CurseUser::CursedEnergy(type::Expend type, double amount) {
+void Character::Health(type::Type type, double amount) {
+    if (amount <= 0.0){
+        throw std::range_error("Cannot use 0 or negative amounts");
+    }
     switch (type) {
-        case type::Expend::Current:  
-            sorcery.cursed_energy -= amount;
+        case type::Type::Add:  
+            state.health += amount;
             break;
-        case type::Expend::Max:      
-            sorcery.max_cursed_energy -= amount;
+        case type::Type::Expend:
+            state.health -= amount;
             break;
+        case type::Type::Set:
+            state.health = amount;
+            break;
+        case type::Type::Get:
+            throw std::invalid_argument("This overload function is not a getter");
     }
-}
-void CurseUser::CursedEnergy(type::Add type, double amount) {
-    switch (type) {
-        case type::Add::Current:  
-            sorcery.cursed_energy += amount;
-            break;
-        case type::Add::Max:      
-            sorcery.max_cursed_energy += amount;
-            break;
-    }
-}
-
-double CurseUser::Output(type::Get t) const noexcept {
-    switch(t){
-        case type::Get::Current:    return sorcery.current_output;
-        case type::Get::Max:        return sorcery.max_output_potential;
-        default:                    return sorcery.current_output;
-    }
-}
-double CurseUser::Output(type::Type t, double amount){
-    switch(t){
-        case type::Type::Add: 
-            sorcery.current_output += amount;
-            break;
-        case type::Type::Expend: 
-            sorcery.current_output -= amount;
-            break;
-        case type::Type::Get: 
-            return sorcery.current_output;
-        case type::Type::Set: 
-            sorcery.current_output = amount;
-            break;
-    }
-    return 0.0;
-}
-void CurseUser::Output(type::Set t, double amount){
-    switch(t){
-        case type::Set::Current: 
-            sorcery.current_output = amount;
-            break;
-        case type::Set::Max: 
-            sorcery.max_output_potential = amount;
-            break;
+    if (state.health > state.max_health){
+        state.health = this->Health(type::Get::Max);
     }
 }
 
-Technique* CurseUser::technique() const {
-    return jujutsu.technique.get();
+const CurseUser* CurseUser::CanUseSorcery() const noexcept {
+    return this;
 }
 
-void CurseUser::Efficiency(CurseUserSystem::Efficiency type){
-    ce_efficiency = type;
-}
-CurseUserSystem::Efficiency CurseUser::Efficiency() const noexcept {
-    return ce_efficiency;
-}
-
-bool CurseUser::CanUseSorcery() const {
-    return true;
-}
 bool CurseUser::HasSixEyes() const noexcept {
     return traits.six_eyes;
 }

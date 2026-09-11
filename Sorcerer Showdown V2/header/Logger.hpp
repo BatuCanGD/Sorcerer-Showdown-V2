@@ -1,5 +1,5 @@
 #pragma once
-#include "Systems/Fighting/CombatSystem.hpp"
+#include "Systems/System/CombatSystem.hpp"
 
 class Character;
 struct battlefield;

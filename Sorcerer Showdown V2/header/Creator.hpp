@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 class Character;
 class CurseUser;
@@ -19,6 +20,6 @@ namespace Create {
     [[nodiscard]] std::unique_ptr<Sorcerer> Gojo();
 
     // technique class
-    [[nodiscard]] std::unique_ptr<Technique> Limitless();
-    [[nodiscard]] std::unique_ptr<Technique> IdleTransfiguration();
+    [[nodiscard]] std::optional<Technique> Limitless();
+    [[nodiscard]] std::optional<Technique> IdleTransfiguration();
 }

@@ -1,12 +1,14 @@
 #pragma once
 
+#include "../Stuff/CursedTool.hpp"
 #include "../Enums.hpp"
 #include "../Structs.hpp"
 
 #include <string>
-#include <memory>
+#include <optional>
 #include <vector>
 
+class CurseUser;
 struct AttackStruct;
 struct DamageStruct;
 
@@ -24,9 +26,9 @@ struct CharState final {
 };
 
 struct CharInv final {
-    std::vector<std::unique_ptr<int>> inventory; // placeholder ints
-    std::unique_ptr<int> stored_tool{nullptr};
-    std::unique_ptr<int> current_tool{nullptr};
+    std::vector<WeaponType>   inventory;
+    std::optional<WeaponType> stored_tool{};
+    std::optional<WeaponType> current_tool{};
     bool has_access_to_inventory{false};
 };
 
@@ -42,21 +44,18 @@ public:
     Character() {};
     virtual ~Character();
 
-    const EntityId& Identity() const;
-    const CharCtrl& Control() const noexcept;
-    const CharState& State() const noexcept;
-    const CharInv& Equipment() const;
+    [[nodiscard]] const EntityId& Identity() const noexcept;
+    [[nodiscard]] const CharCtrl& Control() const noexcept;
+    [[nodiscard]] const CharState& State() const noexcept;
+    [[nodiscard]] const CharInv& Equipment() const noexcept;
 
-    std::string Name(charenums::NameType type = charenums::NameType::Both);
-    void Name(std::string str, charenums::NameType nt = charenums::NameType::Name);
+    [[nodiscard]] std::string Name(charenums::NameType type = charenums::NameType::Both) const noexcept;
 
-    double Health(type::Get type = type::Get::Current) const noexcept;
-    void Health(type::Set type, double amount);
-    void Health(type::Expend t, double amount);
-    void Health(type::Add type, double amount);
+    [[nodiscard]] double Health(type::Get type = type::Get::Current) const noexcept;
+    void Health(type::Type type, double amount);
 
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
 
-    virtual bool CanUseSorcery() const;
+    [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
 };

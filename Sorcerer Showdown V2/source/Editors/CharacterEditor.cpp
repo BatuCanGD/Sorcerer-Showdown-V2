@@ -2,6 +2,8 @@
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/CharacterType/Sorcerer.hpp"
+#include "../../header/Stuff/CursedTool.hpp"
+#include "../../header/Stuff/Shikigami.hpp"
 
 #include <print>
 #include <utility>
@@ -28,57 +30,58 @@ void CharacterEditor::SetStrength(Character &c, double str){
     c.state.strength = str;
 }
 // inventory
-void CharacterEditor::GiveCharacterTool(Character& c, std::unique_ptr<int> tool, ItemPlacement place){
+void CharacterEditor::GiveCharacterTool(Character& c, std::optional<WeaponType> tool, Placement place){
     switch(place){
-        case ItemPlacement::OnHand:
-            if (c.equipment.current_tool != nullptr){
+        case Placement::OnHand:
+            if (c.equipment.current_tool){
                 std::println(stderr, "Character already has a current item, item will be overwritten");
             }
             c.equipment.current_tool = std::move(tool);
             break;
-        case ItemPlacement::Offhand:
-            if (c.equipment.stored_tool != nullptr){
-            std::println(stderr, "Character already has a stored item, item will be overwritten");
+        case Placement::Offhand:
+            if (c.equipment.stored_tool){
+                std::println(stderr, "Character already has a stored item, item will be overwritten");
             }
             c.equipment.stored_tool = std::move(tool);
             break;
-        case ItemPlacement::Inventory:
-            c.equipment.inventory.push_back(std::move(tool));
+        case Placement::Inventory:
+            if (tool){
+                c.equipment.inventory.push_back(std::move(*tool));
+            }
             break;
     }
 }
 void CharacterEditor::SetInventoryAccess(Character& c, bool t){
     c.equipment.has_access_to_inventory = t;
 }
-// inside curseuser
-void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CurseUserSystem::Efficiency efficiency){
-    c.ce_efficiency = efficiency;
-}
 // curse user system
-void CharacterEditor::SetCurseUserSystem(CurseUser &c, CurseUserSystem cus){
-    c.sorcery = cus;
+void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CursedEnergySystem::Efficiency efficiency){
+    c.ce_system.efficiency = efficiency;
+}
+void CharacterEditor::SetCurseUserSystem(CurseUser &c, CursedEnergySystem cus){
+    c.ce_system = cus;
 }
 void CharacterEditor::SetCursedEnergy(CurseUser &c, double ce){
-    c.sorcery.max_cursed_energy = ce;
-    c.sorcery.cursed_energy = ce;
+    c.ce_system.max_cursed_energy = ce;
+    c.ce_system.cursed_energy = ce;
 }
 void CharacterEditor::SetBlackFlashChance(CurseUser& c, int ch){
-    c.sorcery.bf_chance = ch;
+    c.ce_system.bf_chance = ch;
 }
-void CharacterEditor::AddBindingVow(CurseUser& c, std::unique_ptr<int> vow){
-    c.jujutsu.binding_vows.push_back(std::move(vow));
+void CharacterEditor::AddBindingVow(CurseUser& c, BindingVow vow){
+    c.jujutsu.binding_vows.push_back(vow);
 }
-void CharacterEditor::AddShikigami(CurseUser& c, std::unique_ptr<int> shk){
-    c.jujutsu.shikigami.push_back(std::move(shk));
+void CharacterEditor::AddShikigami(CurseUser& c, Shikigami shk){
+    c.jujutsu.shikigami.push_back(shk);
 }
-void CharacterEditor::SetTechnique(CurseUser& c, std::unique_ptr<Technique> tech){
-    c.jujutsu.technique = std::move(tech);
+void CharacterEditor::SetTechnique(CurseUser& c, std::optional<Technique> tech){
+    c.jujutsu.technique = std::move(*tech);
 }
-void CharacterEditor::SetDomain(CurseUser& c, std::unique_ptr<int> domain){
-    c.jujutsu.domain = std::move(domain);
+void CharacterEditor::SetDomain(CurseUser& c, std::optional<int> domain){
+    c.jujutsu.domain = std::move(*domain);
 }
-void CharacterEditor::SetDomainNullifier(CurseUser& c, std::unique_ptr<int> dnf){
-    c.jujutsu.domain_neutralizer = std::move(dnf);
+void CharacterEditor::SetDomainNullifier(CurseUser& c, std::optional<int> dnf){
+    c.jujutsu.domain_neutralizer = std::move(*dnf);
 }
 // traits
 void CharacterEditor::SetTraitSixEyes(CurseUser& c, bool t){
@@ -91,6 +94,6 @@ void CharacterEditor::SetTraitPassiveHealing(CurseUser& c, bool t){
 void CharacterEditor::SetReverseCursedTechnique(Sorcerer& c, bool t){
     c.rct_system.can_use_rct = t;
 }
-void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, SorcererSystem::RCTLevel lvl){
-    c.rct_level = lvl;
+void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, ReverseCTSystem::RCTLevel lvl){
+    c.rct_system.rct_level = lvl;
 }

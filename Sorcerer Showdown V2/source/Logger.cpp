@@ -1,6 +1,7 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
-#include "../header/Systems/Fighting/CombatSystem.hpp"
+#include "../header/CharacterType/Character.hpp"
+#include "../header/Systems/System/CombatSystem.hpp"
 
 #include <print>
 #include <string>
@@ -23,15 +24,14 @@ void Log::Attack(AttackStruct ats, Character& c1, Character& c2) {
 }
 
 void Log::Damage(DamageStruct dms, Character &attacked){
-    if (dms.attack_blocked){
-        std::println("{} took no damage. the attack was negated and blocked", attacked.Name());
-    }else if (dms.negated_damage == 0.0){
+    if (dms.attack_blocked) {
+        std::println("{} took no damage. The attack was negated and blocked", attacked.Name());
+    } else if (dms.negated_damage == 0.0) {
         std::println("{} took {:.1f} damage.", attacked.Name(), dms.damage);
-    }else {
+    } else {
         std::println("{} took {:.1f} damage. {:.1f} damage has been negated", attacked.Name(), dms.damage, dms.negated_damage);
     }
 }
-
 
 void Log::Death(battlefield& bf){
     std::vector<std::string> death_messages;

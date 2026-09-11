@@ -6,10 +6,10 @@
 #include <vector>
 
 struct TechAbility final {
+    EntityInfo id{};
     double damage{1.0};
     double cost{1.0};
     double output{1.0};
-    EntityInfo id{};
     globalums::DamageType damage_type{globalums::DamageType::Normal};
 };
 struct TechBarrier final {

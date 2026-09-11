@@ -16,9 +16,9 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 
     const EntityId id = {"Transfigured Human", "\x1b[38;5;22m"};
 
-    const double health = get_random<double>(1.0, 100.0);
-    const double strength = get_random<double>(1.0, 100.0);
-    const double durability = get_random<double>(1.0, 100.0);
+    const float health      = get_random<float>(1.0, 100.0);
+    const float strength    = get_random<float>(1.0, 100.0);
+    const float durability  = get_random<float>(1.0, 100.0);
 
     const CharState stats {health, health, durability, strength};
 
@@ -33,14 +33,14 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 
     const EntityId id {"Mahito", "\x1b[38;5;129m"};
     
-    constexpr double health = 550.0;
-    constexpr double strength = 115.0;
-    constexpr double durability = 75.0;
+    constexpr float health     = 550.0;
+    constexpr float strength   = 115.0;
+    constexpr float durability = 75.0;
 
     const CharState stats {health, health, durability, strength};
 
     constexpr double cursed_energy = 4000.0;
-    constexpr auto ce_efficiency = CurseUserSystem::Efficiency::Stable;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
     auto technique = Create::IdleTransfiguration();
 
@@ -48,7 +48,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
-    CharacterEditor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
+    CharacterEditor::SetDomain(*c, std::optional<int>()); // placeholder
     CharacterEditor::SetTechnique(*c, std::move(technique)); // placeholder
     CharacterEditor::SetTraitPassiveHealing(*c, true);
 
@@ -60,25 +60,25 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 
     const EntityId id {"Gojo", "\x1b[38;5;117m"};
 
-    constexpr double health = 1000.0;
-    constexpr double strength = 185.0;
-    constexpr double durability = 300.0;
+    constexpr float health     = 1000.0;
+    constexpr float strength   = 185.0;
+    constexpr float durability = 300.0;
 
     const CharState stats = {health, health, durability, strength};
 
     constexpr double cursed_energy = 5000.0;
 
-    constexpr auto ce_efficiency = CurseUserSystem::Efficiency::Extreme;
-    constexpr auto rct_level = SorcererSystem::RCTLevel::Absolute;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
+    constexpr auto rct_level = ReverseCTSystem::RCTLevel::Absolute;
 
     auto technique = Create::Limitless();
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
-    CharacterEditor::SetDomain(*c, std::unique_ptr<int>()); // placeholder
-    CharacterEditor::SetDomainNullifier(*c, std::unique_ptr<int>()); // placeholder
-    CharacterEditor::SetTechnique(*c, std::move(technique));
+    CharacterEditor::SetDomain(*c, std::optional<int>()); // placeholder
+    CharacterEditor::SetDomainNullifier(*c, std::optional<int>()); // placeholder
+    CharacterEditor::SetTechnique(*c, std::move(*technique));
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     CharacterEditor::SetTraitSixEyes(*c, true);
     CharacterEditor::SetReverseCursedTechnique(*c, true);
@@ -89,8 +89,8 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 
 // techniques
 
-std::unique_ptr<Technique> Create::Limitless() {
-    auto c = std::make_unique<Technique>();
+std::optional<Technique> Create::Limitless() {
+    auto c = std::optional<Technique>();
 
     EntityInfo id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
     EntityInfo blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
@@ -100,13 +100,13 @@ std::unique_ptr<Technique> Create::Limitless() {
     TechniqueEditor::SetIdentity(*c, id);
 
     constexpr auto at_type = globalums::DamageType::Normal;
-    constexpr double blue_damage = 125.0, blue_cost = 335.0, blue_output = 55.0;
-    constexpr double red_damage = 175.0, red_cost = 650.0, red_output = 120.0;
-    constexpr double purple_damage = 300.0, purple_cost = 1250.0, purple_output = 200.0;
+    constexpr double blue_damage    = 125.0, blue_cost      = 335.0, blue_output    = 55.0;
+    constexpr double red_damage     = 175.0, red_cost       = 650.0, red_output     = 120.0;
+    constexpr double purple_damage  = 300.0, purple_cost    = 1250.0,purple_output  = 200.0;
 
-    TechAbility blue    =  {blue_damage,     blue_cost,  blue_output,    blue_id,    at_type}; 
-    TechAbility red     =  {red_damage,      red_cost,   red_output,     red_id,     at_type}; 
-    TechAbility purple  = {purple_damage,   purple_cost,purple_output,  purple_id,  at_type};
+    TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
+    TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
+    TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
     
     TechniqueEditor::AddAbility(*c, blue);
     TechniqueEditor::AddAbility(*c, red);
@@ -115,8 +115,8 @@ std::unique_ptr<Technique> Create::Limitless() {
     return c;
 }
 
-std::unique_ptr<Technique> Create::IdleTransfiguration() {
-    auto c = std::make_unique<Technique>();
+std::optional<Technique> Create::IdleTransfiguration() {
+    auto c = std::optional<Technique>();
 
     EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
     EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
@@ -126,7 +126,7 @@ std::unique_ptr<Technique> Create::IdleTransfiguration() {
     constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
-    TechAbility transfiguration = {tfig_damage, tfig_cost ,tfig_output,tfig_id, at_type};
+    TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
     
     TechniqueEditor::AddAbility(*c, transfiguration);
     

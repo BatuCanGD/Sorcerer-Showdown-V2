@@ -22,9 +22,9 @@ void Technique::PrintName() const {
 }
 void Technique::PrintAbilities() const {
     std::uint8_t z = 0;
-    for ([[maybe_unused]] const auto& [damage, cost, output, t_identity, at_type] : abilities){
+    for ([[maybe_unused]] const auto& [id, damage, cost, output, at_type] : abilities){
         std::println("{}:[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
-            ++z, t_identity.color, t_identity.name, t_identity.color.empty() ? "" : "\x1b[0m", damage, cost, output);
+            ++z, id.color, id.name, id.color.empty() ? "" : "\x1b[0m", damage, cost, output);
     }
 }
 
