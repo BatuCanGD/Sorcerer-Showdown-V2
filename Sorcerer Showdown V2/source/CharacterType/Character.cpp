@@ -7,7 +7,7 @@
 Character::~Character() = default;
 
 
-const EntityId& Character::Identity() const noexcept {
+const EntityInfo& Character::Identity() const noexcept {
     return identity;
 }
 const CharState& Character::State() const noexcept {

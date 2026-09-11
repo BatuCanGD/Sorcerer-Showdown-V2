@@ -9,7 +9,7 @@
 #include <utility>
 
 // identity
-void CharacterEditor::SetIdentity(Character &c, EntityId cd){
+void CharacterEditor::SetIdentity(Character &c, EntityInfo cd){
     c.identity = cd;
 }
 // base state
@@ -77,11 +77,11 @@ void CharacterEditor::AddShikigami(CurseUser& c, Shikigami shk){
 void CharacterEditor::SetTechnique(CurseUser& c, std::optional<Technique> tech){
     c.jujutsu.technique = std::move(*tech);
 }
-void CharacterEditor::SetDomain(CurseUser& c, std::optional<int> domain){
+void CharacterEditor::SetDomain(CurseUser& c, std::optional<Domain> domain){
     c.jujutsu.domain = std::move(*domain);
 }
-void CharacterEditor::SetDomainNullifier(CurseUser& c, std::optional<int> dnf){
-    c.jujutsu.domain_neutralizer = std::move(*dnf);
+void CharacterEditor::SetDomainNullifier(CurseUser& c, std::optional<Neutralizer> dnf){
+    c.jujutsu.domain_neutralizer = std::move(dnf.value());
 }
 // traits
 void CharacterEditor::SetTraitSixEyes(CurseUser& c, bool t){

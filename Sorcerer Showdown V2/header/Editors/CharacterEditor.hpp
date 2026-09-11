@@ -17,7 +17,7 @@ struct EntityId;
 
 struct CharacterEditor final {
     // identity section
-    static void SetIdentity(Character& c, EntityId cd);
+    static void SetIdentity(Character& c, EntityInfo cd);
     // base state section
     static void SetStats(Character& c, CharState cs);
     static void SetHealth(Character& c, double hp);
@@ -38,8 +38,8 @@ struct CharacterEditor final {
     static void AddBindingVow(CurseUser& c, BindingVow vow);
     static void AddShikigami(CurseUser& c, Shikigami shk);
     static void SetTechnique(CurseUser& c, std::optional<Technique> tech);
-    static void SetDomain(CurseUser& c, std::optional<int> domain);
-    static void SetDomainNullifier(CurseUser& c, std::optional<int> dnull);
+    static void SetDomain(CurseUser& c, std::optional<Domain> domain);
+    static void SetDomainNullifier(CurseUser& c, std::optional<Neutralizer> dnull);
     // traits
     static void SetTraitSixEyes(CurseUser& c, bool t);
     static void SetTraitPassiveHealing(CurseUser& c, bool t);

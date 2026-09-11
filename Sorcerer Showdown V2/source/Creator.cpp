@@ -14,7 +14,7 @@
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
 
-    const EntityId id = {"Transfigured Human", "\x1b[38;5;22m"};
+    const EntityInfo id = {"Transfigured Human", "\x1b[38;5;22m", "A human, but with its soul massively reshaped"};
 
     const double health      = get_random<double>(1.0, 100.0);
     const double strength    = get_random<double>(1.0, 100.0);
@@ -31,7 +31,7 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 std::unique_ptr<CurseUser> Create::Mahito() {
     auto c = std::make_unique<CurseUser>();
 
-    const EntityId id {"Mahito", "\x1b[38;5;129m"};
+    const EntityInfo id {"Mahito", "\x1b[38;5;129m", "Cursed Spirit with the ability to Reshape souls"};
     
     constexpr double health     = 550.0;
     constexpr double strength   = 115.0;
@@ -48,8 +48,8 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
-    CharacterEditor::SetDomain(*c, std::optional<int>()); // placeholder
-    CharacterEditor::SetTechnique(*c, std::move(technique)); // placeholder
+    CharacterEditor::SetDomain(*c, std::optional<Domain>()); // placeholder
+    CharacterEditor::SetTechnique(*c, std::move(technique));
     CharacterEditor::SetTraitPassiveHealing(*c, true);
 
     return c;
@@ -58,7 +58,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 std::unique_ptr<Sorcerer> Create::Gojo() {
     auto c = std::make_unique<Sorcerer>();
 
-    const EntityId id {"Gojo", "\x1b[38;5;117m"};
+    const EntityInfo id {"Gojo", "\x1b[38;5;117m", "Strongest sorcerer of today"};
 
     constexpr double health     = 1000.0;
     constexpr double strength   = 185.0;
@@ -76,8 +76,8 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
-    CharacterEditor::SetDomain(*c, std::optional<int>()); // placeholder
-    CharacterEditor::SetDomainNullifier(*c, std::optional<int>()); // placeholder
+    CharacterEditor::SetDomain(*c, std::optional<Domain>()); // placeholder
+    CharacterEditor::SetDomainNullifier(*c, std::optional<Neutralizer>()); // placeholder
     CharacterEditor::SetTechnique(*c, std::move(*technique));
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     CharacterEditor::SetTraitSixEyes(*c, true);

@@ -4,14 +4,17 @@
 #include "../Stuff/Shikigami.hpp"
 #include "../Stuff/BindingVow.hpp"
 #include "../Sorcery/Technique.hpp"
+#include "../Sorcery/Domain.hpp"
+#include "../Sorcery/DomainNeutralizer.hpp"
+
 #include "../Enums.hpp"
 
 struct JujutsuSystem final {
     std::vector<BindingVow> binding_vows;
     std::vector<Shikigami> shikigami;
     std::optional<Technique> technique{};
-    std::optional<int> domain{};
-    std::optional<int> domain_neutralizer{};
+    std::optional<Domain> domain{};
+    std::optional<Neutralizer> domain_neutralizer{};
 };
 
 struct CurseUserAmplification final {

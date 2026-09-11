@@ -36,7 +36,7 @@ class Character {
     friend struct CharacterEditor;
     friend struct CombatSystem;
 protected:
-    EntityId identity;
+    EntityInfo identity;
     CharCtrl control;
     CharState state;
     CharInv equipment;
@@ -44,10 +44,15 @@ public:
     Character() {};
     virtual ~Character();
 
-    [[nodiscard]] const EntityId& Identity() const noexcept;
+    [[nodiscard]] const EntityInfo& Identity() const noexcept;
     [[nodiscard]] const CharCtrl& Control() const noexcept;
     [[nodiscard]] const CharState& State() const noexcept;
     [[nodiscard]] const CharInv& Equipment() const noexcept;
+
+    EntityInfo& Identity() noexcept;
+    CharCtrl& Control() noexcept;
+    CharState& State() noexcept;
+    CharInv& Equipment() noexcept;
 
     [[nodiscard]] std::string Name(charenums::NameType type = charenums::NameType::Both) const noexcept;
 
