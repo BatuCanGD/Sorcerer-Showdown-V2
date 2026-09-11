@@ -5,7 +5,7 @@
 #include "../Stuff/BindingVow.hpp"
 #include "../Sorcery/Technique.hpp"
 #include "../Sorcery/Domain.hpp"
-#include "../Sorcery/DomainNeutralizer.hpp"
+#include "../Sorcery/Neutralizer.hpp"
 
 #include "../Enums.hpp"
 

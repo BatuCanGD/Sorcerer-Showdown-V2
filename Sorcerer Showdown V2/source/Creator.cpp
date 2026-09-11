@@ -14,7 +14,7 @@
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
 
-    const EntityInfo id = {"Transfigured Human", "\x1b[38;5;22m", "A human, but with its soul massively reshaped"};
+    const EntityInfo id = {"Transfigured Human", "\x1b[38;5;22m", "A human, but with its body extremely disfigured"};
 
     const double health      = get_random<double>(1.0, 100.0);
     const double strength    = get_random<double>(1.0, 100.0);

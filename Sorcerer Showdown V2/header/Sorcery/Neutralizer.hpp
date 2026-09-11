@@ -1,4 +1,5 @@
 #pragma once
+#include "../Structs.hpp"
 
 enum class NeutralizerTurnType {
     SelfSustained, // use it once, you are good until it gets destroyed
@@ -10,6 +11,7 @@ enum class NeutralizerType {
 };
 
 struct Neutralizer final {
+    EntityInfo identity;
     double health{1.0};
     double durability{1.0};
     double cost{1.0};
