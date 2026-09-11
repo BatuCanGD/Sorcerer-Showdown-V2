@@ -16,9 +16,9 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 
     const EntityId id = {"Transfigured Human", "\x1b[38;5;22m"};
 
-    const float health      = get_random<float>(1.0, 100.0);
-    const float strength    = get_random<float>(1.0, 100.0);
-    const float durability  = get_random<float>(1.0, 100.0);
+    const double health      = get_random<double>(1.0, 100.0);
+    const double strength    = get_random<double>(1.0, 100.0);
+    const double durability  = get_random<double>(1.0, 100.0);
 
     const CharState stats {health, health, durability, strength};
 
@@ -33,9 +33,9 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 
     const EntityId id {"Mahito", "\x1b[38;5;129m"};
     
-    constexpr float health     = 550.0;
-    constexpr float strength   = 115.0;
-    constexpr float durability = 75.0;
+    constexpr double health     = 550.0;
+    constexpr double strength   = 115.0;
+    constexpr double durability = 75.0;
 
     const CharState stats {health, health, durability, strength};
 
@@ -60,9 +60,9 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 
     const EntityId id {"Gojo", "\x1b[38;5;117m"};
 
-    constexpr float health     = 1000.0;
-    constexpr float strength   = 185.0;
-    constexpr float durability = 300.0;
+    constexpr double health     = 1000.0;
+    constexpr double strength   = 185.0;
+    constexpr double durability = 300.0;
 
     const CharState stats = {health, health, durability, strength};
 

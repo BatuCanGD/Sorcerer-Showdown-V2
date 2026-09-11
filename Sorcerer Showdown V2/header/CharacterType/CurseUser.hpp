@@ -7,7 +7,7 @@
 #include "../Enums.hpp"
 
 struct JujutsuSystem final {
-    std::vector<BindingVow> binding_vows; // placeholder ints
+    std::vector<BindingVow> binding_vows;
     std::vector<Shikigami> shikigami;
     std::optional<Technique> technique{};
     std::optional<int> domain{};

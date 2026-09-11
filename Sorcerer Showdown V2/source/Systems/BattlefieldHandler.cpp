@@ -14,12 +14,10 @@ void BattlefieldHandler::PrintSetupValues(const std::unordered_map<int, std::uni
     }
 }
 
-
 bool BattlefieldHandler::ManageSetupChoices(int x){
     if (x == 0) return false;
     return true;
 }
-
 
 void BattlefieldHandler::SetupBattlefield(battlefield &bf) {
     std::unordered_map<int, std::unique_ptr<Character>> list;
