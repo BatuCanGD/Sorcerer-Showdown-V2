@@ -69,19 +69,19 @@ void CharacterEditor::SetBlackFlashChance(CurseUser& c, int ch){
     c.ce_system.bf_chance = ch;
 }
 void CharacterEditor::AddBindingVow(CurseUser& c, BindingVow vow){
-    c.jujutsu.binding_vows.push_back(vow);
+    c.jujutsu.binding_vows.push_back(std::move(vow));
 }
 void CharacterEditor::AddShikigami(CurseUser& c, Shikigami shk){
-    c.jujutsu.shikigami.push_back(shk);
+    c.jujutsu.shikigami.push_back(std::move(shk));
 }
-void CharacterEditor::SetTechnique(CurseUser& c, std::optional<Technique> tech){
-    c.jujutsu.technique = std::move(*tech);
+void CharacterEditor::SetTechnique(CurseUser& c, Technique tech){
+    c.jujutsu.technique = std::move(tech);
 }
-void CharacterEditor::SetDomain(CurseUser& c, std::optional<Domain> domain){
-    c.jujutsu.domain = std::move(*domain);
+void CharacterEditor::SetDomain(CurseUser& c, Domain domain){
+    c.jujutsu.domain = std::move(domain);
 }
-void CharacterEditor::SetDomainNullifier(CurseUser& c, std::optional<Neutralizer> dnf){
-    c.jujutsu.domain_neutralizer = std::move(dnf.value());
+void CharacterEditor::SetDomainNullifier(CurseUser& c, Neutralizer dnf){
+    c.jujutsu.domain_neutralizer = std::move(dnf);
 }
 // traits
 void CharacterEditor::SetTraitSixEyes(CurseUser& c, bool t){

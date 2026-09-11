@@ -37,9 +37,9 @@ struct CharacterEditor final {
     static void SetBlackFlashChance(CurseUser& c, int ch);
     static void AddBindingVow(CurseUser& c, BindingVow vow);
     static void AddShikigami(CurseUser& c, Shikigami shk);
-    static void SetTechnique(CurseUser& c, std::optional<Technique> tech);
-    static void SetDomain(CurseUser& c, std::optional<Domain> domain);
-    static void SetDomainNullifier(CurseUser& c, std::optional<Neutralizer> dnull);
+    static void SetTechnique(CurseUser& c, Technique tech);
+    static void SetDomain(CurseUser& c, Domain domain);
+    static void SetDomainNullifier(CurseUser& c, Neutralizer neutralizer);
     // traits
     static void SetTraitSixEyes(CurseUser& c, bool t);
     static void SetTraitPassiveHealing(CurseUser& c, bool t);

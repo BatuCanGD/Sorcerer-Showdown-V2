@@ -10,13 +10,25 @@ Character::~Character() = default;
 const EntityInfo& Character::Identity() const noexcept {
     return identity;
 }
+EntityInfo& Character::Identity() noexcept {
+    return identity;
+}
 const CharState& Character::State() const noexcept {
+    return state;
+}
+CharState& Character::State() noexcept {
     return state;
 }
 const CharInv& Character::Equipment() const noexcept {
     return equipment;
 }
+CharInv& Character::Equipment() noexcept {
+    return equipment;
+}
 const CharCtrl& Character::Control() const noexcept {
+    return control;
+}
+CharCtrl& Character::Control() noexcept {
     return control;
 }
 
@@ -59,12 +71,12 @@ void Character::Health(type::Type type, double amount) {
     }
 }
 
-
 DamageStruct Character::Damage(double amount, globalums::DamageType type){
+    DamageStruct ds{.attack_blocked = true};
     if (state.is_invulnerable){
-        return {.attack_blocked = true};
+        return ds;
     }
-    const auto& ds = CombatSystem::ResolveDamage(*this, type, amount);
+    ds = CombatSystem::ResolveDamage(*this, type, amount);
     if (ds.attack_blocked){
         return ds;
     }

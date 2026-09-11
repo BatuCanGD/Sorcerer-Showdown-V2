@@ -5,12 +5,34 @@
 const JujutsuSystem& CurseUser::Jujutsu() const noexcept {
     return jujutsu;
 }
+JujutsuSystem& CurseUser::Jujutsu() noexcept {
+    return jujutsu;
+}
 const CursedEnergySystem& CurseUser::CursedEnergySys() const noexcept {
     return ce_system;
+}
+CursedEnergySystem& CurseUser::CursedEnergySys() noexcept {
+    return ce_system;
+}
+const CurseUserAmplification& CurseUser::Amplification() const noexcept {
+    return amplification;
+}
+CurseUserAmplification& CurseUser::Amplification() noexcept {
+    return amplification;
+}
+const CurseUserOutput& CurseUser::Output() const noexcept {
+    return output;
+}
+CurseUserOutput& CurseUser::Output() noexcept {
+    return output;
 }
 const SorceryTrait& CurseUser::Traits() const noexcept {
     return traits;
 }
+SorceryTrait& CurseUser::Traits() noexcept {
+    return traits;
+}
+
 
 double CurseUser::CursedEnergy(type::Get type) const noexcept {
     switch (type) {
@@ -26,41 +48,19 @@ void CurseUser::CursedEnergy(type::Type type, double amount) {
     }
     switch (type) {
         case type::Type::Add:  
-            state.health += amount;
+            ce_system.cursed_energy += amount;
             break;
         case type::Type::Expend:
-            state.health -= amount;
+            ce_system.cursed_energy -= amount;
             break;
         case type::Type::Set:
-            state.health = amount;
+            ce_system.cursed_energy = amount;
             break;
         case type::Type::Get:
             throw std::invalid_argument("This overload function is not a getter");
     }
     if (ce_system.cursed_energy > ce_system.max_cursed_energy){
         ce_system.cursed_energy = ce_system.max_cursed_energy;
-    }
-}
-
-void Character::Health(type::Type type, double amount) {
-    if (amount <= 0.0){
-        throw std::range_error("Cannot use 0 or negative amounts");
-    }
-    switch (type) {
-        case type::Type::Add:  
-            state.health += amount;
-            break;
-        case type::Type::Expend:
-            state.health -= amount;
-            break;
-        case type::Type::Set:
-            state.health = amount;
-            break;
-        case type::Type::Get:
-            throw std::invalid_argument("This overload function is not a getter");
-    }
-    if (state.health > state.max_health){
-        state.health = this->Health(type::Get::Max);
     }
 }
 

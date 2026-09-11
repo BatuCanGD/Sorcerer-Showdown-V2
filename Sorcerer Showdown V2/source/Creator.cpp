@@ -42,14 +42,15 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double cursed_energy = 4000.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
-    auto technique = Create::IdleTransfiguration();
+    Technique technique = Create::IdleTransfiguration();
+    Domain domain{};
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
-    CharacterEditor::SetDomain(*c, std::optional<Domain>()); // placeholder
-    CharacterEditor::SetTechnique(*c, std::move(technique));
+    CharacterEditor::SetDomain(*c, domain); // placeholder
+    CharacterEditor::SetTechnique(*c, technique);
     CharacterEditor::SetTraitPassiveHealing(*c, true);
 
     return c;
@@ -71,14 +72,16 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
     constexpr auto rct_level = ReverseCTSystem::RCTLevel::Absolute;
 
-    auto technique = Create::Limitless();
+    Technique technique{Create::Limitless()};
+    Domain domain{};
+    Neutralizer neutralizer{};
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
     CharacterEditor::SetCursedEnergy(*c, cursed_energy);
-    CharacterEditor::SetDomain(*c, std::optional<Domain>()); // placeholder
-    CharacterEditor::SetDomainNullifier(*c, std::optional<Neutralizer>()); // placeholder
-    CharacterEditor::SetTechnique(*c, std::move(*technique));
+    CharacterEditor::SetDomain(*c, domain); // placeholder
+    CharacterEditor::SetDomainNullifier(*c, neutralizer); // placeholder
+    CharacterEditor::SetTechnique(*c, technique);
     CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
     CharacterEditor::SetTraitSixEyes(*c, true);
     CharacterEditor::SetReverseCursedTechnique(*c, true);
@@ -89,15 +92,15 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 
 // techniques
 
-std::optional<Technique> Create::Limitless() {
-    auto c = std::optional<Technique>();
+Technique Create::Limitless() {
+    Technique c{};
 
     EntityInfo id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
     EntityInfo blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
     EntityInfo red_id = {"Red", "\x1b[48;5;9m", "The power to repel"};
     EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
-    TechniqueEditor::SetIdentity(*c, id);
+    TechniqueEditor::SetIdentity(c, id);
 
     constexpr auto at_type = globalums::DamageType::Normal;
     constexpr double blue_damage    = 125.0, blue_cost      = 335.0, blue_output    = 55.0;
@@ -108,27 +111,27 @@ std::optional<Technique> Create::Limitless() {
     TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
     TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
     
-    TechniqueEditor::AddAbility(*c, blue);
-    TechniqueEditor::AddAbility(*c, red);
-    TechniqueEditor::AddAbility(*c, purple);
+    TechniqueEditor::AddAbility(c, blue);
+    TechniqueEditor::AddAbility(c, red);
+    TechniqueEditor::AddAbility(c, purple);
 
     return c;
 }
 
-std::optional<Technique> Create::IdleTransfiguration() {
-    auto c = std::optional<Technique>();
+Technique Create::IdleTransfiguration() {
+    Technique c{};
 
     EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
     EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
     
-    TechniqueEditor::SetIdentity(*c, id);
+    TechniqueEditor::SetIdentity(c, id);
 
     constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
     TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
     
-    TechniqueEditor::AddAbility(*c, transfiguration);
+    TechniqueEditor::AddAbility(c, transfiguration);
     
     return c;
 }
