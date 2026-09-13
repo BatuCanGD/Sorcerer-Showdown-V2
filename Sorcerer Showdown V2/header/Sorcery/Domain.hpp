@@ -14,6 +14,7 @@ struct Domain final {
     double damage{1.0};
     double cost{1.0};
     unsigned int range{10};
+    bool is_active{false};
     SurehitType surehit_type{SurehitType::Normal};
     globalums::DamageType damage_type{globalums::DamageType::Normal};
 };

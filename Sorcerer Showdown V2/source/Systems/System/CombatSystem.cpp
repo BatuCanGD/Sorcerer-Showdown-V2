@@ -1,5 +1,8 @@
 #include "../../../header/Systems/System/CombatSystem.hpp"
 #include "../../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../../header/Systems/ResourceHandler.hpp"
+#include "../../../header/Helper/DomainHelper.hpp"
+#include "../../../header/Battlefield.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
@@ -9,7 +12,7 @@ DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType typ
     DamageStruct ds{};
     ds.negated_damage = amount;
     amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
-    if (auto crs = dynamic_cast<CurseUser*>(&c)){
+    if (auto crs = c.CanUseSorcery()){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 ds.attack_blocked = true;
@@ -40,7 +43,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
     return {attack_damage, is_critical, is_blackflash};
 }
 
-void CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
+TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
     auto& tech = attacker.Jujutsu().technique;
     TechAbility chosen_ct;
 
@@ -53,9 +56,32 @@ void CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
     const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 
-    if (!(enough_output && enough_ce)) return;
+    if (!(enough_output && enough_ce)) {
+        return{enough_output, enough_ce };
+    }
 
     attacker.CursedEnergy(type::Type::Expend, ce);
     attacker.Output().current_output += output;
     attacked.Damage(chosen_ct.damage);
+    return {enough_output, enough_ce};
+}
+
+DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, battlefield& bf) {
+    DomainStruct dst{};
+    ResourceHandler::UsedDomain(attacker);
+    const auto& domain = attacker.Jujutsu().domain;
+    const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
+
+    for (const auto& c : bf.battlefield) {
+        const auto& [can_hit, damage] = DomainHelper::CalculateHit(domain, c);
+        if (can_hit){
+            c->Health(type::Type::Expend, damage);
+            if (does_paralyze) {
+                c->State().is_stunned = true;
+            }
+            dst.hit_amount++;
+        }
+    }
+
+    return dst;
 }

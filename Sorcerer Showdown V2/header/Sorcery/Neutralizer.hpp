@@ -6,8 +6,8 @@ enum class NeutralizerTurnType {
     UserSustained, // sustained by cursed energy, user has to take care of it every turn
 };
 enum class NeutralizerType {
-    FullyProtected,
-    ReducedDamage
+    ReducedDamage,
+    FullyProtected
 };
 
 struct Neutralizer final {
@@ -15,6 +15,7 @@ struct Neutralizer final {
     double health{1.0};
     double durability{1.0};
     double cost{1.0};
+    bool is_active{false};
     NeutralizerTurnType turn_type{NeutralizerTurnType::SelfSustained};
     NeutralizerType neutralizer_type{NeutralizerType::FullyProtected};
 };
