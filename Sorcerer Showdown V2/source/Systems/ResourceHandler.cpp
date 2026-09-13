@@ -17,7 +17,7 @@ void ResourceHandler::UsedNeutralizer(CurseUser& curse_user){
 void ResourceHandler::UsedDomain(CurseUser& curse_user){
     curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain->cost);
 }
-void ResourceHandler::TickReverseCursedTechnique(Sorcerer& sorcerer){
+void ResourceHandler::TickReverseCursedTechnique(Sorcerer& sorcerer) {
     if (!sorcerer.RCTSystem().can_use_rct) return;
     sorcerer.CursedEnergy(OpType::Expend, sorcerer.RCTSystem().rct_output); // add a function that multiplies output with rct level
     sorcerer.Health(OpType::Add, sorcerer.RCTSystem().rct_output);

@@ -1,7 +1,6 @@
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/Systems/System/CombatSystem.hpp"
 
-#include <format>
 #include <stdexcept>
 
 Character::~Character() = default;
@@ -32,13 +31,8 @@ CharCtrl& Character::Control() noexcept {
     return control;
 }
 
-std::string Character::Name(globalums::NameType type) const noexcept {
-    switch(type){
-        case globalums::NameType::Name:  return identity.name;
-        case globalums::NameType::Color: return identity.color;
-        case globalums::NameType::Both:  return identity.color.empty() ? identity.name : std::format("{}{}\x1b[0m", identity.color, identity.name);
-    }
-    return "";
+std::string Character::Name() const noexcept {
+    return identity.color + identity.name + (identity.color.empty() ? "" : "\x1b[0m");
 }
 
 double Character::Health(ValType type) const noexcept {

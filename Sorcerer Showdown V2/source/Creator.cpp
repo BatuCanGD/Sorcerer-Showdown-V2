@@ -59,7 +59,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 std::unique_ptr<Sorcerer> Create::Gojo() {
     auto c = std::make_unique<Sorcerer>();
 
-    const EntityInfo id {"Gojo", "\x1b[38;5;117m", "Strongest sorcerer of today"};
+    const EntityInfo id {"Gojo", "\x1b[38;5;39m", "Strongest sorcerer of today"};
 
     constexpr double health     = 1000.0;
     constexpr double strength   = 185.0;
@@ -95,9 +95,9 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 Technique Create::Limitless() {
     Technique c{};
 
-    EntityInfo id = {"Limitless", "\x1b[38;5;14m", "An Inherited Technique that grants the user control over space itself" };
-    EntityInfo blue_id = {"Blue", "\x1b[38;5;14m", "The power to attract"};
-    EntityInfo red_id = {"Red", "\x1b[48;5;9m", "The power to repel"};
+    EntityInfo id = {"Limitless", "\x1b[38;5;39m", "An Inherited Technique that grants the user control over space itself" };
+    EntityInfo blue_id = {"Blue", "\x1b[38;5;45m", "The power to attract"};
+    EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
     EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
     TechniqueEditor::SetIdentity(c, id);

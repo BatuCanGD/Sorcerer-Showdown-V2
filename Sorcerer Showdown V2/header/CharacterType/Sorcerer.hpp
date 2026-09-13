@@ -15,4 +15,5 @@ protected:
     ReverseCTSystem rct_system;
 public:
     [[nodiscard]] const ReverseCTSystem& RCTSystem() const noexcept;
+    ReverseCTSystem& RCTSystem() noexcept;
 };

@@ -1,8 +1,11 @@
 #include "../header/Game.hpp"
 #include "../header/Utilities/Input.hpp"
+#include "../header/Creator.hpp"
+#include "../header/CharacterType/Sorcerer.hpp"
 #include "../header/Battlefield.hpp"
 
 #include <print>
+#include <vector>
 
 struct playerchoices {
     bool x;
@@ -16,12 +19,21 @@ bool endgame() {
 }
 
 bool rungameloop(battlefield& bf, const playerchoices& pc) {
-
-    return true;
+    for(const auto& c : bf.battlefield){
+        std::println("{}", c->Name());
+        if (const auto* crs = c->CanUseSorcery()){
+            if (crs->Jujutsu().technique) {
+                crs->Jujutsu().technique->PrintName();
+                crs->Jujutsu().technique->PrintAbilities();
+            }
+        }
+    }
+    return false;
 }
 
 bool rungame()  {
     battlefield bf;
+    bf.battlefield.push_back(Create::Gojo());
 
     const playerchoices pc{};
 

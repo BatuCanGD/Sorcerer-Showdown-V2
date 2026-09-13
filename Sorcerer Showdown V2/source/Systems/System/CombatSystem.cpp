@@ -57,7 +57,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, Character& a
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 
     if (!(enough_output && enough_ce)) {
-        return{enough_output, enough_ce };
+        return{enough_output, enough_ce};
     }
 
     attacker.CursedEnergy(OpType::Expend, ce);
@@ -75,11 +75,11 @@ DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, battlefield& bf) {
     for (const auto& c : bf.battlefield) {
         const auto& [can_hit, damage] = DomainHelper::CalculateHit(domain, c);
         if (can_hit){
+            dst.hit_amount++;
             c->Health(OpType::Expend, damage);
             if (does_paralyze) {
                 c->State().is_stunned = true;
             }
-            dst.hit_amount++;
         }
     }
 

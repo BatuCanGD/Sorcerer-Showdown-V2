@@ -6,10 +6,6 @@ enum class ValType : std::uint8_t { Current, Maximum };
 
 namespace globalums // enums that are used by multiple systems
 {
-    enum class NameType : std::uint8_t {
-        Name, Color,
-        Both
-    };
     enum class DamageType : std::uint8_t {
         Normal, // can be stopped or negated by reinforcement
         BypassTech, // technique barriers
