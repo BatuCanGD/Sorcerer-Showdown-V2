@@ -1,30 +1,18 @@
 #pragma once
-
 #include <cstdint>
 
-namespace type {
-    enum class Type : std::uint8_t { Get, Set, Add, Expend };
-
-    enum class Get : std::uint8_t { Current, Max };
-    enum class Set : std::uint8_t { Current, Max };
-    enum class Expend : std::uint8_t { Current, Max };
-    enum class Add    : std::uint8_t { Current, Max };
-}
-
-namespace charenums // character enums
-{ 
-    enum class NameType : std::uint8_t {
-        Name,
-        Color,
-        Both
-    };
-}
+enum class OpType : std::uint8_t { Get, Set, Add, Expend };
+enum class ValType : std::uint8_t { Current, Maximum };
 
 namespace globalums // enums that are used by multiple systems
 {
+    enum class NameType : std::uint8_t {
+        Name, Color,
+        Both
+    };
     enum class DamageType : std::uint8_t {
         Normal, // can be stopped or negated by reinforcement
-        BypassTech, // techniques, infinity, etc...
+        BypassTech, // technique barriers
         BypassRein, // Cursed Energy Reinforcement
         BypassAll // both bypasses apply
     };

@@ -34,29 +34,29 @@ SorceryTrait& CurseUser::Traits() noexcept {
 }
 
 
-double CurseUser::CursedEnergy(type::Get type) const noexcept {
+double CurseUser::CursedEnergy(ValType type) const noexcept {
     switch (type) {
-        case type::Get::Current:  return ce_system.cursed_energy;
-        case type::Get::Max:      return ce_system.max_cursed_energy;
+        case ValType::Current:  return ce_system.cursed_energy;
+        case ValType::Maximum:  return ce_system.max_cursed_energy;
     }
     return -1.0;
 }
 
-void CurseUser::CursedEnergy(type::Type type, double amount) {
+void CurseUser::CursedEnergy(OpType type, double amount) {
     if (amount <= 0.0){
         throw std::range_error("Cannot use 0 or negative amounts");
     }
     switch (type) {
-        case type::Type::Add:  
+        case OpType::Add:  
             ce_system.cursed_energy += amount;
             break;
-        case type::Type::Expend:
+        case OpType::Expend:
             ce_system.cursed_energy -= amount;
             break;
-        case type::Type::Set:
+        case OpType::Set:
             ce_system.cursed_energy = amount;
             break;
-        case type::Type::Get:
+        case OpType::Get:
             throw std::invalid_argument("This overload function is not a getter");
     }
     if (ce_system.cursed_energy > ce_system.max_cursed_energy){

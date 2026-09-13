@@ -54,10 +54,10 @@ public:
     CharState& State() noexcept;
     CharInv& Equipment() noexcept;
 
-    [[nodiscard]] std::string Name(charenums::NameType type = charenums::NameType::Both) const noexcept;
+    [[nodiscard]] std::string Name(globalums::NameType type = globalums::NameType::Both) const noexcept;
 
-    [[nodiscard]] double Health(type::Get type = type::Get::Current) const noexcept;
-    void Health(type::Type type, double amount);
+    [[nodiscard]] double Health(ValType type = ValType::Current) const noexcept;
+    void Health(OpType type, double amount);
 
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);

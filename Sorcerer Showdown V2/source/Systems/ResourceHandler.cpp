@@ -4,7 +4,7 @@
 
 
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
-    curse_user.CursedEnergy(type::Type::Add, curse_user.CursedEnergySys().regeneration_amount);
+    curse_user.CursedEnergy(OpType::Add, curse_user.CursedEnergySys().regeneration_amount);
 }
 void ResourceHandler::TickShikigami(CurseUser& curse_user){
     for ([[maybe_unused]] const auto& c : curse_user.Jujutsu().shikigami){
@@ -12,13 +12,13 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
     }
 }
 void ResourceHandler::UsedNeutralizer(CurseUser& curse_user){
-    curse_user.CursedEnergy(type::Type::Expend, curse_user.Jujutsu().domain_neutralizer->cost);
+    curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain_neutralizer->cost);
 }
 void ResourceHandler::UsedDomain(CurseUser& curse_user){
-    curse_user.CursedEnergy(type::Type::Expend, curse_user.Jujutsu().domain->cost);
+    curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain->cost);
 }
 void ResourceHandler::TickReverseCursedTechnique(Sorcerer& sorcerer){
     if (!sorcerer.RCTSystem().can_use_rct) return;
-    sorcerer.CursedEnergy(type::Type::Expend, sorcerer.RCTSystem().rct_output); // add a function that multiplies output with rct level
-    sorcerer.Health(type::Type::Add, sorcerer.RCTSystem().rct_output);
+    sorcerer.CursedEnergy(OpType::Expend, sorcerer.RCTSystem().rct_output); // add a function that multiplies output with rct level
+    sorcerer.Health(OpType::Add, sorcerer.RCTSystem().rct_output);
 }

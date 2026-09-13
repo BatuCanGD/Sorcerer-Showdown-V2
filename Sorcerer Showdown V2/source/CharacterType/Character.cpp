@@ -32,38 +32,38 @@ CharCtrl& Character::Control() noexcept {
     return control;
 }
 
-std::string Character::Name(charenums::NameType type) const noexcept {
+std::string Character::Name(globalums::NameType type) const noexcept {
     switch(type){
-        case charenums::NameType::Name:  return identity.name;
-        case charenums::NameType::Color: return identity.color;
-        case charenums::NameType::Both:  return identity.color.empty() ? identity.name : std::format("{}{}\x1b[0m", identity.color, identity.name);
+        case globalums::NameType::Name:  return identity.name;
+        case globalums::NameType::Color: return identity.color;
+        case globalums::NameType::Both:  return identity.color.empty() ? identity.name : std::format("{}{}\x1b[0m", identity.color, identity.name);
     }
     return "";
 }
 
-double Character::Health(type::Get type) const noexcept {
+double Character::Health(ValType type) const noexcept {
     switch (type) {
-        case type::Get::Current:  return state.health;
-        case type::Get::Max:      return state.max_health;
+        case ValType::Current:  return state.health;
+        case ValType::Maximum:  return state.max_health;
     }
     return -1.0;
 }
 
-void Character::Health(type::Type type, double amount) {
+void Character::Health(OpType type, double amount) {
     if (amount <= 0.0){
         throw std::range_error("Cannot use 0 or negative amounts");
     }
     switch (type) {
-        case type::Type::Add:  
+        case OpType::Add:  
             state.health += amount;
             break;
-        case type::Type::Expend:
+        case OpType::Expend:
             state.health -= amount;
             break;
-        case type::Type::Set:
+        case OpType::Set:
             state.health = amount;
             break;
-        case type::Type::Get:
+        case OpType::Get:
             throw std::invalid_argument("This overload function is not a getter");
     }
     if (state.health > state.max_health){

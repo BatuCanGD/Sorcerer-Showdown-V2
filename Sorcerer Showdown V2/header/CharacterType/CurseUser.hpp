@@ -66,11 +66,11 @@ public:
     CurseUserAmplification& Amplification() noexcept;
     SorceryTrait& Traits() noexcept;
     
-    double CursedEnergy(type::Get type = type::Get::Current) const noexcept;
-    void CursedEnergy(type::Type type, double amount);
+    double CursedEnergy(ValType type = ValType::Current) const noexcept;
+    void CursedEnergy(OpType type, double amount);
 
-    double Output(type::Get type) const noexcept;
-    void Output(type::Type type, double amount);
+    double Output(ValType type) const noexcept;
+    void Output(OpType type, double amount);
 
     [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
     [[nodiscard]] bool HasSixEyes() const noexcept;
