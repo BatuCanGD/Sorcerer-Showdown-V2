@@ -1,11 +1,13 @@
 #pragma once
 #include "../Structs.hpp"
 
-enum class NeutralizerTurnType {
+#include <cstdint>
+
+enum class NeutralizerTurnType : std::uint8_t {
     SelfSustained, // use it once, you are good until it gets destroyed
     UserSustained, // sustained by cursed energy, user has to take care of it every turn
 };
-enum class NeutralizerType {
+enum class NeutralizerType : std::uint8_t {
     ReducedDamage,
     FullyProtected
 };

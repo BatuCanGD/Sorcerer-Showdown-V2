@@ -3,18 +3,19 @@
 #include <optional>
 #include <memory>
 #include <utility>
+#include <cstdint>
 
 class Character;
 struct Domain;
 
-enum class ClashWinner {
+enum class ClashWinner : std::uint8_t {
     None,
     First,
     Second,
     Both
 };
 
-enum class DomainWinCon {
+enum class DomainWinCon : std::uint8_t {
     None,
     Overwhelmed,
     Refinement,
