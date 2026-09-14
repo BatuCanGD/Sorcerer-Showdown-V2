@@ -95,8 +95,8 @@ std::unique_ptr<Sorcerer> Create::Gojo() {
 Technique Create::Limitless() {
     Technique c{};
 
-    EntityInfo id = {"Limitless", "\x1b[38;5;39m", "An Inherited Technique that grants the user control over space itself" };
-    EntityInfo blue_id = {"Blue", "\x1b[38;5;45m", "The power to attract"};
+    EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
+    EntityInfo blue_id = {"Blue", "\x1b[38;5;20m", "The power to attract"};
     EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
     EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
