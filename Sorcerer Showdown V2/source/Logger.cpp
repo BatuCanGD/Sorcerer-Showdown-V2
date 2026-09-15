@@ -2,13 +2,14 @@
 #include "../header/Battlefield.hpp"
 #include "../header/CharacterType/Character.hpp"
 #include "../header/Systems/System/CombatSystem.hpp"
+#include "../header/Systems/System/DomainSystem.hpp"
 
 #include <print>
 #include <string>
 #include <vector>
 #include <format>
 
-void Log::Attack(AttackStruct ats, Character& c1, Character& c2) {
+void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
     std::string word{};
     const std::string info = std::format("{} took {:.1f} damage from {}!", c1.Name(), ats.damage, c2.Name());
     
@@ -23,7 +24,7 @@ void Log::Attack(AttackStruct ats, Character& c1, Character& c2) {
     std::println("{}", word);
 }
 
-void Log::Damage(DamageStruct dms, Character &attacked){
+void Log::Damage(const DamageStruct dms, const Character &attacked){
     if (dms.attack_blocked) {
         std::println("{} took no damage. The attack was negated and blocked", attacked.Name());
     } else if (dms.negated_damage == 0.0) {
@@ -33,7 +34,34 @@ void Log::Damage(DamageStruct dms, Character &attacked){
     }
 }
 
-void Log::Death(battlefield& bf){
+void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
+    if (winner == ClashWinner::None) {
+        std::println("The domains are locked in battle with each other, cancelling out the sure-hits.");
+        return;
+    } 
+    const bool both_domains = winner == ClashWinner::Both;
+    if (both_domains) {
+        std::print("Both domains have collapsed due to ");
+    }else{
+        std::print("A domain has collapsed due to ");
+    }
+
+    switch(win_con){
+        case DomainWinCon::Attrition:
+            std::println("sustaining too much damage!");
+            break;
+        case DomainWinCon::Refinement:
+            std::println("being overwhelmed by the other's refinement!");
+            break;
+        case DomainWinCon::Overwhelmed:
+            std::println("being overwhelmed by the range!");
+            break;
+        default:
+
+    }
+}
+
+void Log::Death(const battlefield& bf){
     std::vector<std::string> death_messages;
     for (const auto& c : bf.battlefield){
         const double hp = c->Health();
