@@ -44,6 +44,13 @@ struct SorceryTrait final {
     bool passive_healing{false};
 };
 
+struct ReverseCTSystem final {
+    double rct_output{0.0};
+    bool can_use_rct{false};
+    enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
+    RCTLevel rct_level{RCTLevel::Adept};
+};
+
 class CurseUser : public Character {
    friend struct CharacterEditor; 
    friend struct CombatSystem;
@@ -52,6 +59,7 @@ protected:
     CursedEnergySystem ce_system;
     CurseUserOutput output;
     CurseUserAmplification amplification;
+    ReverseCTSystem rct_system;
     SorceryTrait traits;
 public:
     [[nodiscard]] const JujutsuSystem& Jujutsu() const noexcept;
@@ -59,12 +67,14 @@ public:
     [[nodiscard]] const CurseUserOutput& Output() const noexcept;
     [[nodiscard]] const CurseUserAmplification& Amplification() const noexcept;
     [[nodiscard]] const SorceryTrait& Traits() const noexcept;
+    [[nodiscard]] const ReverseCTSystem& RCTSystem() const noexcept;
 
     JujutsuSystem& Jujutsu() noexcept;
     CursedEnergySystem& CursedEnergySys() noexcept;
     CurseUserOutput& Output() noexcept;
     CurseUserAmplification& Amplification() noexcept;
     SorceryTrait& Traits() noexcept;
+    ReverseCTSystem& RCTSystem() noexcept;
     
     double CursedEnergy(ValType type = ValType::Current) const noexcept;
     void CursedEnergy(OpType type, double amount);

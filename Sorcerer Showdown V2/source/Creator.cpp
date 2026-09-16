@@ -56,8 +56,8 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     return c;
 }
 // sorcerers
-std::unique_ptr<Sorcerer> Create::Gojo() {
-    auto c = std::make_unique<Sorcerer>();
+std::unique_ptr<CurseUser> Create::Gojo() {
+    auto c = std::make_unique<CurseUser>();
 
     const EntityInfo id {"Gojo", "\x1b[38;5;39m", "Strongest sorcerer of today"};
 

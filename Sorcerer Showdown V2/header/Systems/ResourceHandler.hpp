@@ -1,6 +1,5 @@
 #pragma once
 
-class Sorcerer;
 class CurseUser;
 
 namespace ResourceHandler {
@@ -8,5 +7,5 @@ namespace ResourceHandler {
     void TickShikigami(CurseUser& curse_user);
     void UsedNeutralizer(CurseUser& curse_user);
     void UsedDomain(CurseUser& curse_user);
-    void TickReverseCursedTechnique(Sorcerer& sorcerer);
+    void TickRCT(CurseUser& sorcerer);
 }

@@ -4,7 +4,6 @@
 
 class Character;
 class CurseUser;
-class Sorcerer;
 
 class Technique;
 
@@ -14,9 +13,7 @@ namespace Create {
 
     // curse user class
     [[nodiscard]] std::unique_ptr<CurseUser> Mahito();
-
-    // sorcerer class
-    [[nodiscard]] std::unique_ptr<Sorcerer> Gojo();
+    [[nodiscard]] std::unique_ptr<CurseUser> Gojo();
 
     // technique class
     [[nodiscard]] Technique Limitless();

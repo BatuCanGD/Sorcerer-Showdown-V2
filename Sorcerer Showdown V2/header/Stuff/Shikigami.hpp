@@ -4,7 +4,6 @@
 #include <cstdint>
 
 class Character;
-class CurseUser;
 
 enum class SupportType : std::uint8_t {
     Offense,

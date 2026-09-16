@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../CharacterType/Sorcerer.hpp"
 #include "../CharacterType/CurseUser.hpp"
 
 #include <optional>
@@ -8,7 +7,6 @@
 
 class Character;
 class CurseUser;
-class Sorcerer;
 
 struct WeaponType;
 struct Shikigami;
@@ -43,9 +41,6 @@ struct CharacterEditor final {
     // traits
     static void SetTraitSixEyes(CurseUser& c, bool t);
     static void SetTraitPassiveHealing(CurseUser& c, bool t);
-    /*                        CurseUser End                       */
-    // sorcerer system
-    static void SetReverseCursedTechnique(Sorcerer& c, bool can_use);
-    static void SetReverseCursedTechniqueLevel(Sorcerer& c, ReverseCTSystem::RCTLevel lvl);
-    /*                        Sorcerer End                        */
+    static void SetReverseCursedTechnique(CurseUser& c, bool can_use);
+    static void SetReverseCursedTechniqueLevel(CurseUser& c, ReverseCTSystem::RCTLevel lvl);
 };

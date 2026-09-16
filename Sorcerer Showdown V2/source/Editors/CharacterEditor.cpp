@@ -1,7 +1,6 @@
 #include "../../header/Editors/CharacterEditor.hpp"
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
-#include "../../header/CharacterType/Sorcerer.hpp"
 #include "../../header/Stuff/CursedTool.hpp"
 #include "../../header/Stuff/Shikigami.hpp"
 
@@ -91,9 +90,9 @@ void CharacterEditor::SetTraitPassiveHealing(CurseUser& c, bool t){
     c.traits.passive_healing = t;
 }
 // sorcerer reverse cursed technique
-void CharacterEditor::SetReverseCursedTechnique(Sorcerer& c, bool t){
+void CharacterEditor::SetReverseCursedTechnique(CurseUser& c, bool t){
     c.rct_system.can_use_rct = t;
 }
-void CharacterEditor::SetReverseCursedTechniqueLevel(Sorcerer& c, ReverseCTSystem::RCTLevel lvl){
+void CharacterEditor::SetReverseCursedTechniqueLevel(CurseUser& c, ReverseCTSystem::RCTLevel lvl){
     c.rct_system.rct_level = lvl;
 }

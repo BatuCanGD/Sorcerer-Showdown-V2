@@ -3,7 +3,7 @@
 #include "../header/Creator.hpp"
 #include "../header/Battlefield.hpp"
 #include "../header/Utilities/Input.hpp"
-#include "../header/CharacterType/Sorcerer.hpp"
+#include "../header/CharacterType/CurseUser.hpp"
 
 #include <print>
 #include <vector>

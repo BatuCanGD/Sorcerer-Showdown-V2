@@ -71,3 +71,11 @@ const CurseUser* CurseUser::CanUseSorcery() const noexcept {
 bool CurseUser::HasSixEyes() const noexcept {
     return traits.six_eyes;
 }
+
+const ReverseCTSystem& CurseUser::RCTSystem() const noexcept{
+    return rct_system;
+}
+
+ReverseCTSystem& CurseUser::RCTSystem() noexcept{
+    return rct_system;
+}
