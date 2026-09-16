@@ -25,13 +25,15 @@ protected:
     TechBarrier barrier;
     EntityInfo identity;
 public:
-    const EntityInfo& Identity() const noexcept;
-    const TechBarrier& Barrier() const noexcept;
+    [[nodiscard]] const EntityInfo& Identity() const noexcept;
+    [[nodiscard]] const TechBarrier& Barrier() const noexcept;
+
+    const std::string Name() const noexcept;
+    const std::vector<TechAbility> Abilities() const noexcept;
+
     void Barrier(bool set);
     bool HasBarrier() const noexcept;
 
-    void PrintName() const;
-    void PrintAbilities() const;
     const TechAbility& GetAbility(size_t idx) const;
     size_t GetAbility() const;
 };

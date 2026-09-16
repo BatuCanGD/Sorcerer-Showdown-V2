@@ -5,11 +5,17 @@ enum class ClashWinner : std::uint8_t;
 enum class DomainWinCon : std::uint8_t;
 
 class Character;
+class CurseUser;
+class Technique;
+
 struct battlefield;
 struct AttackStruct;
 struct DamageStruct;
 
 namespace Log {
+    void CharacterInfo(const Character& c);
+    void TechniqueInfo(const Technique& ct);
+
     void Attack(const AttackStruct ats, const Character& c1, const Character& c2);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const ClashWinner winner, const DomainWinCon win_con);

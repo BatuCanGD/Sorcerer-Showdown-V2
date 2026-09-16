@@ -1,8 +1,9 @@
 #include "../header/Game.hpp"
-#include "../header/Utilities/Input.hpp"
+#include "../header/Logger.hpp"
 #include "../header/Creator.hpp"
-#include "../header/CharacterType/Sorcerer.hpp"
 #include "../header/Battlefield.hpp"
+#include "../header/Utilities/Input.hpp"
+#include "../header/CharacterType/Sorcerer.hpp"
 
 #include <print>
 #include <vector>
@@ -20,13 +21,7 @@ bool endgame() {
 
 bool rungameloop(battlefield& bf, const playerchoices& pc) {
     for(const auto& c : bf.battlefield){
-        std::println("{}", c->Name());
-        if (const auto* crs = c->CanUseSorcery()){
-            if (crs->Jujutsu().technique) {
-                crs->Jujutsu().technique->PrintName();
-                crs->Jujutsu().technique->PrintAbilities();
-            }
-        }
+       Log::CharacterInfo(*c);
     }
     return false;
 }

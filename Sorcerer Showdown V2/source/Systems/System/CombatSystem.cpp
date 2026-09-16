@@ -1,7 +1,7 @@
 #include "../../../header/Systems/System/CombatSystem.hpp"
 #include "../../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../../header/Systems/System/DomainSystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
-#include "../../../header/Helper/DomainHelper.hpp"
 #include "../../../header/Battlefield.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
@@ -73,7 +73,7 @@ DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, battlefield& bf) {
     const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
 
     for (const auto& c : bf.battlefield) {
-        const auto& [can_hit, damage] = DomainHelper::CalculateHit(domain, c);
+        const auto& [can_hit, damage] = DomainSystem::CalculateHit(domain, c);
         if (can_hit){
             dst.hit_amount++;
             c->Health(OpType::Expend, damage);

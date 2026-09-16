@@ -1,6 +1,8 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
 #include "../header/CharacterType/Character.hpp"
+#include "../header/CharacterType/CurseUser.hpp"
+#include "../header/Sorcery/Technique.hpp"
 #include "../header/Systems/System/CombatSystem.hpp"
 #include "../header/Systems/System/DomainSystem.hpp"
 
@@ -9,10 +11,26 @@
 #include <vector>
 #include <format>
 
+void Log::CharacterInfo(const Character& c){
+    std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
+    if (const auto* crs = c.CanUseSorcery()) {
+        std::println("CURSED ENERGY: {}", crs->CursedEnergy());
+        std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
+    }
+}
+
+void Log::TechniqueInfo(const Technique &ct){
+    std::println("{}", ct.Name());
+    size_t i = 0;
+    for ([[maybe_unused]] const auto& [id, damage, cost, output, at_type] : ct.Abilities()){
+        std::println("{}:[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
+            ++i, id.color, id.name, id.color.empty() ? "" : "\x1b[0m", damage, cost, output);
+    }
+}
+
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
-    std::string word{};
     const std::string info = std::format("{} took {:.1f} damage from {}!", c1.Name(), ats.damage, c2.Name());
-    
+    std::string word{};
     if (ats.is_critical){
         word.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
     }
@@ -20,7 +38,6 @@ void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c
         word.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
     }
     word.append(info);
-
     std::println("{}", word);
 }
 
@@ -38,7 +55,7 @@ void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
     if (winner == ClashWinner::None) {
         std::println("The domains are locked in battle with each other, cancelling out the sure-hits.");
         return;
-    } 
+    }
     const bool both_domains = winner == ClashWinner::Both;
     if (both_domains) {
         std::print("Both domains have collapsed due to ");
@@ -56,8 +73,8 @@ void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
         case DomainWinCon::Overwhelmed:
             std::println("being overwhelmed by the range!");
             break;
-        default:
-
+        default: 
+            break;
     }
 }
 

@@ -1,5 +1,6 @@
 #include "../../../header/Systems/System/TechniqueSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Logger.hpp"
 #include "../../../header/Utilities/Input.hpp"
 #include "../../../header/Sorcery/Sorcery.hpp"
 #include "../../../header/Sorcery/Technique.hpp"
@@ -26,7 +27,6 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, Te
 }
 
 TechAbility TechniqueSystem::ChooseAbility(Technique& tech) {
-    tech.PrintName();
-    tech.PrintAbilities();
+    Log::TechniqueInfo(tech);
     return tech.GetAbility(get_input<size_t>());
 }
