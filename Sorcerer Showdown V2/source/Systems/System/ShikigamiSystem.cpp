@@ -45,18 +45,18 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
     if (sk.summon_type != SummonType::Active){
         sk.hp.health = std::min(sk.hp.health + sk.hp.regen_speed, sk.hp.max_health);
         if (sk.summon_type == SummonType::Shadow){
-            if (!sk.saved_vals.undone){
-                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.saved_vals); // case 1: if user changes target the values get carried to the target
-                sk.saved_vals.undone = true;
+            if (!sk.saved_val.undone){
+                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.saved_val); // case 1: if user changes target the values get carried to the target
+                sk.saved_val.undone = true;
             }
             return;
         }
-        if (sk.saved_vals.undone){
-            sk.saved_vals.undone = false;
-        }
+    }
+    if (sk.saved_val.undone){
+        sk.saved_val.undone = false;
     }
     const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
-    ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.saved_vals, mult);
+    ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.saved_val, mult);
 }
 
 void ShikigamiSystem::HandleShadow(CurseUser& owner, const SupportType& st, const SavedSupportValues& sv){

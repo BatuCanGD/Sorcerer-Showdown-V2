@@ -37,9 +37,8 @@ struct ShikigamiHealth final {
 struct Shikigami final {
     EntityInfo id;
     ShikigamiHealth hp;
-    SavedSupportValues saved_vals;
+    SavedSupportValues saved_val;
     double cost{1.0};
-    double support_value{1.0}; // provides X amount of support/damage/boost
     SummonType summon_type{SummonType::Shadow};
     SupportType support_type{SupportType::Offense};
 };
