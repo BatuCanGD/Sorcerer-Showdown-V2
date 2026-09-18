@@ -111,7 +111,7 @@ void Log::Death(const Battlefield& bf){
 void Log::d_CharacterInfo(const Character& c){
     std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
     if (const auto* crs = c.CanUseSorcery()) {
-        std::println("CURSED ENERGY: {} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->CursedEnergySys().efficiency));
+        std::println("CURSED ENERGY: {} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
         std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
     }
 }
