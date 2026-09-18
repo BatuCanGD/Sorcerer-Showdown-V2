@@ -4,12 +4,12 @@
 #include <memory>
 
 class Character;
-struct battlefield;
+struct Battlefield;
 
 class BattlefieldHandler final {
     static void PrintSetupValues(const std::unordered_map<int, std::unique_ptr<Character>>& list);
     static bool ManageSetupChoices(int x);
 public:
-    static void SetupBattlefield(battlefield& bf);
-    static void HandleDeadPeople(battlefield& bf);
+    static void SetupBattlefield(Battlefield& bf);
+    static void HandleDeadPeople(Battlefield& bf);
 };

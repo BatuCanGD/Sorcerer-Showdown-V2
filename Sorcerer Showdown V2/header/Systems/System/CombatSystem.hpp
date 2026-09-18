@@ -3,7 +3,7 @@
 
 class Character;
 class CurseUser;
-struct battlefield;
+struct Battlefield;
 struct TechStruct;
 
 struct AttackStruct final {
@@ -32,5 +32,5 @@ struct CombatSystem final  {
     static DamageStruct ResolveDamage(Character& c, globalums::DamageType type, double amount);
     static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
     static TechniqueStruct ResolveTechnique(CurseUser& attacker, Character& attacked);
-    static DomainStruct ResolveDomain(CurseUser& attacker, battlefield& bf);
+    static DomainStruct ResolveDomain(CurseUser& attacker, Battlefield& bf);
 };

@@ -19,7 +19,7 @@ bool BattlefieldHandler::ManageSetupChoices(int x){
     return true;
 }
 
-void BattlefieldHandler::SetupBattlefield(battlefield &bf) {
+void BattlefieldHandler::SetupBattlefield(Battlefield &bf) {
     std::unordered_map<int, std::unique_ptr<Character>> list;
     while(true) {
         PrintSetupValues(list);
@@ -27,7 +27,7 @@ void BattlefieldHandler::SetupBattlefield(battlefield &bf) {
     }
 }
 
-void BattlefieldHandler::HandleDeadPeople(battlefield &bf){
+void BattlefieldHandler::HandleDeadPeople(Battlefield &bf){
     Log::Death(bf);
     std::erase_if(bf.battlefield, [](const auto& s) { 
         return s->Health() <= 0.0;

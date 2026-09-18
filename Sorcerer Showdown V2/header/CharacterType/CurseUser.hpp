@@ -82,6 +82,8 @@ public:
     double Output(ValType type) const noexcept;
     void Output(OpType type, double amount);
 
-    [[nodiscard]] CurseUser* CanUseSorcery() noexcept override;
+    [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
+    CurseUser* CanUseSorcery() noexcept override;
+
     [[nodiscard]] bool HasSixEyes() const noexcept;
 };

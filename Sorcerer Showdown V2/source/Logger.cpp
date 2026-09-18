@@ -77,7 +77,7 @@ void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
     }
 }
 
-void Log::Death(const battlefield& bf){
+void Log::Death(const Battlefield& bf){
     std::vector<std::string> death_messages;
     for (const auto& c : bf.battlefield){
         const double hp = c->Health();

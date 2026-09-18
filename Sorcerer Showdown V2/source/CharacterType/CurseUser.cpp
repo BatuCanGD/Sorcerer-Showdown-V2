@@ -64,6 +64,10 @@ void CurseUser::CursedEnergy(OpType type, double amount) {
     }
 }
 
+const CurseUser* CurseUser::CanUseSorcery() const noexcept {
+    return this;
+}
+
 CurseUser* CurseUser::CanUseSorcery() noexcept {
     return this;
 }

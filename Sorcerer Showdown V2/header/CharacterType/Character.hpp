@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Stuff/CursedTool.hpp"
+#include "../CharacterAI/CharacterAI.hpp"
 #include "../Enums.hpp"
 #include "../Structs.hpp"
 
@@ -14,6 +15,8 @@ struct DamageStruct;
 
 struct CharCtrl final {
     bool is_player{false};
+    TargetingType targeting_type{TargetingType::Mixed};
+    FightingStyle fighting_style{FightingStyle::Mixed};
 };
 
 struct CharState final {
@@ -62,5 +65,6 @@ public:
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
 
-    [[nodiscard]] virtual CurseUser* CanUseSorcery() noexcept;
+    [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
+    virtual CurseUser* CanUseSorcery() noexcept;
 };

@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-struct battlefield {
+struct Battlefield {
     std::vector<std::unique_ptr<Character>> battlefield;
     std::vector<std::unique_ptr<Character>> spawn_next;
 };

@@ -19,7 +19,7 @@ bool endgame() {
     return get_input<int>() == 1;
 }
 
-bool rungameloop(battlefield& bf, const playerchoices& pc) {
+bool rungameloop(Battlefield& bf, const playerchoices& pc) {
     for(const auto& c : bf.battlefield){
        Log::CharacterInfo(*c);
     }
@@ -27,7 +27,7 @@ bool rungameloop(battlefield& bf, const playerchoices& pc) {
 }
 
 bool rungame()  {
-    battlefield bf;
+    Battlefield bf;
     bf.battlefield.push_back(Create::Gojo());
 
     const playerchoices pc{};

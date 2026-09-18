@@ -8,7 +8,7 @@ class Character;
 class CurseUser;
 class Technique;
 
-struct battlefield;
+struct Battlefield;
 struct AttackStruct;
 struct DamageStruct;
 
@@ -19,7 +19,7 @@ namespace Log {
     void Attack(const AttackStruct ats, const Character& c1, const Character& c2);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const ClashWinner winner, const DomainWinCon win_con);
-    void Death(const battlefield& bf);
+    void Death(const Battlefield& bf);
 
     void d_CharacterInfo(const Character& c);
     void d_TechniqueInfo(const Technique& ct);
