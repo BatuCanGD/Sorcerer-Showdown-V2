@@ -25,5 +25,6 @@ enum class DomainWinCon : std::uint8_t {
 namespace DomainSystem {
     std::pair<bool, double> CalculateHit(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c); 
     std::pair<ClashWinner, DomainWinCon> ClashDomains(std::optional<Domain>& first, std::optional<Domain>& second); // use case for already active domains
+    void HandleSureHit(Character& c, const double damage, const bool does_paralyze);
     void ResetDomain(std::optional<Domain>& domain);
 };

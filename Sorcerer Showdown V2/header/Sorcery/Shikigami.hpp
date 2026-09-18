@@ -7,9 +7,19 @@ class Character;
 
 enum class SupportType : std::uint8_t {
     Offense,
-    Boost,
-    Protection,
-    Regeneration
+    Defense,
+    Output,
+    CursedEnergyRegen
+};
+
+struct SavedSupportValues final {
+    double s_strength{};
+    double s_durability{};
+    double s_output{};
+    double s_ce_regen{};
+    double s_hp_regen{};
+    bool saved{};
+    bool undone{};
 };
 
 enum class SummonType : std::uint8_t {
@@ -18,26 +28,18 @@ enum class SummonType : std::uint8_t {
     Active      // full support   | vulnerable
 };
 
-struct HealthValues final {
+struct ShikigamiHealth final {
     double health{1.0};
     double max_health{1.0};
     double regen_speed{1.0};
 };
 
-struct ShikigamiValues final {
-    double cost{1.0};
-    double support_value{1.0}; // provides X amount of support/damage/boost
-};
-
-struct ShikigamiType final {
-    SummonType summon_type{SummonType::Shadow};
-    SupportType support_type{SupportType::Offense};
-};
-
 struct Shikigami final {
     EntityInfo id;
-    HealthValues hp;
-    Character* target{nullptr}; // focuses support on the target whether it be its owner or an enemy
-    ShikigamiValues val;
-    ShikigamiType types;
+    ShikigamiHealth hp;
+    SavedSupportValues saved_vals;
+    double cost{1.0};
+    double support_value{1.0}; // provides X amount of support/damage/boost
+    SummonType summon_type{SummonType::Shadow};
+    SupportType support_type{SupportType::Offense};
 };

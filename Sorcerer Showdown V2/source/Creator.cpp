@@ -4,7 +4,6 @@
 #include "../header/Utilities/Random.hpp"
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
-#include "../header/CharacterType/Sorcerer.hpp"
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 

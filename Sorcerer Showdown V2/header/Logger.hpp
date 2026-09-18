@@ -20,4 +20,7 @@ namespace Log {
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const ClashWinner winner, const DomainWinCon win_con);
     void Death(const battlefield& bf);
+
+    void d_CharacterInfo(const Character& c);
+    void d_TechniqueInfo(const Technique& ct);
 }

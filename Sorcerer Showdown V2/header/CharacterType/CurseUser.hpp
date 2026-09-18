@@ -1,8 +1,8 @@
 #pragma once
 #include "Character.hpp"
 
-#include "../Stuff/Shikigami.hpp"
-#include "../Stuff/BindingVow.hpp"
+#include "../Sorcery/Shikigami.hpp"
+#include "../Sorcery/BindingVow.hpp"
 #include "../Sorcery/Technique.hpp"
 #include "../Sorcery/Domain.hpp"
 #include "../Sorcery/Neutralizer.hpp"
@@ -63,14 +63,14 @@ protected:
     SorceryTrait traits;
 public:
     [[nodiscard]] const JujutsuSystem& Jujutsu() const noexcept;
-    [[nodiscard]] const CursedEnergySystem& CursedEnergySys() const noexcept;
+    [[nodiscard]] const CursedEnergySystem& Sorcery() const noexcept;
     [[nodiscard]] const CurseUserOutput& Output() const noexcept;
     [[nodiscard]] const CurseUserAmplification& Amplification() const noexcept;
     [[nodiscard]] const SorceryTrait& Traits() const noexcept;
     [[nodiscard]] const ReverseCTSystem& RCTSystem() const noexcept;
 
     JujutsuSystem& Jujutsu() noexcept;
-    CursedEnergySystem& CursedEnergySys() noexcept;
+    CursedEnergySystem& Sorcery() noexcept;
     CurseUserOutput& Output() noexcept;
     CurseUserAmplification& Amplification() noexcept;
     SorceryTrait& Traits() noexcept;
@@ -82,6 +82,6 @@ public:
     double Output(ValType type) const noexcept;
     void Output(OpType type, double amount);
 
-    [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
+    [[nodiscard]] CurseUser* CanUseSorcery() noexcept override;
     [[nodiscard]] bool HasSixEyes() const noexcept;
 };

@@ -8,10 +8,10 @@ const JujutsuSystem& CurseUser::Jujutsu() const noexcept {
 JujutsuSystem& CurseUser::Jujutsu() noexcept {
     return jujutsu;
 }
-const CursedEnergySystem& CurseUser::CursedEnergySys() const noexcept {
+const CursedEnergySystem& CurseUser::Sorcery() const noexcept {
     return ce_system;
 }
-CursedEnergySystem& CurseUser::CursedEnergySys() noexcept {
+CursedEnergySystem& CurseUser::Sorcery() noexcept {
     return ce_system;
 }
 const CurseUserAmplification& CurseUser::Amplification() const noexcept {
@@ -64,7 +64,7 @@ void CurseUser::CursedEnergy(OpType type, double amount) {
     }
 }
 
-const CurseUser* CurseUser::CanUseSorcery() const noexcept {
+CurseUser* CurseUser::CanUseSorcery() noexcept {
     return this;
 }
 

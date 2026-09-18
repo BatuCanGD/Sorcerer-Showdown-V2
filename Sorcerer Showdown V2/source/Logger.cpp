@@ -5,28 +5,27 @@
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Systems/System/CombatSystem.hpp"
 #include "../header/Systems/System/DomainSystem.hpp"
+#include "../header/Systems/Stringet.hpp"
 
 #include <print>
 #include <string>
 #include <vector>
 #include <format>
 
-void Log::CharacterInfo(const Character& c){
-    std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
-    if (const auto* crs = c.CanUseSorcery()) {
-        std::println("CURSED ENERGY: {}", crs->CursedEnergy());
-        std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
+
+void Log::CharacterInfo(const Character &c){
+    std::println("[{}]", c.Name());
+    std::print("HP: [{}] ", Stringet::HealthStr(c.Health()));
+    if (const auto* crs = c.CanUseSorcery()){
+        std::print("CE: [{}] | EFFICIENCY: [] ", Stringet::OutputStr(crs->Output().max_output_potential));
     }
+    std::println();
 }
 
 void Log::TechniqueInfo(const Technique &ct){
-    std::println("{}", ct.Name());
-    size_t i = 0;
-    for ([[maybe_unused]] const auto& [id, damage, cost, output, at_type] : ct.Abilities()){
-        std::println("{}:[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
-            ++i, id.color, id.name, id.color.empty() ? "" : "\x1b[0m", damage, cost, output);
-    }
+
 }
+
 
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
     const std::string info = std::format("{} took {:.1f} damage from {}!", c1.Name(), ats.damage, c2.Name());
@@ -106,5 +105,21 @@ void Log::Death(const battlefield& bf){
     }
     for (const auto& m : death_messages) {
         std::println("{}", m);
+    }
+}
+
+void Log::d_CharacterInfo(const Character& c){
+    std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
+    if (const auto* crs = c.CanUseSorcery()) {
+        std::println("CURSED ENERGY: {} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->CursedEnergySys().efficiency));
+        std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
+    }
+}
+
+void Log::d_TechniqueInfo(const Technique &ct){
+    std::println("{}", ct.Name());
+    for ([[maybe_unused]] const auto& [id, damage, cost, output, at_type] : ct.Abilities()){
+        std::println("[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
+            id.color, id.name, id.color.empty() ? "" : "\x1b[0m", damage, cost, output);
     }
 }

@@ -81,6 +81,6 @@ AttackStruct Character::Attack(Character& cc){
     return CombatSystem::ResolveAttacking(*this, cc);
 }
 
-const CurseUser* Character::CanUseSorcery() const noexcept {
+CurseUser* Character::CanUseSorcery() noexcept {
     return nullptr;
 }

@@ -1,7 +1,7 @@
 #pragma once
-#include "../CharacterType/CurseUser.hpp"
+#include "../../CharacterType/CurseUser.hpp"
 
-namespace Sorcery {
+namespace SorcerySystem {
     double EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept;
     double ApplySixEyes(double amount);
 }

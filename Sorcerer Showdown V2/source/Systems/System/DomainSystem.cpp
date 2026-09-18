@@ -82,6 +82,13 @@ std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Do
     return {winner, win_con};
 }
 
+void DomainSystem::HandleSureHit(Character &c, const double damage, const bool does_paralyze){
+    c.Health(OpType::Expend, damage);
+    if (does_paralyze){
+        c.State().is_stunned = true;
+    }
+}
+
 void DomainSystem::ResetDomain(std::optional<Domain>& domain){
     domain->is_active = false;
     domain->health = domain->max_health;

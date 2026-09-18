@@ -1,7 +1,6 @@
-#include "../../header/Sorcery/Sorcery.hpp"
+#include "../../../header/Systems/System/SorcerySystem.hpp"
 
-
-double Sorcery::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept {
+double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept {
     switch(type){
         case CursedEnergySystem::Efficiency::Absolute: return 0.40;
         case CursedEnergySystem::Efficiency::Ultimate: return 0.55;
@@ -15,6 +14,6 @@ double Sorcery::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexce
     return 1.0;
 }
 
-double Sorcery::ApplySixEyes(double amount){
+double SorcerySystem::ApplySixEyes(double amount){
     return amount * 0.25;
 }

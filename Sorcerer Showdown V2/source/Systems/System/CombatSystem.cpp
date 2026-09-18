@@ -33,7 +33,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
         if (crs->Amplification().is_usable && crs->Amplification().is_active){
             attack_type = globalums::DamageType::BypassTech;
         }
-        if (get_random<int>(1, 100) <= crs->CursedEnergySys().bf_chance){
+        if (get_random<int>(1, 100) <= crs->Sorcery().bf_chance){
             attack_damage *= 2.5;
             is_blackflash = true;
         }
@@ -67,21 +67,17 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, Character& a
 }
 
 DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, battlefield& bf) {
-    DomainStruct dst{};
-    ResourceHandler::UsedDomain(attacker);
+    ResourceHandler::TickDomain(attacker);
     const auto& domain = attacker.Jujutsu().domain;
     const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
+    int hit_amount = 0;
 
     for (const auto& c : bf.battlefield) {
         const auto& [can_hit, damage] = DomainSystem::CalculateHit(domain, c);
         if (can_hit){
-            dst.hit_amount++;
-            c->Health(OpType::Expend, damage);
-            if (does_paralyze) {
-                c->State().is_stunned = true;
-            }
+            hit_amount++;
+            DomainSystem::HandleSureHit(*c, damage, does_paralyze);
         }
     }
-
-    return dst;
+    return {hit_amount, does_paralyze};
 }

@@ -62,5 +62,5 @@ public:
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);
 
-    [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
+    [[nodiscard]] virtual CurseUser* CanUseSorcery() noexcept;
 };

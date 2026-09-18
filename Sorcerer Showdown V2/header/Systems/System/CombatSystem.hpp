@@ -25,6 +25,7 @@ struct TechniqueStruct final {
 
 struct DomainStruct final {
     int hit_amount;
+    bool did_paralyze;
 };
 
 struct CombatSystem final  {
