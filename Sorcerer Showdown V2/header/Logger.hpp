@@ -13,8 +13,10 @@ struct AttackStruct;
 struct DamageStruct;
 
 namespace Log {
+    enum class CTLogType : std::uint8_t { Name, Abilities, Both };
+
     void CharacterInfo(const Character& c);
-    void TechniqueInfo(const Technique& ct);
+    void TechniqueInfo(const Technique& ct, const CTLogType& log_type = CTLogType::Name);
 
     void Attack(const AttackStruct ats, const Character& c1, const Character& c2);
     void Damage(const DamageStruct dms, const Character& attacked);

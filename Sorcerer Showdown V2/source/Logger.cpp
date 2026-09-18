@@ -15,15 +15,31 @@
 
 void Log::CharacterInfo(const Character &c){
     std::println("[{}]", c.Name());
-    std::print("HP: [{}] ", Stringet::HealthStr(c.Health()));
+    std::print("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
-        std::print("CE: [{}] | EFFICIENCY: [] ", Stringet::OutputStr(crs->Output().max_output_potential));
+        std::println("CE: [{}] | EFFICIENCY: [] ", Stringet::OutputStr(crs->Output().max_output_potential), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
+        if (const auto& tech = crs->Jujutsu().technique){
+            Log::TechniqueInfo(*tech);
+        }
     }
     std::println();
 }
 
-void Log::TechniqueInfo(const Technique &ct){
+void Log::TechniqueInfo(const Technique &ct, const CTLogType& log_type){
+    const bool log_name      = log_type == CTLogType::Name       || log_type == CTLogType::Both;
+    const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
 
+    if (log_name){
+        std::println("TECHNIQUE: [{}]", ct.Name());
+    }
+    if (log_abilities){
+        std::println("ABILITIES");
+        size_t i = 0;
+        for (const auto& c : ct.Abilities()){
+            std::println("{}:[{}{}{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
+                ++i, c.id.color, c.id.name, c.id.color.empty() ? "" : "\x1b[0m", c.damage, c.output, c.cost);
+        }
+    }
 }
 
 
@@ -111,7 +127,7 @@ void Log::Death(const Battlefield& bf){
 void Log::d_CharacterInfo(const Character& c){
     std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
     if (const auto* crs = c.CanUseSorcery()) {
-        std::println("CURSED ENERGY: {} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
+        std::println("CURSED ENERGY: {:.1f} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
         std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
     }
 }

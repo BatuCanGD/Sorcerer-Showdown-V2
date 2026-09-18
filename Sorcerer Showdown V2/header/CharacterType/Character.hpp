@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Stuff/CursedTool.hpp"
-#include "../CharacterAI/CharacterAI.hpp"
+#include "../AI.hpp"
 #include "../Enums.hpp"
 #include "../Structs.hpp"
 
@@ -17,6 +17,7 @@ struct CharCtrl final {
     bool is_player{false};
     TargetingType targeting_type{TargetingType::Mixed};
     FightingStyle fighting_style{FightingStyle::Mixed};
+    ResourceUsage resource_usage{ResourceUsage::Mixed};
 };
 
 struct CharState final {
