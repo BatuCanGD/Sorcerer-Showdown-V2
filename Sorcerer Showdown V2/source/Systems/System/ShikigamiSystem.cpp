@@ -46,7 +46,7 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
         sk.hp.health = std::min(sk.hp.health + sk.hp.regen_speed, sk.hp.max_health);
         if (sk.summon_type == SummonType::Shadow){
             if (!sk.saved_val.undone){
-                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.saved_val); // case 1: if user changes target the values get carried to the target
+                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.saved_val);
                 sk.saved_val.undone = true;
             }
             return;
