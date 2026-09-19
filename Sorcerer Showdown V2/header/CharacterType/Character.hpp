@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Stuff/StatusEffects.hpp"
 #include "../Stuff/CursedTool.hpp"
 #include "../AI.hpp"
 #include "../Enums.hpp"
@@ -21,6 +22,7 @@ struct CharCtrl final {
 };
 
 struct CharState final {
+    std::vector<StatusEffect> status_effects;
     double health{1.0};
     double max_health{1.0};
     double durability{1.0};

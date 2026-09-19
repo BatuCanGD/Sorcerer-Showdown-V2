@@ -1,8 +1,11 @@
 #pragma once
+#include <utility>
 #include <cstdint>
 
 class Character;
 class Technique;
+
+struct CursedTool;
 struct BindingVow;
 struct Domain;
 struct Shikigami;
@@ -32,11 +35,13 @@ struct AIConclusion final {
     BindingVow* used_binding_vow;
     Shikigami* used_shikigami;
     Technique* used_technique;
+    CursedTool* used_tool;
     Domain* used_domain;
     bool attack_did_hit;
 };
 
 namespace AI {
     Character* GetTarget(const Character& user, const TargetingType tp, Battlefield& bf);
+    std::pair<bool, CursedTool> asd();
     AIConclusion Fight(Character& user, Battlefield& bf, const FightingStyle fs, const ResourceUsage rs);
 };

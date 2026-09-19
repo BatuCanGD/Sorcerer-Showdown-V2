@@ -1,6 +1,16 @@
 #include "../../header/Systems/ResourceHandler.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+
+void ResourceHandler::TickStatusEffects(Character &character){
+    for (auto& c : character.State().status_effects){
+        c.turn_amount--;
+    }
+    std::erase_if(character.State().status_effects, [&](const auto& c){
+        return c.turn_amount <= 0;
+    });
+}
+
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
     curse_user.CursedEnergy(OpType::Add, curse_user.Sorcery().regeneration_amount);
 }
