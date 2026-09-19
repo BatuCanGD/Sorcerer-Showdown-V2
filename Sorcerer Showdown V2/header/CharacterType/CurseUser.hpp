@@ -51,9 +51,7 @@ struct ReverseCTSystem final {
     RCTLevel rct_level{RCTLevel::Adept};
 };
 
-class CurseUser : public Character {
-   friend struct CharacterEditor; 
-   friend struct CombatSystem;
+class CurseUser final : public Character {
 protected:
     JujutsuSystem jujutsu;
     CursedEnergySystem ce_system;

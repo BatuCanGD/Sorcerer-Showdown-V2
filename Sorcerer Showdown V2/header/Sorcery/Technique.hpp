@@ -18,8 +18,6 @@ struct TechBarrier final {
 };
 
 class Technique final {
-    friend struct TechniqueEditor;
-    friend struct TechniqueSystem;
 protected:
     std::vector<TechAbility> abilities;
     TechBarrier barrier;
@@ -27,9 +25,14 @@ protected:
 public:
     [[nodiscard]] const EntityInfo& Identity() const noexcept;
     [[nodiscard]] const TechBarrier& Barrier() const noexcept;
+    [[nodiscard]] const std::vector<TechAbility>& Abilities() const noexcept;
+
+    EntityInfo& Identity() noexcept;
+    TechBarrier& Barrier() noexcept;
+    std::vector<TechAbility>& Abilities() noexcept;
 
     const std::string Name() const noexcept;
-    const std::vector<TechAbility> Abilities() const noexcept;
+
 
     void Barrier(bool set);
     bool HasBarrier() const noexcept;

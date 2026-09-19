@@ -19,7 +19,7 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
     const double strength    = get_random<double>(1.0, 100.0);
     const double durability  = get_random<double>(1.0, 100.0);
 
-    const CharState stats {health, health, durability, strength};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
@@ -36,7 +36,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double strength   = 115.0;
     constexpr double durability = 75.0;
 
-    const CharState stats {health, health, durability, strength};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
@@ -64,7 +64,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr double strength   = 185.0;
     constexpr double durability = 300.0;
 
-    const CharState stats = {health, health, durability, strength};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 5000.0;
 

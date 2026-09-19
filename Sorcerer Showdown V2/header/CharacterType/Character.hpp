@@ -39,8 +39,6 @@ struct CharInv final {
 };
 
 class Character {
-    friend struct CharacterEditor;
-    friend struct CombatSystem;
 protected:
     EntityInfo identity;
     CharCtrl control;
