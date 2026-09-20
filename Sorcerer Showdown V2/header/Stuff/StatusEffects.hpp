@@ -22,6 +22,7 @@ enum class EffectForType : std::uint8_t {
 
 struct StatusEffect final {
     EntityInfo id;
+    double saved_value{1.0};
     double effect_amount{1.0};
     int turn_amount{3};
     EffectType effect_type{EffectType::None};

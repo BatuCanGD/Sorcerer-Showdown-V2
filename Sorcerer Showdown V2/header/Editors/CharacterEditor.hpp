@@ -8,7 +8,7 @@
 class Character;
 class CurseUser;
 
-struct WeaponType;
+struct CursedTool;
 struct Shikigami;
 struct BindingVow;
 struct EntityId;
@@ -24,7 +24,7 @@ struct CharacterEditor final {
     static void SetStrength(Character& c, double str);
     // inventory
     enum class Placement : std::uint8_t { OnHand, Offhand, Inventory };
-    static void GiveCharacterTool(Character& c, std::optional<WeaponType> tool, Placement place);
+    static void GiveCharacterTool(Character& c, std::optional<CursedTool> tool, Placement place);
     static void SetInventoryAccess(Character& c, bool t);
     /*                        Character End                       */
     // inside curse user

@@ -32,9 +32,9 @@ struct CharState final {
 };
 
 struct CharInv final {
-    std::vector<WeaponType>   inventory;
-    std::optional<WeaponType> stored_tool{};
-    std::optional<WeaponType> current_tool{};
+    std::vector<CursedTool>   inventory;
+    std::optional<CursedTool> stored_tool{};
+    std::optional<CursedTool> current_tool{};
     bool has_access_to_inventory{false};
 };
 

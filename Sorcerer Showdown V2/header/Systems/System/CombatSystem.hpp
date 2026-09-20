@@ -4,12 +4,19 @@
 class Character;
 class CurseUser;
 struct Battlefield;
+struct StatusEffect;
 struct TechStruct;
 
 struct AttackStruct final {
     double damage;
     bool is_critical;
     bool is_blackflash;
+};
+
+struct ToolStruct final {
+    double damage;
+    bool did_hit;
+    StatusEffect* applied_effect;
 };
 
 struct DamageStruct final {
@@ -29,7 +36,11 @@ struct DomainStruct final {
 };
 
 struct CombatSystem final  {
+    template <typename T>
+    T ResolveOptions(Character& c, Character& ct);
+
     static DamageStruct ResolveDamage(Character& c, globalums::DamageType type, double amount);
+    static ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
     static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
     static TechniqueStruct ResolveTechnique(CurseUser& attacker, Character& attacked);
     static DomainStruct ResolveDomain(CurseUser& attacker, Battlefield& bf);

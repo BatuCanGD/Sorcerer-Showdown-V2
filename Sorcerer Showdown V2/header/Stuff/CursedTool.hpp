@@ -3,7 +3,7 @@
 #include "../Structs.hpp"
 #include "StatusEffects.hpp"
 
-struct WeaponType {
+struct CursedTool {
     EntityInfo identity;
     double damage{1.0};
     StatusEffect given_effect{};

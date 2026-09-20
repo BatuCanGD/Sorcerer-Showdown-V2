@@ -8,10 +8,18 @@
 
 #include <cmath>
 
+template <typename T>
+T CombatSystem::ResolveOptions(Character& c, Character& ct){
+    if (c.Equipment().current_tool){
+        return CombatSystem::ResolveCursedTool(c, ct);
+    }
+    return CombatSystem::ResolveAttacking(c, ct);
+}
+
 DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
     DamageStruct ds{};
     ds.negated_damage = amount;
-    amount = amount * (0.10 + 0.90 * std::exp(-c.state.durability / 450.0));
+    amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
     if (auto crs = c.CanUseSorcery()){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){

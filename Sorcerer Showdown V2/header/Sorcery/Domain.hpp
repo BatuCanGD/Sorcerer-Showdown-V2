@@ -30,7 +30,7 @@ struct Domain final {
     double durability{1.0};
     double damage{1.0};
     double cost{1.0};
-    unsigned short range{10};
+    int range{10};
     bool is_active{false};
 
     DomainType type{DomainType::Closed};

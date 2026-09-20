@@ -29,7 +29,7 @@ void CharacterEditor::SetStrength(Character &c, double str){
     c.State().strength = str;
 }
 // inventory
-void CharacterEditor::GiveCharacterTool(Character& c, std::optional<WeaponType> tool, Placement place){
+void CharacterEditor::GiveCharacterTool(Character& c, std::optional<CursedTool> tool, Placement place){
     switch(place){
         case Placement::OnHand:
             if (c.Equipment().current_tool){

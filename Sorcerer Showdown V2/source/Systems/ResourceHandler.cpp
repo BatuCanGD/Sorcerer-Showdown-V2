@@ -5,6 +5,9 @@
 void ResourceHandler::TickStatusEffects(Character &character){
     for (auto& c : character.State().status_effects){
         c.turn_amount--;
+        if (c.turn_amount <= 0){
+            
+        }
     }
     std::erase_if(character.State().status_effects, [&](const auto& c){
         return c.turn_amount <= 0;

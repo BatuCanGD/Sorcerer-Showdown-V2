@@ -4,11 +4,12 @@
 #include "../header/Utilities/Random.hpp"
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
+#include "../header/Stuff/CursedTool.hpp"
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 
 #include <memory>
-
+#include <format>
 // base characters
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
@@ -54,7 +55,6 @@ std::unique_ptr<CurseUser> Create::Mahito() {
 
     return c;
 }
-// sorcerers
 std::unique_ptr<CurseUser> Create::Gojo() {
     auto c = std::make_unique<CurseUser>();
 
@@ -132,5 +132,41 @@ Technique Create::IdleTransfiguration() {
     
     TechniqueEditor::AddAbility(c, transfiguration);
     
+    return c;
+}
+
+// cursed tools
+
+CursedTool Create::InvertedSpearOfHeaven() {
+    CursedTool c{};
+
+    const EntityInfo id = {"Inverted Spear Of Heaven", "", "A Cursed Tool that negates Techniques"};
+
+    constexpr double damage = 100.0;
+
+    c.identity = id;
+    c.damage = damage;
+    c.damage_type = globalums::DamageType::BypassTech;
+    c.given_effect = Create::BleedEffect();
+
+    return c;
+}
+
+// status effects
+
+StatusEffect Create::BleedEffect() {
+    StatusEffect c{};
+
+    constexpr double severity_amount = 25.0;
+    constexpr int effect_turn_amount = 3;
+
+    const EntityInfo id = { "Bleeding...", "\x1b[38;5;9", std::format("Drains {:.1f}HP per turn", severity_amount)};
+
+    c.id = id;
+    c.effect_amount = severity_amount;
+    c.effect_type = EffectType::Drain;
+    c.effect_for_type = EffectForType::Health;
+    c.turn_amount = effect_turn_amount;
+
     return c;
 }
