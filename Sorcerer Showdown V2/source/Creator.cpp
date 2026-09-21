@@ -164,7 +164,7 @@ StatusEffect Create::BleedEffect() {
 
     c.id = id;
     c.effect_amount = severity_amount;
-    c.effect_type = EffectType::Drain;
+    c.effect_type = EffectType::Decrease;
     c.effect_for_type = EffectForType::Health;
     c.turn_amount = effect_turn_amount;
 

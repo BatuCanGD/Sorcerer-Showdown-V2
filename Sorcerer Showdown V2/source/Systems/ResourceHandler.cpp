@@ -1,15 +1,13 @@
 #include "../../header/Systems/ResourceHandler.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include <vector>
 
-void ResourceHandler::TickStatusEffects(Character &character){
-    for (auto& c : character.State().status_effects){
+void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
+    for (auto& c : ste){
         c.turn_amount--;
-        if (c.turn_amount <= 0){
-            
-        }
     }
-    std::erase_if(character.State().status_effects, [&](const auto& c){
+    std::erase_if(ste, [&](const auto& c){
         return c.turn_amount <= 0;
     });
 }
@@ -22,10 +20,10 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
         ShikigamiSystem::TickShikigami(c, curse_user);
     }
 }
-void ResourceHandler::TickNeutralizer(CurseUser& curse_user){
+void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
     curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain_neutralizer->cost);
 }
-void ResourceHandler::TickDomain(CurseUser& curse_user){
+void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
     curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain->cost);
 }
 void ResourceHandler::TickRCT(CurseUser& curse_user) {

@@ -156,6 +156,46 @@ const std::string Stringet::EfficiencyStr(const CursedEnergySystem::Efficiency& 
     }
     return clr + s + "\x1b[0m";
 }
+
+const std::string Stringet::OutputStr(const double op) {
+    std::string clr{"\x1b[38;5;9m"};
+    std::string s{"Unknown"};
+
+    if (op < 25.0){
+        s = "EXTREMELY LOW";
+        clr = "\x1b[38;5;8m";
+    }else if (op < 50.0){
+        s = "VERY LOW";
+        clr = "\x1b[38;5;1m";
+    }else if (op < 75.0){
+        s = "LOW";
+        clr = "\x1b[38;5;3m";
+    }else if (op < 100.0){
+        s = "BELOW AVERAGE";
+        clr = "\x1b[38;5;7m";
+    }else if (op < 150.0){
+        s = "AVERAGE";
+        clr = "\x1b[38;5;2m";
+    }else if (op < 200.0){
+        s = "HIGH";
+        clr = "\x1b[38;5;10m";
+    }else if (op < 300.0){
+        s = "VERY HIGH";
+        clr = "\x1b[38;5;14m";
+    }else if (op < 500.0){
+        s = "EXCEPTIONAL";
+        clr = "\x1b[38;5;13m";
+    }else if (op < 1000.0){
+        s = "SUPREME";
+        clr = "\x1b[38;5;5m";
+    }else {
+        s = "ABSOLUTE";
+        clr = "\x1b[48;5;5m\x1b[1m";
+    }
+    return clr + s + "\x1b[0m";
+}
+
+
 const std::string Stringet::OutputCmpStr(const double cur, const double max){
     std::string clr{"\x1b[38;5;9m"};
     if (cur > max * 0.75){

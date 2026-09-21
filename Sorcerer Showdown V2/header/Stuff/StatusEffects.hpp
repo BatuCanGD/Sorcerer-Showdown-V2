@@ -4,10 +4,10 @@
 
 enum class EffectType : std::uint8_t {
     None,
-    Drain, // bleed effects
+    Decrease, // bleed effects
     Increase,
     Buff,
-    Debuff // temporary debuff
+    Debuff // temporary one time effects
 };
 
 enum class EffectForType : std::uint8_t {
