@@ -6,6 +6,7 @@ class CurseUser;
 struct Battlefield;
 struct StatusEffect;
 struct TechStruct;
+struct TechAbility;
 
 struct AttackStruct final {
     double damage;
@@ -36,12 +37,9 @@ struct DomainStruct final {
 };
 
 struct CombatSystem final  {
-    template <typename T>
-    T ResolveOptions(Character& c, Character& ct);
-
     static DamageStruct ResolveDamage(Character& c, globalums::DamageType type, double amount);
     static ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
     static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
-    static TechniqueStruct ResolveTechnique(CurseUser& attacker, Character& attacked);
+    static TechniqueStruct ResolveTechnique(CurseUser& attacker, const TechAbility& tc, Character& attacked);
     static DomainStruct ResolveDomain(CurseUser& attacker, Battlefield& bf);
 };

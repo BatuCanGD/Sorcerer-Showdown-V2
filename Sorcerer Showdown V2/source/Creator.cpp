@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <format>
-// base characters
+// Base Characters
 std::unique_ptr<Character> Create::TranfiguredHuman() {
     auto c = std::make_unique<Character>();
 
@@ -27,7 +27,7 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 
     return c;
 }
-// curse users
+// Curse Users
 std::unique_ptr<CurseUser> Create::Mahito() {
     auto c = std::make_unique<CurseUser>();
 
@@ -37,13 +37,14 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double strength   = 115.0;
     constexpr double durability = 75.0;
 
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
-    Technique technique = Create::IdleTransfiguration();
-    Domain domain{};
+    const Technique technique = Create::IdleTransfiguration();
+    const Domain domain{};
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
@@ -64,6 +65,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr double strength   = 185.0;
     constexpr double durability = 300.0;
 
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 5000.0;
@@ -71,9 +73,9 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
     constexpr auto rct_level = ReverseCTSystem::RCTLevel::Absolute;
 
-    Technique technique{Create::Limitless()};
-    Domain domain{};
-    Neutralizer neutralizer{};
+    const Technique technique{Create::Limitless()};
+    const Domain domain{};
+    const Neutralizer neutralizer{};
 
     CharacterEditor::SetIdentity(*c, id);
     CharacterEditor::SetStats(*c, stats);
@@ -94,10 +96,10 @@ std::unique_ptr<CurseUser> Create::Gojo() {
 Technique Create::Limitless() {
     Technique c{};
 
-    EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
-    EntityInfo blue_id = {"Blue", "\x1b[38;5;20m", "The power to attract"};
-    EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
-    EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
+    const EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
+    const EntityInfo blue_id = {"Blue", "\x1b[38;5;20m", "The power to attract"};
+    const EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
+    const EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
     TechniqueEditor::SetIdentity(c, id);
 
@@ -106,9 +108,9 @@ Technique Create::Limitless() {
     constexpr double red_damage     = 175.0, red_cost       = 650.0, red_output     = 120.0;
     constexpr double purple_damage  = 300.0, purple_cost    = 1250.0,purple_output  = 200.0;
 
-    TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
-    TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
-    TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
+    const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
+    const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
+    const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
     
     TechniqueEditor::AddAbility(c, blue);
     TechniqueEditor::AddAbility(c, red);
@@ -128,7 +130,7 @@ Technique Create::IdleTransfiguration() {
     constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
-    TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
+    const TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
     
     TechniqueEditor::AddAbility(c, transfiguration);
     

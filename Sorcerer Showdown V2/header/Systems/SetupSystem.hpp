@@ -4,6 +4,7 @@
 #include <string>
 
 struct Battlefield;
+class Character;
 
 enum class SkipType : std::uint8_t {
     None,
@@ -11,9 +12,11 @@ enum class SkipType : std::uint8_t {
     All
 };
 
-namespace GameEngine {
+namespace SetupSystem {
     SkipType GetPlayerSkipType() noexcept;
-    bool SetupLoop(Battlefield& bf);
+    Character* SetupLoop(Battlefield& bf);
+    void LogSetupOptions();
+    bool SetupOptions(Battlefield& bf, Character*& c);
     void BattlefieldSetup(Battlefield& bf);
     std::map<std::string, int> SetList(const Battlefield& bf);
 }

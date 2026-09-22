@@ -2,12 +2,12 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
 #include "../header/Utilities/Input.hpp"
-#include "../header/Systems/GameEngine.hpp"
+#include "../header/Systems/SetupSystem.hpp"
 
 #include <print>
 
 struct playerchoices {
-    bool user_playing{false};
+    Character* user_character{nullptr};
     SkipType skip_type{SkipType::None};
 };
 
@@ -31,8 +31,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc) {
 
 bool rungame()  {
     Battlefield bf;
-    const playerchoices pc = {GameEngine::SetupLoop(bf), GameEngine::GetPlayerSkipType()};
-
+    const playerchoices pc = {SetupSystem::SetupLoop(bf), SetupSystem::GetPlayerSkipType()};
     while(rungameloop(bf, pc));
     return endgame();
 }

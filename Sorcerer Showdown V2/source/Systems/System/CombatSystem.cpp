@@ -8,14 +8,6 @@
 
 #include <cmath>
 
-template <typename T>
-T CombatSystem::ResolveOptions(Character& c, Character& ct){
-    if (c.Equipment().current_tool){
-        return CombatSystem::ResolveCursedTool(c, ct);
-    }
-    return CombatSystem::ResolveAttacking(c, ct);
-}
-
 DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
     DamageStruct ds{};
     ds.negated_damage = amount;
@@ -51,16 +43,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
     return {attack_damage, is_critical, is_blackflash};
 }
 
-TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, Character& attacked){
-    auto& tech = attacker.Jujutsu().technique;
-    TechAbility chosen_ct;
-
-    if (attacker.Control().is_player){
-        chosen_ct = TechniqueSystem::ChooseAbility(tech.value());
-    }else{
-        chosen_ct = tech->GetAbility(get_random<size_t>(0 ,tech->GetAbility() - 1));
-    }
-
+TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAbility& chosen_ct, Character& attacked){
     const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 

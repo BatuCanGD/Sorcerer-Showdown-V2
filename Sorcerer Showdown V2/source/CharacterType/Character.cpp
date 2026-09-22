@@ -24,11 +24,11 @@ const CharInv& Character::Equipment() const noexcept {
 CharInv& Character::Equipment() noexcept {
     return equipment;
 }
-const CharCtrl& Character::Control() const noexcept {
-    return control;
+const BattleIQ& Character::Style() const noexcept {
+    return style;
 }
-CharCtrl& Character::Control() noexcept {
-    return control;
+BattleIQ& Character::Style() noexcept {
+    return style;
 }
 
 std::string Character::Name() const noexcept {

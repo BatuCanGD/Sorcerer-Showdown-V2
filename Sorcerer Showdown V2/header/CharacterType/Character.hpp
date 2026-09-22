@@ -14,8 +14,7 @@ class CurseUser;
 struct AttackStruct;
 struct DamageStruct;
 
-struct CharCtrl final {
-    bool is_player{false};
+struct BattleIQ final {
     TargetingType targeting_type{TargetingType::Mixed};
     FightingStyle fighting_style{FightingStyle::Mixed};
     ResourceUsage resource_usage{ResourceUsage::Mixed};
@@ -41,7 +40,7 @@ struct CharInv final {
 class Character {
 protected:
     EntityInfo identity;
-    CharCtrl control;
+    BattleIQ style;
     CharState state;
     CharInv equipment;
 public:
@@ -49,12 +48,12 @@ public:
     virtual ~Character();
 
     [[nodiscard]] const EntityInfo& Identity() const noexcept;
-    [[nodiscard]] const CharCtrl& Control() const noexcept;
+    [[nodiscard]] const BattleIQ& Style() const noexcept;
     [[nodiscard]] const CharState& State() const noexcept;
     [[nodiscard]] const CharInv& Equipment() const noexcept;
 
     EntityInfo& Identity() noexcept;
-    CharCtrl& Control() noexcept;
+    BattleIQ& Style() noexcept;
     CharState& State() noexcept;
     CharInv& Equipment() noexcept;
 
