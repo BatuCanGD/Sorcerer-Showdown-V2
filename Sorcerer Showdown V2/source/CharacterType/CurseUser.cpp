@@ -83,3 +83,7 @@ const ReverseCTSystem& CurseUser::RCTSystem() const noexcept{
 ReverseCTSystem& CurseUser::RCTSystem() noexcept{
     return rct_system;
 }
+
+std::unique_ptr<Character> CurseUser::Clone() const {
+    return std::make_unique<CurseUser>(*this);
+}

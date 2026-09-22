@@ -6,7 +6,6 @@
 #include "../Sorcery/Technique.hpp"
 #include "../Sorcery/Domain.hpp"
 #include "../Sorcery/Neutralizer.hpp"
-
 #include "../Enums.hpp"
 
 struct JujutsuSystem final {
@@ -84,4 +83,5 @@ public:
     CurseUser* CanUseSorcery() noexcept override;
 
     [[nodiscard]] bool HasSixEyes() const noexcept;
+    [[nodiscard]] std::unique_ptr<Character> Clone() const override;
 };

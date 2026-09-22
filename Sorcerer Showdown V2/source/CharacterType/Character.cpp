@@ -88,3 +88,7 @@ const CurseUser* Character::CanUseSorcery() const noexcept {
 CurseUser* Character::CanUseSorcery() noexcept {
     return nullptr;
 }
+
+std::unique_ptr<Character> Character::Clone() const {
+    return std::make_unique<Character>(*this);
+}

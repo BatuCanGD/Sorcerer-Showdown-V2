@@ -8,6 +8,7 @@
 
 #include <string>
 #include <optional>
+#include <memory>
 #include <vector>
 
 class CurseUser;
@@ -67,4 +68,6 @@ public:
 
     [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
     virtual CurseUser* CanUseSorcery() noexcept;
+
+    [[nodiscard]] virtual std::unique_ptr<Character> Clone() const;
 };
