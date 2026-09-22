@@ -17,7 +17,7 @@ void Log::CharacterInfo(const Character &c){
     std::println("[{}]", c.Name());
     std::print("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
-        std::println("CE: [{}] | EFFICIENCY: [] ", Stringet::OutputStr(crs->Output().max_output_potential), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
+        std::println("CE: [{}] | EFFICIENCY: [{}] ", Stringet::OutputStr(crs->Output().max_output_potential), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
         if (const auto& tech = crs->Jujutsu().technique){
             Log::TechniqueInfo(*tech);
         }

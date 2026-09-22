@@ -2,6 +2,8 @@
 
 #include <format>
 
+// i hate this so much yet i have no idea if my other implementation would be worth it aswell
+
 const std::string Stringet::HealthStr(const double hp){
     std::string clr{"\x1b[38;5;9m"};
     std::string s{"Unknown"};
