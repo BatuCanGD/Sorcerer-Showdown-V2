@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <map>
+#include <string>
 
 struct Battlefield;
 
@@ -11,6 +13,7 @@ enum class SkipType : std::uint8_t {
 
 namespace GameEngine {
     SkipType GetPlayerSkipType() noexcept;
-    bool PlayerSetupBattlefield(Battlefield& bf);
-    void Placeholder3();
+    bool SetupLoop(Battlefield& bf);
+    void BattlefieldSetup(Battlefield& bf);
+    std::map<std::string, int> SetList(const Battlefield& bf);
 }

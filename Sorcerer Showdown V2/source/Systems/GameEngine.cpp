@@ -1,9 +1,10 @@
 #include "../../header/Systems/GameEngine.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/CharacterType/Character.hpp"
 #include "../../header/Battlefield.hpp"
 #include "../../header/Utilities/Input.hpp"
 
 #include <print>
+#include <map>
 
 SkipType GameEngine::GetPlayerSkipType() noexcept {
     std::println("1 - Skip Everything\n2 - Skip to end of round\n3 - Dont skip");
@@ -19,10 +20,20 @@ SkipType GameEngine::GetPlayerSkipType() noexcept {
     return st;
 }
 
-bool GameEngine::PlayerSetupBattlefield(Battlefield& bf) {
+std::map<std::string, int> GameEngine::SetList(const Battlefield &bf){
+    std::map<std::string, int> list;
+    for (const auto& c : bf.battlefield){
+        list[c->Name()]++;
+    }
+    return list;
+}
+
+bool GameEngine::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     while(true){
-        std::println("Placeholder PlayerSetupBattlefield println");
+        for (const auto& [name, num] : GameEngine::SetList(bf)){
+            std::println("{}x {}", num, name);
+        }
     }
-    return c == nullptr;
+    return c != nullptr;
 }
