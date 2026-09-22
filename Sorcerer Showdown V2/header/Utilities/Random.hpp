@@ -6,7 +6,7 @@
 
 template<typename T>
 requires (std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>
-[[nodiscard]] T get_random(T mn, T mx) {
+[[nodiscard]] inline T get_random(T mn, T mx) {
     if (mn == mx) return mn;
     T min = std::min(mn, mx), max = std::max(mn, mx);
 

@@ -4,7 +4,7 @@
 #include <type_traits>
 
 template <typename T>
-[[nodiscard]] T get_input(){
+[[nodiscard]] inline T get_input(){
     T t{};
     if constexpr (std::is_same_v<T, std::string>) {
         getline(std::cin, t);
@@ -16,4 +16,10 @@ template <typename T>
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     return t;
+}
+
+inline void hold_input() noexcept {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 }

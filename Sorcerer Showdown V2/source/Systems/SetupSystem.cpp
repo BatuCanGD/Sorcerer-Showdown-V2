@@ -50,8 +50,8 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 
 
 void SetupSystem::LogSetupOptions() {
-    std::println("1 - Add Character | 11 - Add multiple characters\n",
-                 "2 - Remove Character | 22 - Remove last character\n",
+    std::println("1 - Add Character | 11 - Add multiple characters\n"
+                 "2 - Remove Character | 22 - Remove last character\n"
                  "3 - Clear Battlefield | 33 - Additional Character Info\n"
                  "0 - Start Game");
 }
@@ -131,8 +131,8 @@ void SetupSystem::AddCharacters(Battlefield& bf){
 void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c){
     if (bf.battlefield.empty()) return;
     size_t x{0};
-    for (const auto& c : bf.battlefield){
-        std::println("{}:{}", ++x, c->Name());
+    for (const auto& b : bf.battlefield){
+        std::println("{}:{}", ++x, b->Name());
     }
     x = get_input<size_t>();
     if (x == 0 || x > bf.battlefield.size()) {

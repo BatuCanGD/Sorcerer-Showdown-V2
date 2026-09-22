@@ -5,6 +5,7 @@
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Systems/System/CombatSystem.hpp"
 #include "../header/Systems/System/DomainSystem.hpp"
+#include "../header/Systems/System/EffectSystem.hpp"
 #include "../header/Systems/Stringet.hpp"
 
 #include <print>
@@ -39,6 +40,12 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType& log_type){
             std::println("{}:[{}{}{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
                 ++i, c.id.color, c.id.name, c.id.color.empty() ? "" : "\x1b[0m", c.damage, c.output, c.cost);
         }
+    }
+}
+
+void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> ef) {
+    for (const auto& s : ef.first){
+        std::print("{} got affected by the {}{}{} effect and {} {} {}", ef.second.Name(), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 
