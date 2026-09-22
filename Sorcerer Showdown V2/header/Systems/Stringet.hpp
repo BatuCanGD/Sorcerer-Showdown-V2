@@ -10,7 +10,6 @@ namespace Stringet {
     const std::string StrengthStr(const double str);
     const std::string CursedEnergyStr(const double str);
     const std::string EfficiencyStr(const CursedEnergySystem::Efficiency& efficiency);
-
     const std::string OutputStr(const double max);                      // "X"
     const std::string OutputCmpStr(const double cur, const double max); // "X/Y"
 }

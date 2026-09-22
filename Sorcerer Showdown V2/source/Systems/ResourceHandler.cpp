@@ -21,13 +21,13 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
     }
 }
 void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain_neutralizer->cost);
+    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain_neutralizer->cost);
 }
 void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Expend, curse_user.Jujutsu().domain->cost);
+    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain->cost);
 }
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
     if (!curse_user.RCTSystem().can_use_rct) return;
-    curse_user.CursedEnergy(OpType::Expend, curse_user.RCTSystem().rct_output); // add a function that multiplies output with rct level
+    curse_user.CursedEnergy(OpType::Subtract, curse_user.RCTSystem().rct_output); // add a function that multiplies output with rct level
     curse_user.Health(OpType::Add, curse_user.RCTSystem().rct_output);
 }

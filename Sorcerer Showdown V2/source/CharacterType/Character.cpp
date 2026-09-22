@@ -51,7 +51,7 @@ void Character::Health(OpType type, double amount) {
         case OpType::Add:  
             state.health += amount;
             break;
-        case OpType::Expend:
+        case OpType::Subtract:
             state.health -= amount;
             break;
         case OpType::Set:

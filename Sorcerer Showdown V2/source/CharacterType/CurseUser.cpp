@@ -50,7 +50,7 @@ void CurseUser::CursedEnergy(OpType type, double amount) {
         case OpType::Add:  
             ce_system.cursed_energy += amount;
             break;
-        case OpType::Expend:
+        case OpType::Subtract:
             ce_system.cursed_energy -= amount;
             break;
         case OpType::Set:
