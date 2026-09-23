@@ -37,9 +37,9 @@ struct DomainStruct final {
 };
 
 struct CombatSystem final  {
-    static DamageStruct ResolveDamage(Character& c, globalums::DamageType type, double amount);
+    static DamageStruct ResolveDamage(const Character& c, globalums::DamageType type, double amount);
+    static AttackStruct ResolveAttacking(const Character& attacker, Character& attacked);
     static ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
-    static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
     static TechniqueStruct ResolveTechnique(CurseUser& attacker, const TechAbility& tc, Character& attacked);
     static DomainStruct ResolveDomain(CurseUser& attacker, Battlefield& bf);
 };

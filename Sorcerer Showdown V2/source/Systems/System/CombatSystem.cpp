@@ -8,11 +8,11 @@
 
 #include <cmath>
 
-DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType type, double amount) {
+DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
     DamageStruct ds{};
     ds.negated_damage = amount;
     amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
-    if (auto crs = c.CanUseSorcery()){
+    if (const auto& crs = c.CanUseSorcery()){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 ds.attack_blocked = true;
@@ -24,12 +24,12 @@ DamageStruct CombatSystem::ResolveDamage(Character &c, globalums::DamageType typ
     return ds;
 }
 
-AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &attacked) {
+AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character &attacked) {
     double attack_damage = attacker.State().strength;
     auto attack_type = globalums::DamageType::Normal;
     bool is_blackflash{false};
 
-    if (auto crs = dynamic_cast<CurseUser*>(&attacker)) {
+    if (const auto& crs = attacker.CanUseSorcery()) {
         if (crs->Amplification().is_usable && crs->Amplification().is_active){
             attack_type = globalums::DamageType::BypassTech;
         }

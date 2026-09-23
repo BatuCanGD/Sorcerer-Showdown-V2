@@ -16,11 +16,11 @@
 
 void Log::CharacterInfo(const Character &c){
     std::println("[{}]", c.Name());
-    std::print("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
+    std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
         std::println("CE: [{}] | EFFICIENCY: [{}] ", Stringet::OutputStr(crs->Output().max_output_potential), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
         if (const auto& tech = crs->Jujutsu().technique){
-            Log::TechniqueInfo(*tech);
+            Log::d_TechniqueInfo(*tech);
         }
     }
     std::println();
@@ -43,12 +43,11 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType& log_type){
     }
 }
 
-void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> ef) {
-    for (const auto& s : ef.first){
-        std::print("{} got affected by the {}{}{} effect and {} {} {}", ef.second.Name(), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p) {
+    for (const auto& s : p.first){
+        std::print("{} got affected by the {}{}{} effect and {} {} {}", p.second.Name(), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
-
 
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
     const std::string info = std::format("{} took {:.1f} damage from {}!", c1.Name(), ats.damage, c2.Name());

@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <utility>
-#include <vector>
 
 enum class ClashWinner : std::uint8_t;
 enum class DomainWinCon : std::uint8_t;
@@ -26,7 +25,7 @@ namespace Log {
     void Attack(const AttackStruct ats, const Character& c1, const Character& c2);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const ClashWinner winner, const DomainWinCon win_con);
-    void Effects(std::pair<const std::vector<StatusEffect>&, const Character&> ef);
+    void Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p);
     void Death(const Battlefield& bf);
 
     void d_CharacterInfo(const Character& c);

@@ -60,8 +60,8 @@ void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
             break;
     }
 }
-
-std::string GetEffectForTypeStr(EffectForType eft) {
+    
+std::string EffectSystem::GetEffectForTypeStr(EffectForType eft) {
     switch (eft) {
         case EffectForType::CursedEnergy:   return "Cursed Energy";
         case EffectForType::Health:         return "Health";
