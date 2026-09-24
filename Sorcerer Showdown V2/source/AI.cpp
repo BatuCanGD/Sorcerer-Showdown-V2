@@ -47,12 +47,11 @@ Character* AI::GetTarget(const Character& user, const TargetingType tp, const Ba
     return target;
 }
 
-AIConclusion AI::Fight(Character &user, Battlefield &bf, const FightingStyle fs, const ResourceUsage rs) {
+void AI::Fight(Character &user, Battlefield &bf, const FightingStyle fs, const ResourceUsage rs) {
+    Character* target{nullptr};
     try {
-        AI::GetTarget(user, user.Style().targeting_type, bf);
+        target = AI::GetTarget(user, user.Style().targeting_type, bf);
     } catch (const std::runtime_error& run){
         std::println("Runtime error: {}", run.what());
     }
-
-    return {};
 }

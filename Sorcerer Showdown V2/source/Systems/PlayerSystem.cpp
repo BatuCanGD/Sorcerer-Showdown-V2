@@ -2,6 +2,7 @@
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Battlefield.hpp"
 #include "../../header/Systems/System/CombatSystem.hpp"
+#include "../../header/Systems/System/TechniqueSystem.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
@@ -139,26 +140,41 @@ bool UserControl::DoInventoryManagement(Character& c) {
                 return true;
             }
             if (auto& w = c.Equipment().current_tool){
-
+                if (has_inv){
+                    c.Equipment().inventory.push_back(std::move(*w));
+                    c.Equipment().current_tool = std::move(*chosen_tool);
+                } else {
+                    auto temp = c.Equipment().current_tool;
+                    c.Equipment().current_tool = std::move(*chosen_tool);
+                    c.Equipment().stored_tool = std::move(*temp);
+                }
             }
+            break;
         case 2:
             if (chosen_tool == &*c.Equipment().stored_tool){
                 std::println("You cannot move an item in your hand");
                 return true;
             }
             if (auto& w = c.Equipment().stored_tool){
-                
+                if (has_inv){
+                    c.Equipment().inventory.push_back(std::move(*w));
+                    c.Equipment().stored_tool = std::move(*chosen_tool);
+                } else {
+                    auto temp = c.Equipment().stored_tool;
+                    c.Equipment().stored_tool = std::move(*chosen_tool);
+                    c.Equipment().current_tool = std::move(*temp);
+                }
             }
+            break;
         case 3:
             if (!has_inv){
                 return true;
             }
+            c.Equipment().inventory.push_back(*chosen_tool);
+            break;
         default:
             return true;
     }
-
-
-
     return true;
 }
 
@@ -167,6 +183,16 @@ bool UserControl::DoSorcery(CurseUser* c) {
         std::println("You are not a curse user!");
         return true;
     }
+    int k{0};
+    auto add_p([&](std::string_view sv){
+        std::println("{} - {} |", ++k, sv);
+    });
+
+    if (c->RCTSystem().can_use_rct){
+        add_p("RCT");
+    }
+
+
     return false;
 }
 bool UserControl::DoTechnique(CurseUser* c, Character& cd) {
@@ -174,13 +200,34 @@ bool UserControl::DoTechnique(CurseUser* c, Character& cd) {
         std::println("You are not a curse user!");
         return true;
     }
+    if (!c->Jujutsu().technique.has_value()) {
+        std::println("You do not have a technique");
+        return true;
+    }
+    const auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
+    const auto result = CombatSystem::ResolveTechnique(*c, ability, cd);
+    Log::TechniqueAttack(result);
     return false;
 }
 bool UserControl::DoDomain(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
         return true;
+    }    
+    const auto& domain = c->Jujutsu().domain;
+    const auto& neutralizer = c->Jujutsu().domain_neutralizer;
+
+    if (!(domain && neutralizer)) {
+        std::println("You do not have a domain or anything that can neutralize it");
+        return true;
     }
+    if (domain){
+        std::println("[{}{}{}] - {}", domain->identity.color, domain->identity.name, domain->identity.color.empty() ? "" : "\x1b[0m", domain->is_active ? "Active" : "Inactive");
+    }
+    if (neutralizer) {
+        std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive");
+    }
+
     return false;
 }
 bool UserControl::DoShikigami(CurseUser* c) {
@@ -188,5 +235,13 @@ bool UserControl::DoShikigami(CurseUser* c) {
         std::println("You are not a curse user!");
         return true;
     }
-    return false;
+    if (c->Jujutsu().shikigami.empty()) {
+        std::println("You do not have any shikigami");
+        return true;
+    }
+    size_t idx{0};
+    for (const auto& x : c->Jujutsu().shikigami){
+        std::println("{}:{}{}{}", ++idx, x.id.color, x.id.name, x.id.color.empty() ? "" : "\x1b[0m");
+    }
+    return true;
 }
