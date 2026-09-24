@@ -3,9 +3,10 @@
 #include "../header/Battlefield.hpp"
 
 #include <limits>
+#include <print>
 #include <stdexcept>
 
-Character* AI::GetTarget(const Character& user, const TargetingType tp, Battlefield &bf){
+Character* AI::GetTarget(const Character& user, const TargetingType tp, const Battlefield &bf){
     Character* target{nullptr};
     switch(tp){
         case TargetingType::HighestHP: {
@@ -41,13 +42,17 @@ Character* AI::GetTarget(const Character& user, const TargetingType tp, Battlefi
         }
     }
     if (!target){
-        throw std::runtime_error("Only one person/Nobody left in battlefield vector");
+        throw std::runtime_error("Only one person/Nobody left in battlefield vector, Impossible to find target");
     }
     return target;
 }
 
 AIConclusion AI::Fight(Character &user, Battlefield &bf, const FightingStyle fs, const ResourceUsage rs) {
-    AIConclusion conc;
+    try {
+        AI::GetTarget(user, user.Style().targeting_type, bf);
+    } catch (const std::runtime_error& run){
+        std::println("Runtime error: {}", run.what());
+    }
 
-    return conc;
+    return {};
 }

@@ -18,6 +18,7 @@ enum class Action : std::uint8_t {
 namespace UserControl {
     std::vector<Action> GetChoices(const Character& c);
     void GetPlayerTurn(Character& c, Battlefield& bf);
+    bool GetConfirmation();
 
     Character* GetUserTarget(Battlefield& bf);
 

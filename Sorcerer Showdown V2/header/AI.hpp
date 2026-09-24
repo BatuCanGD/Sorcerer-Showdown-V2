@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <vector>
 #include <cstdint>
 
 class Character;
@@ -30,10 +31,10 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 };
 
 struct AIConclusion final {
-    Character* attacker_character;
-    Character* attacked_character;
-    BindingVow* used_binding_vow;
-    Shikigami* used_shikigami;
+    std::vector<Shikigami*> used_shikigami;
+    Character* attacker;
+    Character* attacked;
+    BindingVow* used_vow;
     Technique* used_technique;
     CursedTool* used_tool;
     Domain* used_domain;
@@ -41,7 +42,7 @@ struct AIConclusion final {
 };
 
 namespace AI {
-    Character* GetTarget(const Character& user, const TargetingType tp, Battlefield& bf);
-    std::pair<bool, CursedTool> asd();
+    Character* GetTarget(const Character& user, const TargetingType tp, const Battlefield& bf);
+    std::pair<bool, CursedTool> asd(); // forgot what this placeholder function was for
     AIConclusion Fight(Character& user, Battlefield& bf, const FightingStyle fs, const ResourceUsage rs);
 };
