@@ -3,6 +3,7 @@
 #include "../header/Battlefield.hpp"
 #include "../header/Utilities/Input.hpp"
 #include "../header/Systems/SetupSystem.hpp"
+#include "../header/Systems/PlayerSystem.hpp"
 
 #include <print>
 
@@ -20,7 +21,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc) {
     for(const auto& c : bf.battlefield){
         Log::CharacterInfo(*c);
         if (pc.user_character == c.get()){
-
+            UserControl::GetPlayerTurn(*c, bf);
         }else {
 
         }

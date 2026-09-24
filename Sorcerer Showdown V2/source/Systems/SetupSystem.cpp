@@ -163,5 +163,5 @@ void SetupSystem::ViewCharacterInfo(Battlefield &bf){
     if (x == 0 || x > bf.battlefield.size()){
         return;
     }
-    Log::d_CharacterInfo(*bf.battlefield[--x]);
+    Log::CharacterInfo(*bf.battlefield[--x]);
 }

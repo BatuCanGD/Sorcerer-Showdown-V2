@@ -14,19 +14,22 @@
 #include <format>
 
 
-void Log::CharacterInfo(const Character &c){
+void Log::CharacterInfo(const Character &c, const LogDetailType ct){
     std::println("[{}]", c.Name());
     std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
-        std::println("CE: [{}] | EFFICIENCY: [{}] ", Stringet::OutputStr(crs->Output().max_output_potential), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
+        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy()) : std::format("{:.1f}", crs->CursedEnergy());
+        const std::string output        = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->Output().current_output) : Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential);
+        const std::string efficiency    = Stringet::EfficiencyStr(crs->Sorcery().efficiency);
+        std::println("CE: [{}] | OUTPUT: [{}] | EFFICIENCY: [{}] ", cursed_energy, output, efficiency);
         if (const auto& tech = crs->Jujutsu().technique){
-            Log::d_TechniqueInfo(*tech);
+            Log::TechniqueInfo(*tech, CTLogType::Name ,ct);
         }
     }
     std::println();
 }
 
-void Log::TechniqueInfo(const Technique &ct, const CTLogType& log_type){
+void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const LogDetailType info_type){
     const bool log_name      = log_type == CTLogType::Name       || log_type == CTLogType::Both;
     const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
 
@@ -127,21 +130,5 @@ void Log::Death(const Battlefield& bf){
     }
     for (const auto& m : death_messages) {
         std::println("{}", m);
-    }
-}
-
-void Log::d_CharacterInfo(const Character& c){
-    std::println("{} | HEALTH: {:.1f} | STRENGTH: {:.1f} | DURABILITY: {:.1f}", c.Name(), c.Health() ,c.State().strength, c.State().durability);
-    if (const auto* crs = c.CanUseSorcery()) {
-        std::println("CURSED ENERGY: {:.1f} | CE EFFICIENCY: {}", crs->CursedEnergy(), Stringet::EfficiencyStr(crs->Sorcery().efficiency));
-        std::println("TECHNIQUE: {}", crs->Jujutsu().technique ? crs->Jujutsu().technique->Name() : "None");
-    }
-}
-
-void Log::d_TechniqueInfo(const Technique &ct){
-    std::println("{}", ct.Name());
-    for ([[maybe_unused]] const auto& [id, damage, cost, output, at_type] : ct.Abilities()){
-        std::println("[{}{}{}] {:.1f} damage |{:.1f} cursed energy cost |{:.1f} output cost", 
-            id.color, id.name, id.color.empty() ? "" : "\x1b[0m", damage, cost, output);
     }
 }

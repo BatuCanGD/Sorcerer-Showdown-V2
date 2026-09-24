@@ -67,7 +67,7 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
 }
 
 Character* UserControl::GetUserTarget(Battlefield& bf) {
-
+    
 }
 
 bool UserControl::DoAttack(Character& c, Character& cd) {
