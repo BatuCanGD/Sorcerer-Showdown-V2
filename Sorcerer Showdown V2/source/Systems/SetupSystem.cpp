@@ -37,7 +37,7 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList() {
 
 Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
-    bool looping = true;
+    bool looping{true};
     while(looping){
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             std::println("{}x {}", num, name);

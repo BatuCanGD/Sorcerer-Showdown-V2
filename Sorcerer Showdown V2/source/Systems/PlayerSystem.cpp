@@ -183,18 +183,66 @@ bool UserControl::DoSorcery(CurseUser* c) {
         std::println("You are not a curse user!");
         return true;
     }
-    int k{0};
-    auto add_p([&](std::string_view sv){
-        std::println("{} - {} |", ++k, sv);
-    });
+    const auto& sp = UserControl::GetSorceryChoices(*c);
+    size_t ch = get_input<size_t>() - 1;
 
-    if (c->RCTSystem().can_use_rct){
-        add_p("RCT");
+    if (ch >= sp.size()) {
+        return true;
     }
 
-
-    return false;
+    switch(sp[ch]){
+        case SorceryType::RCT:
+            UserControl::ForRCT(*c);
+            break;
+        case SorceryType::Reinforcement:
+            UserControl::ForReinforcement(*c);
+            break;
+        case SorceryType::BindingVows:
+            UserControl::ForBindingVows(*c);
+            break;
+    }
+    return true;
 }
+
+const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const CurseUser& c) {
+    std::vector<SorceryType> sp;
+    int k{0};
+    auto add_p([&](std::string_view sv, SorceryType s){
+        std::println("{} - {} |", ++k, sv);
+        sp.push_back(s);
+    });
+    if (c.RCTSystem().can_use_rct){
+        add_p("RCT", SorceryType::RCT);
+    }
+    add_p("Reinforcement", SorceryType::Reinforcement);
+    add_p("Binding Vows", SorceryType::BindingVows);
+    return sp;
+}
+
+
+void UserControl::ForRCT(CurseUser& c){
+    std::println("total usage | cost"); // placeholders
+
+    std::println("set | do nothing");
+
+    std::println("new cost, are you sure?");
+}
+void UserControl::ForReinforcement(CurseUser& c){
+        std::println("total usage | cost"); // placeholders
+
+    std::println("set | do nothing");
+
+    std::println("new cost, are you sure?");
+}
+void UserControl::ForBindingVows(CurseUser& c){
+    std::println("currently used vows | description"); // placeholders
+
+    std::println("add | remove | do nothing");
+
+    std::println("choose | return");
+}
+
+
 bool UserControl::DoTechnique(CurseUser* c, Character& cd) {
     if (c == nullptr){
         std::println("You are not a curse user!");
@@ -230,6 +278,11 @@ bool UserControl::DoDomain(CurseUser* c) {
 
     return false;
 }
+
+//
+// Shikigami player Functions
+//
+
 bool UserControl::DoShikigami(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
@@ -239,9 +292,69 @@ bool UserControl::DoShikigami(CurseUser* c) {
         std::println("You do not have any shikigami");
         return true;
     }
+    UserControl::UseShikigami(*UserControl::ChooseShikigami(c->Jujutsu().shikigami));
+    return true;
+}
+
+Shikigami* UserControl::ChooseShikigami(std::vector<Shikigami>& sh) {
     size_t idx{0};
-    for (const auto& x : c->Jujutsu().shikigami){
+    for (const auto& x : sh){
         std::println("{}:{}{}{}", ++idx, x.id.color, x.id.name, x.id.color.empty() ? "" : "\x1b[0m");
     }
-    return true;
+
+    idx = get_input<size_t>() - 1;
+
+    while (idx >= sh.size()) {
+        std::println("Invalid Input");
+        idx = get_input<size_t>() - 1;
+    }
+
+    return &sh[idx];
+}
+void UserControl::UseShikigami(Shikigami& c) {
+    const auto& active_type = c.summon_type;
+    std::string active;
+    switch(active_type){
+        case SummonType::Support:
+            active = "Partially Manifested";
+            break;
+        case SummonType::Active:
+            active = "Fully Manifested";
+            break;
+        case SummonType::Shadow:
+            active = "In Shadow";
+            break;
+    }
+    std::println("Chosen: {}{}{} -  {}\n1 - Manifest\n2 - Partial Manifestation\n3 - Dismiss", 
+        active,
+        c.id.color, 
+        c.id.name, 
+        c.id.color.empty() ? "" : "\x1b[0m"
+    );
+    int g = get_input<int>();
+    switch(g) {
+        case 1:
+            if (active_type == SummonType::Active){
+                std::println("Shikigami is already fully manifested");
+                return;
+            }
+            c.summon_type = SummonType::Active;
+            break;
+        case 2:
+            if (active_type == SummonType::Support){
+                std::println("Shikigami is already partially manifested");
+                return;
+            }
+            c.summon_type = SummonType::Support;
+            break;
+        case 3:
+            if (active_type == SummonType::Shadow){
+                std::println("Shikigami is already dismissed");
+                return;
+            }
+            c.summon_type = SummonType::Shadow;
+            break;
+        default:
+            break;
+    }
 }
