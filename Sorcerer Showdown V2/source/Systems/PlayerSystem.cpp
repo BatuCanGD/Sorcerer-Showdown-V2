@@ -134,7 +134,7 @@ bool UserControl::DoInventoryManagement(Character& c) {
     std::println("1 - Move to main hand\n2 - Move to Offhand\n{}", has_inv ? "3 - Move to Inventory" : "");
 
     switch(get_input<int>()){
-        case 1:
+        case 1: {
             if (chosen_tool == &*c.Equipment().current_tool) {
                 std::println("You cannot move an item in your hand");
                 return true;
@@ -144,13 +144,14 @@ bool UserControl::DoInventoryManagement(Character& c) {
                     c.Equipment().inventory.push_back(std::move(*w));
                     c.Equipment().current_tool = std::move(*chosen_tool);
                 } else {
-                    auto temp = c.Equipment().current_tool;
+                    auto temp = std::move(c.Equipment().current_tool);
                     c.Equipment().current_tool = std::move(*chosen_tool);
                     c.Equipment().stored_tool = std::move(*temp);
                 }
             }
             break;
-        case 2:
+        }
+        case 2: {
             if (chosen_tool == &*c.Equipment().stored_tool){
                 std::println("You cannot move an item in your hand");
                 return true;
@@ -160,20 +161,33 @@ bool UserControl::DoInventoryManagement(Character& c) {
                     c.Equipment().inventory.push_back(std::move(*w));
                     c.Equipment().stored_tool = std::move(*chosen_tool);
                 } else {
-                    auto temp = c.Equipment().stored_tool;
+                    auto temp = std::move(c.Equipment().stored_tool);
                     c.Equipment().stored_tool = std::move(*chosen_tool);
                     c.Equipment().current_tool = std::move(*temp);
                 }
             }
             break;
-        case 3:
+        }
+        case 3: {
             if (!has_inv){
                 return true;
             }
-            c.Equipment().inventory.push_back(*chosen_tool);
+            auto temp = chosen_tool;
+            if (chosen_tool == &*c.Equipment().current_tool) {
+                c.Equipment().current_tool.reset();
+            }else if (chosen_tool == &*c.Equipment().stored_tool){
+                c.Equipment().stored_tool.reset();
+            }else {
+                std::erase_if(c.Equipment().inventory , [&](auto& k){ 
+                    return &k == chosen_tool;
+                });
+            }
+            c.Equipment().inventory.push_back(std::move(*temp));
             break;
-        default:
+        }
+        default: {
             return true;
+        }
     }
     return true;
 }
@@ -228,7 +242,7 @@ void UserControl::ForRCT(CurseUser& c){
     std::println("new cost, are you sure?");
 }
 void UserControl::ForReinforcement(CurseUser& c){
-        std::println("total usage | cost"); // placeholders
+    std::println("total usage | cost"); // placeholders
 
     std::println("set | do nothing");
 
