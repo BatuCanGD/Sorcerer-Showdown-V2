@@ -100,94 +100,115 @@ bool UserControl::DoAttack(Character& c, Character& cd) {
 }
 
 bool UserControl::DoInventoryManagement(Character& c) {
-    const bool& has_inv = c.Equipment().has_access_to_inventory;
-    std::vector<CursedTool*> wp;
+    auto& equip = c.Equipment();
+    const bool has_inv = equip.has_access_to_inventory;
+
+    enum class Origin { 
+        MainHand, 
+        OffHand, 
+        Inventory 
+    };
+    struct Candidate { 
+        CursedTool* tool; 
+        Origin origin; 
+        size_t index; 
+    };
+
+    std::vector<Candidate> wp;
     size_t ww{0};
 
-    auto add_wp([&](std::optional<CursedTool> w){
-        std::println("{}:{}{}{}", ++ww, w->identity.color, w->identity.name, w->identity.color.empty() ? "" : "\x1b[0m");
-        wp.push_back(&*w);
+    auto add_wp([&](CursedTool& w, Origin origin, size_t index = 0){
+        std::println("{}:{}{}{}", ++ww, w.identity.color, w.identity.name,
+                      w.identity.color.empty() ? "" : "\x1b[0m");
+        wp.push_back({&w, origin, index});
     });
 
-    if (const auto& current = c.Equipment().current_tool){
-        add_wp(current);
+    if (auto& current = equip.current_tool) {
+        add_wp(*current, Origin::MainHand);
     }
-    if (const auto& stored = c.Equipment().stored_tool){
-        add_wp(stored);
+    if (auto& stored  = equip.stored_tool) {
+        add_wp(*stored, Origin::OffHand);
     }
-    if (has_inv){
-        for (const auto& tools : c.Equipment().inventory) {
-            add_wp(tools);
+    if (has_inv) {
+        for (size_t i = 0; i < equip.inventory.size(); ++i) {
+            add_wp(equip.inventory[i], Origin::Inventory, i);
         }
+    }
+
+    if (wp.empty()) { 
+        std::println("You have no cursed tools"); 
+        return true; 
     }
 
     size_t input = get_input<size_t>() - 1;
-
-    if (input >= wp.size()){
-        std::println("Invalid Input");
-        return true;
+    if (input >= wp.size()) { 
+        std::println("Invalid Input"); 
+        return true; 
     }
 
-    auto& chosen_tool = wp[input];
-
-    std::println("Chosen Tool: [{}]", chosen_tool->identity.color, chosen_tool->identity.name, chosen_tool->identity.color.empty() ? "" : "\x1b[0m");
+    const Candidate chosen = wp[input];
+    std::println("Chosen Tool: [{}{}{}]", chosen.tool->identity.color, chosen.tool->identity.name, chosen.tool->identity.color.empty() ? "" : "\x1b[0m");
     std::println("1 - Move to main hand\n2 - Move to Offhand\n{}", has_inv ? "3 - Move to Inventory" : "");
 
-    switch(get_input<int>()){
+    auto extract_chosen = [&]() -> CursedTool {
+        CursedTool value = std::move(*chosen.tool);
+        switch (chosen.origin) {
+            case Origin::MainHand:  
+                equip.current_tool.reset(); 
+                break;
+            case Origin::OffHand:   
+                equip.stored_tool.reset();  
+                break;
+            case Origin::Inventory: 
+                equip.inventory.erase(equip.inventory.begin() + chosen.index); 
+                break;
+        }
+        return value;
+    };
+
+    switch (get_input<int>()) {
         case 1: {
-            if (chosen_tool == &*c.Equipment().current_tool) {
+            if (chosen.origin == Origin::MainHand) {
                 std::println("You cannot move an item in your hand");
                 return true;
             }
-            if (auto& w = c.Equipment().current_tool){
-                if (has_inv){
-                    c.Equipment().inventory.push_back(std::move(*w));
-                    c.Equipment().current_tool = std::move(*chosen_tool);
+            CursedTool incoming = extract_chosen();
+            if (equip.current_tool) {
+                CursedTool displaced = std::move(*equip.current_tool);
+                if (has_inv) {
+                    equip.inventory.push_back(std::move(displaced));
                 } else {
-                    auto temp = std::move(c.Equipment().current_tool);
-                    c.Equipment().current_tool = std::move(*chosen_tool);
-                    c.Equipment().stored_tool = std::move(*temp);
+                    equip.stored_tool = std::move(displaced);
                 }
             }
+            equip.current_tool = std::move(incoming);
             break;
         }
         case 2: {
-            if (chosen_tool == &*c.Equipment().stored_tool){
+            if (chosen.origin == Origin::OffHand) {
                 std::println("You cannot move an item in your hand");
                 return true;
             }
-            if (auto& w = c.Equipment().stored_tool){
-                if (has_inv){
-                    c.Equipment().inventory.push_back(std::move(*w));
-                    c.Equipment().stored_tool = std::move(*chosen_tool);
+            CursedTool incoming = extract_chosen();
+            if (equip.stored_tool) {
+                CursedTool displaced = std::move(*equip.stored_tool);
+                if (has_inv) {
+                    equip.inventory.push_back(std::move(displaced));
                 } else {
-                    auto temp = std::move(c.Equipment().stored_tool);
-                    c.Equipment().stored_tool = std::move(*chosen_tool);
-                    c.Equipment().current_tool = std::move(*temp);
+                    equip.current_tool = std::move(displaced);
                 }
             }
+            equip.stored_tool = std::move(incoming);
             break;
         }
         case 3: {
-            if (!has_inv){
+            if (!has_inv || chosen.origin == Origin::Inventory) {
                 return true;
             }
-            auto temp = chosen_tool;
-            if (chosen_tool == &*c.Equipment().current_tool) {
-                c.Equipment().current_tool.reset();
-            }else if (chosen_tool == &*c.Equipment().stored_tool){
-                c.Equipment().stored_tool.reset();
-            }else {
-                std::erase_if(c.Equipment().inventory , [&](auto& k){ 
-                    return &k == chosen_tool;
-                });
-            }
-            c.Equipment().inventory.push_back(std::move(*temp));
+            equip.inventory.push_back(extract_chosen());
             break;
         }
-        default: {
-            return true;
-        }
+        default: return true;
     }
     return true;
 }
