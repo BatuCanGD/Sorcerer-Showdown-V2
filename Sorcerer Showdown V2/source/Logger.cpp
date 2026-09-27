@@ -52,6 +52,10 @@ void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> 
     }
 }
 
+void Log::TechniqueAttack(const TechniqueStruct tc){
+    
+}
+
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
     const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", c1.Name(), ats.damage, c2.Name());
     std::string word{};

@@ -24,6 +24,8 @@ if(MSVC)
     )
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(SorcererShowdownV2 PRIVATE
-        -Wall -Wextra -Wpedantic -Wshadow -Wno-unused-parameter -O2
+        -Wall -Wextra -Wpedantic -Wshadow -O2
+        -Wno-unused-parameter 
+        -Wno-missing-field-initializers
     )
 endif()

@@ -31,6 +31,9 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 
 namespace AI {
     Character* GetTarget(const Character& user, const TargetingType tp, const Battlefield& bf);
-    std::pair<bool, CursedTool> asd(); // forgot what this placeholder function was for
-    void Fight(Character& user, Battlefield& bf, const FightingStyle fs, const ResourceUsage rs);
+    
+    void DoFightingStyle(Character& user, Character* target, const FightingStyle fs);
+    void DoResourceUsage(Character& user, const Battlefield& bf, const ResourceUsage ru);
+
+    void Fight(Character& user, Battlefield& bf);
 };

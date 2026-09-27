@@ -37,7 +37,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double strength   = 115.0;
     constexpr double durability = 75.0;
 
-    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    [[maybe_unused]] const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
@@ -65,7 +65,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr double strength   = 185.0;
     constexpr double durability = 300.0;
 
-    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
+    [[maybe_unused]] const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 5000.0;

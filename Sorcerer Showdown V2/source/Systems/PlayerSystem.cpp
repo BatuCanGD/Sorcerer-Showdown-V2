@@ -104,22 +104,21 @@ bool UserControl::DoInventoryManagement(Character& c) {
     const bool has_inv = equip.has_access_to_inventory;
 
     enum class Origin { 
-        MainHand, 
-        OffHand, 
-        Inventory 
+        MainHand,
+        OffHand,
+        Inventory
     };
     struct Candidate { 
-        CursedTool* tool; 
-        Origin origin; 
-        size_t index; 
+        CursedTool* tool;
+        Origin origin;
+        size_t index;
     };
 
     std::vector<Candidate> wp;
     size_t ww{0};
 
     auto add_wp([&](CursedTool& w, Origin origin, size_t index = 0){
-        std::println("{}:{}{}{}", ++ww, w.identity.color, w.identity.name,
-                      w.identity.color.empty() ? "" : "\x1b[0m");
+        std::println("{}:{}{}{}", ++ww, w.identity.color, w.identity.name, w.identity.color.empty() ? "" : "\x1b[0m");
         wp.push_back({&w, origin, index});
     });
 
@@ -135,15 +134,15 @@ bool UserControl::DoInventoryManagement(Character& c) {
         }
     }
 
-    if (wp.empty()) { 
+    if (wp.empty()) {
         std::println("You have no cursed tools"); 
-        return true; 
+        return true;
     }
 
     size_t input = get_input<size_t>() - 1;
-    if (input >= wp.size()) { 
+    if (input >= wp.size()) {
         std::println("Invalid Input"); 
-        return true; 
+        return true;
     }
 
     const Candidate chosen = wp[input];
@@ -153,14 +152,14 @@ bool UserControl::DoInventoryManagement(Character& c) {
     auto extract_chosen = [&]() -> CursedTool {
         CursedTool value = std::move(*chosen.tool);
         switch (chosen.origin) {
-            case Origin::MainHand:  
-                equip.current_tool.reset(); 
+            case Origin::MainHand:
+                equip.current_tool.reset();
                 break;
-            case Origin::OffHand:   
-                equip.stored_tool.reset();  
+            case Origin::OffHand:
+                equip.stored_tool.reset();
                 break;
-            case Origin::Inventory: 
-                equip.inventory.erase(equip.inventory.begin() + chosen.index); 
+            case Origin::Inventory:
+                equip.inventory.erase(equip.inventory.begin() + chosen.index);
                 break;
         }
         return value;
@@ -256,11 +255,19 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 
 
 void UserControl::ForRCT(CurseUser& c){
-    std::println("total usage | cost"); // placeholders
+    double& rct = c.RCTSystem().rct_output;
+    std::println("Total RCT output: {0:.1f} | Cost: {0:.1f} CE per turn\n1 - Set Output | 2 - Return", rct);
+    if (get_input<int>() != 1){
+        return;
+    }
+    std::print("Enter Output Amount: ");
+    const double prv = rct;
+    rct = get_input<double>();
 
-    std::println("set | do nothing");
-
-    std::println("new cost, are you sure?");
+    std::println("New cost: {:.1f}", rct);
+    if (!UserControl::GetConfirmation()){
+        rct = prv;
+    }
 }
 void UserControl::ForReinforcement(CurseUser& c){
     std::println("total usage | cost"); // placeholders

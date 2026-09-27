@@ -34,7 +34,7 @@ Character* AI::GetTarget(const Character& user, const TargetingType tp, const Ba
         case TargetingType::Mixed: {
             for (const auto& c : bf.battlefield){
                 if (c.get() == &user) continue;
-                if (get_random<int>(0,77) >= 45 || !target){
+                if (get_random<int>(0,100) >= 50 || !target){
                     target = c.get();
                 }
             }
@@ -42,16 +42,78 @@ Character* AI::GetTarget(const Character& user, const TargetingType tp, const Ba
         }
     }
     if (!target){
-        throw std::runtime_error("Only one person/Nobody left in battlefield vector, Impossible to find target");
+        throw std::runtime_error("0-1 Entities left in vector, Impossible to find target");
     }
     return target;
 }
 
-void AI::Fight(Character &user, Battlefield &bf, const FightingStyle fs, const ResourceUsage rs) {
-    Character* target{nullptr};
+void AI::DoFightingStyle(Character& user, Character* target, const FightingStyle fs) { // possible technique/domain use
+    if (!target){
+        throw std::runtime_error("No target exists");
+    }
+    switch(fs){
+        case FightingStyle::Aggressive: {
+            
+            break;
+        }
+        case FightingStyle::Defensive: {
+
+            break;
+        }
+        case FightingStyle::Mixed: {
+
+            break;
+        }
+        default:
+            throw std::out_of_range("Unexpected Fighting Style");
+    }
+    return;
+}
+void AI::DoResourceUsage(Character& user, const Battlefield& bf ,const ResourceUsage ru) { // possible shikigami, reinforcement and rct use
+    switch(ru){
+        case ResourceUsage::AllOut: {
+
+            break;
+        }
+        case ResourceUsage::Conservative: {
+
+            break;
+        }
+        case ResourceUsage::Mixed: {
+
+            break;
+        }
+        default:
+            throw std::out_of_range("Unexpected Resource Usage");
+    }
+    return;
+}
+
+
+
+
+void AI::Fight(Character &user, Battlefield &bf) {
+    const auto& style{user.Style()};
+
     try {
-        target = AI::GetTarget(user, user.Style().targeting_type, bf);
+        DoResourceUsage(user, bf, style.resource_usage);
+    }catch(const std::out_of_range& rn) {
+        std::println(stderr, "Range error: {}", rn.what());
+    }
+
+    Character* target{nullptr};
+
+    try {
+        target = AI::GetTarget(user, style.targeting_type, bf);
     } catch (const std::runtime_error& run){
-        std::println("Runtime error: {}", run.what());
+        std::println(stderr, "Runtime error: {}", run.what());
+    }
+
+    try {
+        DoFightingStyle(user, target, style.fighting_style);
+    }catch(const std::out_of_range& rn) {
+        std::println(stderr, "Range error: {}", rn.what());
+    }catch(const std::runtime_error& rn){
+        std::println(stderr, "Runtime error: {}", rn.what());
     }
 }
