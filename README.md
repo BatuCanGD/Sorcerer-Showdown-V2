@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/LINES%20OF%20CODE-2506-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/LINES%20OF%20CODE-2456-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/FILES-53-yellow?style=for-the-badge" />
 </p>
 
