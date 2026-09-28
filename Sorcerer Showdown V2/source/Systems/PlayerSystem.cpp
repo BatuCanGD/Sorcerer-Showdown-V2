@@ -270,7 +270,9 @@ void UserControl::ForRCT(CurseUser& c){
     }
 }
 void UserControl::ForReinforcement(CurseUser& c){
-    std::println("total usage | cost"); // placeholders
+    double& rf = c.CursedEnergy().reinforcement_amount;
+    std::println("Total Usage: {0:.1f} | Cost: {0:.1f}", rf, c.Output().max_output_potential); // placeholders
+    std::println("Output: {0:.1f}/{1:.1f}", c.Output().current_output, c.Output().max_output_potential);
 
     std::println("set | do nothing");
 

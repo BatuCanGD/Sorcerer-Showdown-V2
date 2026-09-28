@@ -13,7 +13,7 @@ void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
 }
 
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Add, curse_user.Sorcery().regeneration_amount);
+    curse_user.CursedEnergy(OpType::Add, curse_user.CursedEnergy().regeneration_amount);
 }
 void ResourceHandler::TickShikigami(CurseUser& curse_user){
     for (auto& c : curse_user.Jujutsu().shikigami){

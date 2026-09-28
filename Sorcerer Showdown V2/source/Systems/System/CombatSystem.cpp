@@ -33,7 +33,7 @@ AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character
         if (crs->Amplification().is_usable && crs->Amplification().is_active){
             attack_type = globalums::DamageType::BypassTech;
         }
-        if (get_random<int>(1, 100) <= crs->Sorcery().bf_chance){
+        if (get_random<int>(1, 100) <= crs->CursedEnergy().bf_chance){
             attack_damage *= 2.5;
             is_blackflash = true;
         }

@@ -1,4 +1,5 @@
 #include "../header/AI.hpp"
+#include "../header/CharacterType/CurseUser.hpp"
 #include "../header/Utilities/Random.hpp"
 #include "../header/Battlefield.hpp"
 
@@ -6,7 +7,7 @@
 #include <print>
 #include <stdexcept>
 
-Character* AI::GetTarget(const Character& user, const TargetingType tp, const Battlefield &bf){
+Character* AI::GetTarget(const Character& user, const TargetingType& tp, const Battlefield &bf){
     Character* target{nullptr};
     switch(tp){
         case TargetingType::HighestHP: {
@@ -47,11 +48,11 @@ Character* AI::GetTarget(const Character& user, const TargetingType tp, const Ba
     return target;
 }
 
-void AI::DoFightingStyle(Character& user, Character* target, const FightingStyle fs) { // possible technique/domain use
+void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { // possible technique/domain use
     if (!target){
         throw std::runtime_error("No target exists");
     }
-    switch(fs){
+    switch(fs.fighting_style){
         case FightingStyle::Aggressive: {
             
             break;
@@ -69,7 +70,15 @@ void AI::DoFightingStyle(Character& user, Character* target, const FightingStyle
     }
     return;
 }
-void AI::DoResourceUsage(Character& user, const Battlefield& bf ,const ResourceUsage ru) { // possible shikigami, reinforcement and rct use
+void AI::DoResourceManagement(Character& user, const Battlefield& bf ,const ResourceUsage& ru) { // possible shikigami, reinforcement and rct use
+
+    [[maybe_unused]] Technique* tech{nullptr};
+    if (const auto* c = user.CanUseSorcery()){
+        if (auto t = c->Jujutsu().technique){
+            tech = &*t;
+        }
+    }
+
     switch(ru){
         case ResourceUsage::AllOut: {
 
@@ -96,24 +105,12 @@ void AI::Fight(Character &user, Battlefield &bf) {
     const auto& style{user.Style()};
 
     try {
-        DoResourceUsage(user, bf, style.resource_usage);
-    }catch(const std::out_of_range& rn) {
-        std::println(stderr, "Range error: {}", rn.what());
-    }
-
-    Character* target{nullptr};
-
-    try {
-        target = AI::GetTarget(user, style.targeting_type, bf);
-    } catch (const std::runtime_error& run){
-        std::println(stderr, "Runtime error: {}", run.what());
-    }
-
-    try {
-        DoFightingStyle(user, target, style.fighting_style);
-    }catch(const std::out_of_range& rn) {
-        std::println(stderr, "Range error: {}", rn.what());
-    }catch(const std::runtime_error& rn){
-        std::println(stderr, "Runtime error: {}", rn.what());
+        DoResourceManagement(user, bf, style.resource_usage);
+        Character* target = AI::GetTarget(user, style.targeting_type, bf);
+        DoFighting(user, target, style);
+    }catch(const std::out_of_range& oor) {
+        std::println(stderr, "Range error: {}", oor.what());
+    }catch(const std::runtime_error& re){
+        std::println(stderr, "Runtime error: {}", re.what());
     }
 }

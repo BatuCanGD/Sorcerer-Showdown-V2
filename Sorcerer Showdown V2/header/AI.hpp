@@ -1,11 +1,11 @@
 #pragma once
-#include <utility>
 #include <cstdint>
 
 class Character;
 class Technique;
 
 struct CursedTool;
+struct BattleIQ;
 struct BindingVow;
 struct Domain;
 struct Shikigami;
@@ -30,10 +30,10 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 };
 
 namespace AI {
-    Character* GetTarget(const Character& user, const TargetingType tp, const Battlefield& bf);
+    Character* GetTarget(const Character& user, const TargetingType& tp, const Battlefield& bf);
     
-    void DoFightingStyle(Character& user, Character* target, const FightingStyle fs);
-    void DoResourceUsage(Character& user, const Battlefield& bf, const ResourceUsage ru);
+    void DoFighting(Character& user, Character* target, const BattleIQ& iq);
+    void DoResourceManagement(Character& user, const Battlefield& bf, const ResourceUsage& ru);
 
     void Fight(Character& user, Battlefield& bf);
 };

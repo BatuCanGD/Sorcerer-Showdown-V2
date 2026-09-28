@@ -11,6 +11,9 @@
 void CharacterEditor::SetIdentity(Character &c, EntityInfo cd){
     c.Identity() = cd;
 }
+void CharacterEditor::SetStyle(Character& c, BattleIQ iq) {
+    c.Style() = iq;
+}
 // base state
 void CharacterEditor::SetStats(Character& c, CharState cs) {
     c.State() = cs;
@@ -55,17 +58,17 @@ void CharacterEditor::SetInventoryAccess(Character& c, bool t){
 }
 // curse user system
 void CharacterEditor::SetCursedEnergyEfficiency(CurseUser& c, CursedEnergySystem::Efficiency efficiency){
-    c.Sorcery().efficiency = efficiency;
+    c.CursedEnergy().efficiency = efficiency;
 }
 void CharacterEditor::SetCurseUserSystem(CurseUser &c, CursedEnergySystem cus){
-    c.Sorcery() = cus;
+    c.CursedEnergy() = cus;
 }
 void CharacterEditor::SetCursedEnergy(CurseUser &c, double ce){
-    c.Sorcery().max_cursed_energy = ce;
-    c.Sorcery().cursed_energy = ce;
+    c.CursedEnergy().max_cursed_energy = ce;
+    c.CursedEnergy().cursed_energy = ce;
 }
 void CharacterEditor::SetBlackFlashChance(CurseUser& c, int ch){
-    c.Sorcery().bf_chance = ch;
+    c.CursedEnergy().bf_chance = ch;
 }
 void CharacterEditor::AddBindingVow(CurseUser& c, BindingVow vow){
     c.Jujutsu().binding_vows.push_back(std::move(vow));

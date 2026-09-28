@@ -18,9 +18,9 @@ void Log::CharacterInfo(const Character &c, const LogDetailType ct){
     std::println("[{}]", c.Name());
     std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
-        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy()) : std::format("{:.1f}", crs->CursedEnergy());
+        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy(ValType::Current)) : std::format("{:.1f}", crs->CursedEnergy(ValType::Current));
         const std::string output        = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->Output().current_output) : Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential);
-        const std::string efficiency    = Stringet::EfficiencyStr(crs->Sorcery().efficiency);
+        const std::string efficiency    = Stringet::EfficiencyStr(crs->CursedEnergy().efficiency);
         std::println("CE: [{}] | OUTPUT: [{}] | EFFICIENCY: [{}] ", cursed_energy, output, efficiency);
         if (const auto& tech = crs->Jujutsu().technique){
             Log::TechniqueInfo(*tech, CTLogType::Name ,ct);

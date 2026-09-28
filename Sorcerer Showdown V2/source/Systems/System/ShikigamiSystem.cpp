@@ -28,9 +28,9 @@ void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, Sav
         case SupportType::CursedEnergyRegen:
             if (auto* crs = owner.CanUseSorcery()){
                 if (!sv.saved){
-                    sv.s_ce_regen = crs->Sorcery().regeneration_amount; 
+                    sv.s_ce_regen = crs->CursedEnergy().regeneration_amount; 
                 }
-                crs->Sorcery().regeneration_amount = sv.s_ce_regen * mult;
+                crs->CursedEnergy().regeneration_amount = sv.s_ce_regen * mult;
             }
             break;
     }
@@ -74,7 +74,7 @@ void ShikigamiSystem::HandleShadow(CurseUser& owner, const SupportType& st, cons
             break;
         case SupportType::CursedEnergyRegen:
             if (auto* crs = owner.CanUseSorcery()){
-                crs->Sorcery().regeneration_amount = sv.s_ce_regen;
+                crs->CursedEnergy().regeneration_amount = sv.s_ce_regen;
             }
             break;
     }

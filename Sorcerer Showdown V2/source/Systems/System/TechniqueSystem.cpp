@@ -6,7 +6,7 @@
 #include "../../../header/Sorcery/Technique.hpp"
 
 std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {
-    const double efficiency = SorcerySystem::EfficiencyMultiplier(user.Sorcery().efficiency);
+    const double efficiency = SorcerySystem::EfficiencyMultiplier(user.CursedEnergy().efficiency);
     const double op = chosen_ct.output * efficiency;
 
     if (user.Output().current_output + op > user.Output().max_output_potential){
@@ -20,7 +20,7 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, Te
     if (user.HasSixEyes()){
         cursed_energy_consumption = SorcerySystem::ApplySixEyes(cursed_energy_consumption);
     }
-    if (user.CursedEnergy() < cursed_energy_consumption){
+    if (user.CursedEnergy(ValType::Current) < cursed_energy_consumption){
         return {false, 0.0};
     }
     return {true, cursed_energy_consumption};

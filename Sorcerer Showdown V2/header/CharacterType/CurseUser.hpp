@@ -30,6 +30,7 @@ struct CursedEnergySystem final {
     double cursed_energy{1.0};
     double max_cursed_energy{1.0};
     double regeneration_amount{1.0};
+    double reinforcement_amount{1.0}; // split these up
     std::uint8_t bf_chance{1}; 
     enum class Efficiency : std::uint8_t { 
         Wasteful, Rough, Unstable, Stable, 
@@ -60,20 +61,20 @@ protected:
     SorceryTrait traits;
 public:
     [[nodiscard]] const JujutsuSystem& Jujutsu() const noexcept;
-    [[nodiscard]] const CursedEnergySystem& Sorcery() const noexcept;
+    [[nodiscard]] const CursedEnergySystem& CursedEnergy() const noexcept;
     [[nodiscard]] const CurseUserOutput& Output() const noexcept;
     [[nodiscard]] const CurseUserAmplification& Amplification() const noexcept;
     [[nodiscard]] const SorceryTrait& Traits() const noexcept;
     [[nodiscard]] const ReverseCTSystem& RCTSystem() const noexcept;
 
     JujutsuSystem& Jujutsu() noexcept;
-    CursedEnergySystem& Sorcery() noexcept;
+    CursedEnergySystem& CursedEnergy() noexcept;
     CurseUserOutput& Output() noexcept;
     CurseUserAmplification& Amplification() noexcept;
     SorceryTrait& Traits() noexcept;
     ReverseCTSystem& RCTSystem() noexcept;
     
-    double CursedEnergy(ValType type = ValType::Current) const noexcept;
+    double CursedEnergy(ValType type) const noexcept;
     void CursedEnergy(OpType type, double amount);
 
     double Output(ValType type) const noexcept;

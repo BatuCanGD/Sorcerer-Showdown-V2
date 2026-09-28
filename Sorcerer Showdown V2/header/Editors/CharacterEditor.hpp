@@ -13,34 +13,35 @@ struct Shikigami;
 struct BindingVow;
 struct EntityId;
 
-struct CharacterEditor final {
+namespace CharacterEditor {
     // identity section
-    static void SetIdentity(Character& c, EntityInfo cd);
+    void SetIdentity(Character& c, EntityInfo cd);
+    void SetStyle(Character& c, BattleIQ iq);
     // base state section
-    static void SetStats(Character& c, CharState cs);
-    static void SetHealth(Character& c, double hp);
-    static void SetInvulnerability(Character& c, bool t);
-    static void SetDurability(Character& c, double dr);
-    static void SetStrength(Character& c, double str);
+    void SetStats(Character& c, CharState cs);
+    void SetHealth(Character& c, double hp);
+    void SetInvulnerability(Character& c, bool t);
+    void SetDurability(Character& c, double dr);
+    void SetStrength(Character& c, double str);
     // inventory
     enum class Placement : std::uint8_t { OnHand, Offhand, Inventory };
-    static void GiveCharacterTool(Character& c, std::optional<CursedTool> tool, Placement place);
-    static void SetInventoryAccess(Character& c, bool t);
+    void GiveCharacterTool(Character& c, std::optional<CursedTool> tool, Placement place);
+    void SetInventoryAccess(Character& c, bool t);
     /*                        Character End                       */
     // inside curse user
-    static void SetCursedEnergyEfficiency(CurseUser& c, CursedEnergySystem::Efficiency efficiency);
+    void SetCursedEnergyEfficiency(CurseUser& c, CursedEnergySystem::Efficiency efficiency);
     // curse user system
-    static void SetCurseUserSystem(CurseUser& c, CursedEnergySystem cus);
-    static void SetCursedEnergy(CurseUser& c, double ce);
-    static void SetBlackFlashChance(CurseUser& c, int ch);
-    static void AddBindingVow(CurseUser& c, BindingVow vow);
-    static void AddShikigami(CurseUser& c, Shikigami shk);
-    static void SetTechnique(CurseUser& c, Technique tech);
-    static void SetDomain(CurseUser& c, Domain domain);
-    static void SetDomainNullifier(CurseUser& c, Neutralizer neutralizer);
+    void SetCurseUserSystem(CurseUser& c, CursedEnergySystem cus);
+    void SetCursedEnergy(CurseUser& c, double ce);
+    void SetBlackFlashChance(CurseUser& c, int ch);
+    void AddBindingVow(CurseUser& c, BindingVow vow);
+    void AddShikigami(CurseUser& c, Shikigami shk);
+    void SetTechnique(CurseUser& c, Technique tech);
+    void SetDomain(CurseUser& c, Domain domain);
+    void SetDomainNullifier(CurseUser& c, Neutralizer neutralizer);
     // traits
-    static void SetTraitSixEyes(CurseUser& c, bool t);
-    static void SetTraitPassiveHealing(CurseUser& c, bool t);
-    static void SetReverseCursedTechnique(CurseUser& c, bool can_use);
-    static void SetReverseCursedTechniqueLevel(CurseUser& c, ReverseCTSystem::RCTLevel lvl);
+    void SetTraitSixEyes(CurseUser& c, bool t);
+    void SetTraitPassiveHealing(CurseUser& c, bool t);
+    void SetReverseCursedTechnique(CurseUser& c, bool can_use);
+    void SetReverseCursedTechniqueLevel(CurseUser& c, ReverseCTSystem::RCTLevel lvl);
 };
