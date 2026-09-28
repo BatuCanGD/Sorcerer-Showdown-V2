@@ -1,6 +1,4 @@
 #include "../header/Creator.hpp"
-#include "../header/Editors/CharacterEditor.hpp"
-#include "../header/Editors/TechniqueEditor.hpp"
 #include "../header/Utilities/Random.hpp"
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
@@ -22,8 +20,8 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
-    CharacterEditor::SetIdentity(*c, id);
-    CharacterEditor::SetStats(*c, stats);
+    c->Identity() = id;
+    c->State() = stats;
 
     return c;
 }
@@ -37,7 +35,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double strength   = 115.0;
     constexpr double durability = 75.0;
 
-    [[maybe_unused]] const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
@@ -46,13 +44,15 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     const Technique technique = Create::IdleTransfiguration();
     const Domain domain{};
 
-    CharacterEditor::SetIdentity(*c, id);
-    CharacterEditor::SetStats(*c, stats);
-    CharacterEditor::SetCursedEnergy(*c, cursed_energy);
-    CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
-    CharacterEditor::SetDomain(*c, domain); // placeholder
-    CharacterEditor::SetTechnique(*c, technique);
-    CharacterEditor::SetTraitPassiveHealing(*c, true);
+    c->Identity() = id;
+    c->Style() = style;
+    c->State() = stats;
+    c->CursedEnergy().max_cursed_energy = cursed_energy;
+    c->CursedEnergy().cursed_energy = cursed_energy;
+    c->CursedEnergy().efficiency = ce_efficiency;
+    c->Jujutsu().domain = domain;
+    c->Jujutsu().technique = technique;
+    c->Traits().passive_healing = true;
 
     return c;
 }
@@ -65,7 +65,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr double strength   = 185.0;
     constexpr double durability = 300.0;
 
-    [[maybe_unused]] const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 5000.0;
@@ -77,16 +77,18 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     const Domain domain{};
     const Neutralizer neutralizer{};
 
-    CharacterEditor::SetIdentity(*c, id);
-    CharacterEditor::SetStats(*c, stats);
-    CharacterEditor::SetCursedEnergy(*c, cursed_energy);
-    CharacterEditor::SetDomain(*c, domain); // placeholder
-    CharacterEditor::SetDomainNullifier(*c, neutralizer); // placeholder
-    CharacterEditor::SetTechnique(*c, technique);
-    CharacterEditor::SetCursedEnergyEfficiency(*c, ce_efficiency);
-    CharacterEditor::SetTraitSixEyes(*c, true);
-    CharacterEditor::SetReverseCursedTechnique(*c, true);
-    CharacterEditor::SetReverseCursedTechniqueLevel(*c, rct_level);
+    c->Identity() = id;
+    c->Style() = style;
+    c->State() = stats;
+    c->CursedEnergy().max_cursed_energy = cursed_energy;
+    c->CursedEnergy().cursed_energy = cursed_energy;
+    c->Jujutsu().domain = domain;
+    c->Jujutsu().domain_neutralizer = neutralizer;
+    c->Jujutsu().technique = technique;
+    c->CursedEnergy().efficiency = ce_efficiency;
+    c->Traits().six_eyes = true;
+    c->RCTSystem().can_use_rct = true;
+    c->RCTSystem().rct_level = rct_level;
 
     return c;
 }
@@ -101,7 +103,7 @@ Technique Create::Limitless() {
     const EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
     const EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
-    TechniqueEditor::SetIdentity(c, id);
+    c.Identity() = id;
 
     constexpr auto at_type = globalums::DamageType::Normal;
     constexpr double blue_damage    = 125.0, blue_cost      = 335.0, blue_output    = 55.0;
@@ -112,9 +114,10 @@ Technique Create::Limitless() {
     const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
     const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
     
-    TechniqueEditor::AddAbility(c, blue);
-    TechniqueEditor::AddAbility(c, red);
-    TechniqueEditor::AddAbility(c, purple);
+
+    c.Abilities().push_back(blue);
+    c.Abilities().push_back(red);
+    c.Abilities().push_back(purple);
 
     return c;
 }
@@ -125,14 +128,14 @@ Technique Create::IdleTransfiguration() {
     EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
     EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
     
-    TechniqueEditor::SetIdentity(c, id);
+    c.Identity() = id;
 
     constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
     const TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
     
-    TechniqueEditor::AddAbility(c, transfiguration);
+    c.Abilities().push_back(transfiguration);
     
     return c;
 }

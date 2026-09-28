@@ -50,9 +50,9 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 
 
 void SetupSystem::LogSetupOptions() {
-    std::println("1 - Add Character | 11 - Add multiple characters\n"
-                 "2 - Remove Character | 22 - Remove last character\n"
-                 "3 - Clear Battlefield | 33 - Additional Character Info\n"
+    std::println("1 - Add Character         | 11 - Add multiple characters\n"
+                 "2 - Remove Character      | 22 - Remove last character\n"
+                 "3 - Clear Battlefield     | 33 - Additional Character Info\n"
                  "0 - Start Game");
 }
 

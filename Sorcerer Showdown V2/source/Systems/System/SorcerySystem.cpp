@@ -28,5 +28,8 @@ double SorcerySystem::ApplyReinforcementCost(const double amount) {
     return amount * (0.80 * std::exp(amount / 150.0));
 }
 double SorcerySystem::ApplySixEyes(const double amount){
-    return amount * 0.25;
+    if (amount <= 0.0){
+        return 0.0;
+    }
+    return amount * 0.2;
 }
