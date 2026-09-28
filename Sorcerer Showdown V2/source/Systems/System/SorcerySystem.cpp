@@ -1,4 +1,5 @@
 #include "../../../header/Systems/System/SorcerySystem.hpp"
+#include <cmath>
 
 double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept {
     switch(type){
@@ -14,6 +15,12 @@ double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) 
     return 1.0;
 }
 
-double SorcerySystem::ApplySixEyes(double amount){
+double SorcerySystem::ApplyRCTCost(const double amount) {
+    return amount * (0.70 * std::exp(amount / 100.0));
+}
+double SorcerySystem::ApplyReinforcementCost(const double amount) {
+    return amount * (0.80 * std::exp(amount / 150.0));
+}
+double SorcerySystem::ApplySixEyes(const double amount){
     return amount * 0.25;
 }

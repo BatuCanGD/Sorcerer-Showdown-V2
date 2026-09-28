@@ -57,6 +57,10 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
 }
 
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
+    if (ats.damage == -1.0) {
+        std::println("You cannot attack yourself");
+        return;
+    }
     const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", c1.Name(), ats.damage, c2.Name());
     std::string word{};
     if (ats.is_critical){

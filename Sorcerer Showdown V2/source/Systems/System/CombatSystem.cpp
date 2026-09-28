@@ -25,6 +25,9 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
 }
 
 AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character &attacked) {
+    if (&attacker == &attacked){
+        return {-1.0};
+    }
     double attack_damage = attacker.State().strength;
     auto attack_type = globalums::DamageType::Normal;
     bool is_blackflash{false};

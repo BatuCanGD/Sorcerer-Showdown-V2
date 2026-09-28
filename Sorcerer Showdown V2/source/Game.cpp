@@ -25,14 +25,18 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc) {
         }else {
 
         }
-        if (pc.skip_type == SkipType::Turns){
+        if (pc.skip_type == SkipType::Turns || pc.skip_type == SkipType::All){
             hold_input();
         }
     }
     if (pc.skip_type == SkipType::All){
         hold_input();
     }
-    return false;
+
+    if (bf.battlefield.size() <= 1){
+        return false;
+    }
+    return true;
 }
 
 bool rungame()  {

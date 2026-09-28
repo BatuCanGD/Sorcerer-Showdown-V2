@@ -3,5 +3,7 @@
 
 namespace SorcerySystem {
     double EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept;
-    double ApplySixEyes(double amount);
+    double ApplyRCTCost(const double amount);
+    double ApplyReinforcementCost(const double amount);
+    double ApplySixEyes(const double amount);
 }

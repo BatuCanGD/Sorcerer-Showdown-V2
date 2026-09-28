@@ -3,6 +3,7 @@
 #include "../../header/Battlefield.hpp"
 #include "../../header/Systems/System/CombatSystem.hpp"
 #include "../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
@@ -82,7 +83,7 @@ bool UserControl::GetConfirmation() {
 Character* UserControl::GetUserTarget(Battlefield& bf) {
     size_t z{0};
     for (const auto& c : bf.battlefield){
-        std::println("{}:{} | HP: {}", ++z, c->Name(), c->Health());
+        std::println("{}:{} | HP: {:.1f}", ++z, c->Name(), c->Health());
     }
     std::println("Pick a target");
     size_t x = get_input<size_t>() - 1;
@@ -256,7 +257,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 
 void UserControl::ForRCT(CurseUser& c){
     double& rct = c.RCTSystem().rct_output;
-    std::println("Total RCT output: {0:.1f} | Cost: {0:.1f} CE per turn\n1 - Set Output | 2 - Return", rct);
+    std::println("Total RCT output: {0:.1f} | Cost: {1:.1f} CE per turn\n1 - Set Output | 2 - Return", rct, SorcerySystem::ApplyRCTCost(rct));
     if (get_input<int>() != 1){
         return;
     }
@@ -271,14 +272,24 @@ void UserControl::ForRCT(CurseUser& c){
 }
 void UserControl::ForReinforcement(CurseUser& c){
     double& rf = c.CursedEnergy().reinforcement_amount;
-    std::println("Total Usage: {0:.1f} | Cost: {0:.1f}", rf, c.Output().max_output_potential); // placeholders
+    std::println("Total Usage: {0:.1f} | Cost: {0:.1f}", rf, SorcerySystem::ApplyReinforcementCost(rf)); // placeholders
     std::println("Output: {0:.1f}/{1:.1f}", c.Output().current_output, c.Output().max_output_potential);
 
-    std::println("set | do nothing");
+    std::println("1 - Set | 2 - Return");
+    if (get_input<int>() != 1){
+        return;
+    }
+    std::print("Enter Reinforcement Amount: ");
+    const double prv = rf;
+    rf = get_input<double>();
 
-    std::println("new cost, are you sure?");
+    std::println("New cost: {:.1f}", SorcerySystem::ApplyReinforcementCost(rf));
+    if (!UserControl::GetConfirmation()){
+        rf = prv;
+    }
 }
-void UserControl::ForBindingVows(CurseUser& c){
+void UserControl::ForBindingVows(CurseUser& c){ // no binding vows yet :C
+    return;
     std::println("currently used vows | description"); // placeholders
 
     std::println("add | remove | do nothing");

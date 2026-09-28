@@ -118,11 +118,10 @@ void SetupSystem::AddCharacters(Battlefield& bf){
         std::println("{}:{}", ++g, z->Name());
     }
     std::println("Which character would you like to add");
-    g = get_input<size_t>();
-    if (g == 0 || g > list.size()){
+    g = get_input<size_t>() - 1;
+    if (g >= list.size()){
         return;
     }
-    --g;
     for (int i = 0; i < x; i++){
         bf.battlefield.push_back(list[g]->Clone());
     }
