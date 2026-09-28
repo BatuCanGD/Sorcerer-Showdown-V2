@@ -263,7 +263,7 @@ void UserControl::ForRCT(CurseUser& c){
     }
     std::print("Enter Output Amount: ");
     const double prv = rct;
-    rct = get_input<double>();
+    rct = std::max(get_input<double>(), 0.0);
 
     std::println("New cost: {:.1f}", rct);
     if (!UserControl::GetConfirmation()){
@@ -281,7 +281,7 @@ void UserControl::ForReinforcement(CurseUser& c){
     }
     std::print("Enter Reinforcement Amount: ");
     const double prv = rf;
-    rf = get_input<double>();
+    rf = std::max(get_input<double>(), 0.0);
 
     std::println("New cost: {:.1f}", SorcerySystem::ApplyReinforcementCost(rf));
     if (!UserControl::GetConfirmation()){

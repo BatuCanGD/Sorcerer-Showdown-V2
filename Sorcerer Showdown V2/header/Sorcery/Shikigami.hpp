@@ -12,12 +12,8 @@ enum class SupportType : std::uint8_t {
     CursedEnergyRegen
 };
 
-struct SavedSupportValues final {
-    double s_strength{};
-    double s_durability{};
-    double s_output{};
-    double s_ce_regen{};
-    double s_hp_regen{};
+struct SavedValue final {
+    double value{};
     bool saved{};
     bool undone{};
 };
@@ -37,7 +33,7 @@ struct ShikigamiHealth final {
 struct Shikigami final {
     EntityInfo id;
     ShikigamiHealth hp;
-    SavedSupportValues saved_val;
+    SavedValue rollback;
     double cost{1.0};
     SummonType summon_type{SummonType::Shadow};
     SupportType support_type{SupportType::Offense};

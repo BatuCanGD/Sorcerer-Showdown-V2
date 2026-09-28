@@ -1,200 +1,117 @@
 #include "../../header/Systems/Stringet.hpp"
 
 #include <format>
+#include <array>
 
-// i hate this so much yet i have no idea if my other implementation would be worth it aswell
+struct StringData final {
+    double threshold;
+    std::string_view text;
+    std::string_view color;
+};
 
 const std::string Stringet::HealthStr(const double hp){
-    std::string clr{"\x1b[38;5;9m"};
-    std::string s{"Unknown"};
+    static constexpr std::array<StringData, 9> health_data{
+        StringData{25.0,   "VERY LOW",      "\x1b[38;5;8m"},
+        StringData{50.0,   "LOW",           "\x1b[38;5;1m"},
+        StringData{75.0,   "BELOW AVERAGE", "\x1b[38;5;3m"},
+        StringData{100.0,  "AVERAGE",       "\x1b[38;5;7m"},
+        StringData{150.0,  "HEALTHY",       "\x1b[38;5;2m"},
+        StringData{200.0,  "HIGH",          "\x1b[38;5;10m"},
+        StringData{300.0,  "VERY HIGH",     "\x1b[38;5;14m"},
+        StringData{500.0,  "EXCEPTIONAL",   "\x1b[38;5;13m"},
+        StringData{1000.0, "OVERWHELMING",  "\x1b[38;5;5m"}
+    };
 
-    if (hp < 25.0){
-        s = "VERY LOW";
-        clr = "\x1b[38;5;8m";
-    }else if (hp < 50.0){
-        s = "LOW";
-        clr = "\x1b[38;5;1m";
-    }else if (hp < 75.0){
-        s = "BELOW AVERAGE";
-        clr = "\x1b[38;5;3m";
-    }else if (hp < 100.0){
-        s = "AVERAGE";
-        clr = "\x1b[38;5;7m";
-    }else if (hp < 150.0){
-        s = "HEALTHY";
-        clr = "\x1b[38;5;2m";
-    }else if (hp < 200.0){
-        s = "HIGH";
-        clr = "\x1b[38;5;10m";
-    }else if (hp < 300.0){
-        s = "VERY HIGH";
-        clr = "\x1b[38;5;14m";
-    }else if (hp < 500.0){
-        s = "EXCEPTIONAL";
-        clr = "\x1b[38;5;13m";
-    }else if (hp < 1000.0){
-        s = "OVERWHELMING";
-        clr = "\x1b[38;5;5m";
-    }else {
-        s = "ABSOLUTE";
-        clr = "\x1b[48;5;5m\x1b[1m";
+    for (const auto& data : health_data) {
+        if (hp < data.threshold) {
+            return std::format("{}{}\x1b[0m", data.color, data.text);
+        }
     }
-    return clr + s + "\x1b[0m";
+    return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
 }
 
 const std::string Stringet::DurabilityStr(const double dr){
-    std::string clr{"\x1b[38;5;9m"};
-    std::string s{"Unknown"};
+    static constexpr std::array<StringData, 9> durability_data{
+        StringData{25.0,   "VERY FRAGILE", "\x1b[38;5;8m"},
+        StringData{50.0,   "FRAGILE",      "\x1b[38;5;1m"},
+        StringData{75.0,   "BRITTLE",      "\x1b[38;5;3m"},
+        StringData{100.0,  "AVERAGE",      "\x1b[38;5;7m"},
+        StringData{150.0,  "DURABLE",      "\x1b[38;5;2m"},
+        StringData{200.0,  "TOUGH",        "\x1b[38;5;10m"},
+        StringData{300.0,  "VERY TOUGH",   "\x1b[38;5;14m"},
+        StringData{500.0,  "EXCEPTIONAL",  "\x1b[38;5;13m"},
+        StringData{1000.0, "SUPREME",      "\x1b[38;5;5m"}
+    };
 
-    if (dr < 25.0){
-        s = "VERY FRAGILE";
-        clr = "\x1b[38;5;8m";
-    }else if (dr < 50.0){
-        s = "FRAGILE";
-        clr = "\x1b[38;5;1m";
-    }else if (dr < 75.0){
-        s = "BRITTLE";
-        clr = "\x1b[38;5;3m";
-    }else if (dr < 100.0){
-        s = "AVERAGE";
-        clr = "\x1b[38;5;7m";
-    }else if (dr < 150.0){
-        s = "DURABLE";
-        clr = "\x1b[38;5;2m";
-    }else if (dr < 200.0){
-        s = "TOUGH";
-        clr = "\x1b[38;5;10m";
-    }else if (dr < 300.0){
-        s = "VERY TOUGH";
-        clr = "\x1b[38;5;14m";
-    }else if (dr < 500.0){
-        s = "EXCEPTIONAL";
-        clr = "\x1b[38;5;13m";
-    }else if (dr < 1000.0){
-        s = "SUPREME";
-        clr = "\x1b[38;5;5m";
-    }else {
-        s = "ABSOLUTE";
-        clr = "\x1b[48;5;5m\x1b[1m";
+    for (const auto& data : durability_data) {
+        if (dr < data.threshold) {
+            return std::format("{}{}\x1b[0m", data.color, data.text);
+        }
     }
-    return clr + s + "\x1b[0m";
+    return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
 }
 
 const std::string Stringet::StrengthStr(const double str){
-    std::string clr{"\x1b[38;5;9m"};
-    std::string s{"Unknown"};
+    static constexpr std::array<StringData, 9> strength_data{
+        StringData{25.0,   "VERY WEAK",     "\x1b[38;5;8m"},
+        StringData{50.0,   "WEAK",          "\x1b[38;5;1m"},
+        StringData{75.0,   "BELOW AVERAGE", "\x1b[38;5;3m"},
+        StringData{100.0,  "AVERAGE",       "\x1b[38;5;7m"},
+        StringData{150.0,  "SOLID",         "\x1b[38;5;2m"},
+        StringData{200.0,  "STRONG",        "\x1b[38;5;10m"},
+        StringData{300.0,  "VERY STRONG",   "\x1b[38;5;14m"},
+        StringData{500.0,  "EXCEPTIONAL",   "\x1b[38;5;13m"},
+        StringData{1000.0, "SUPREME",       "\x1b[38;5;5m"}
+    };
 
-    if (str < 25.0){
-        s = "VERY WEAK";
-        clr = "\x1b[38;5;8m";
-    }else if (str < 50.0){
-        s = "WEAK";
-        clr = "\x1b[38;5;1m";
-    }else if (str < 75.0){
-        s = "BELOW AVERAGE";
-        clr = "\x1b[38;5;3m";
-    }else if (str < 100.0){
-        s = "AVERAGE";
-        clr = "\x1b[38;5;7m";
-    }else if (str < 150.0){
-        s = "SOLID";
-        clr = "\x1b[38;5;2m";
-    }else if (str < 200.0){
-        s = "STRONG";
-        clr = "\x1b[38;5;10m";
-    }else if (str < 300.0){
-        s = "VERY STRONG";
-        clr = "\x1b[38;5;14m";
-    }else if (str < 500.0){
-        s = "EXCEPTIONAL";
-        clr = "\x1b[38;5;13m";
-    }else if (str < 1000.0){
-        s = "SUPREME";
-        clr = "\x1b[38;5;5m";
-    }else {
-        s = "ABSOLUTE";
-        clr = "\x1b[48;5;5m\x1b[1m";
+    for (const auto& data : strength_data) {
+        if (str < data.threshold) {
+            return std::format("{}{}\x1b[0m", data.color, data.text);
+        }
     }
-    return clr + s + "\x1b[0m";
+    return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
 }
 
-const std::string Stringet::EfficiencyStr(const CursedEnergySystem::Efficiency& efficiency){
-    std::string clr{"\x1b[38;5;9m"};
-    std::string s{"Unknown"};
+struct EnumStringData final {
+    std::string_view text;
+    std::string_view color;
+};
 
-    switch(efficiency){
-        case CursedEnergySystem::Efficiency::Wasteful:  
-            clr = "\x1b[38;5;124m";
-            s = "Wasteful";
-            break;
-        case CursedEnergySystem::Efficiency::Rough:     
-            clr = "\x1b[38;5;202m";
-            s = "Rough";
-            break;
-        case CursedEnergySystem::Efficiency::Unstable:  
-            clr = "\x1b[38;5;221m";
-            s = "Unstable";
-            break;
-        case CursedEnergySystem::Efficiency::Stable:    
-            clr = "\x1b[38;5;118m";
-            s = "Stable";
-            break;
-        case CursedEnergySystem::Efficiency::Expert:    
-            clr = "\x1b[38;5;10m";
-            s = "Expert";
-            break;
-        case CursedEnergySystem::Efficiency::Absolute:  
-            clr = "\x1b[38;5;50m";
-            s = "Absolute";
-            break;
-        case CursedEnergySystem::Efficiency::Ultimate:  
-            clr = "\x1b[38;5;87m";
-            s = "Ultimate";
-            break;
-        case CursedEnergySystem::Efficiency::Extreme:   
-            clr = "\x1b[38;5;27m";
-            s = "Extreme";
-            break;
-    }
-    return clr + s + "\x1b[0m";
+const std::string Stringet::EfficiencyStr(const CursedEnergySystem::Efficiency& efficiency){
+    static constexpr std::array<EnumStringData, 8> efficiency_data{
+        EnumStringData{"Wasteful", "\x1b[38;5;124m"},
+        EnumStringData{"Rough",    "\x1b[38;5;202m"},
+        EnumStringData{"Unstable", "\x1b[38;5;221m"},
+        EnumStringData{"Stable",   "\x1b[38;5;118m"},
+        EnumStringData{"Expert",   "\x1b[38;5;10m"},
+        EnumStringData{"Absolute", "\x1b[38;5;50m"},
+        EnumStringData{"Ultimate", "\x1b[38;5;87m"},
+        EnumStringData{"Extreme",  "\x1b[38;5;27m"}
+    };
+
+    const auto& data = efficiency_data[static_cast<std::size_t>(efficiency)];
+    return std::format("{}{}\x1b[0m", data.color, data.text);
 }
 
 const std::string Stringet::OutputStr(const double op) {
-    std::string clr{"\x1b[38;5;9m"};
-    std::string s{"Unknown"};
+    static constexpr std::array<StringData, 9> output_data{
+        StringData{25.0,   "EXTREMELY LOW", "\x1b[38;5;8m"},
+        StringData{50.0,   "VERY LOW",      "\x1b[38;5;1m"},
+        StringData{75.0,   "LOW",           "\x1b[38;5;3m"},
+        StringData{100.0,  "BELOW AVERAGE", "\x1b[38;5;7m"},
+        StringData{150.0,  "AVERAGE",       "\x1b[38;5;2m"},
+        StringData{200.0,  "HIGH",          "\x1b[38;5;10m"},
+        StringData{300.0,  "VERY HIGH",     "\x1b[38;5;14m"},
+        StringData{500.0,  "EXCEPTIONAL",   "\x1b[38;5;13m"},
+        StringData{1000.0, "SUPREME",       "\x1b[38;5;5m"}
+    };
 
-    if (op < 25.0){
-        s = "EXTREMELY LOW";
-        clr = "\x1b[38;5;8m";
-    }else if (op < 50.0){
-        s = "VERY LOW";
-        clr = "\x1b[38;5;1m";
-    }else if (op < 75.0){
-        s = "LOW";
-        clr = "\x1b[38;5;3m";
-    }else if (op < 100.0){
-        s = "BELOW AVERAGE";
-        clr = "\x1b[38;5;7m";
-    }else if (op < 150.0){
-        s = "AVERAGE";
-        clr = "\x1b[38;5;2m";
-    }else if (op < 200.0){
-        s = "HIGH";
-        clr = "\x1b[38;5;10m";
-    }else if (op < 300.0){
-        s = "VERY HIGH";
-        clr = "\x1b[38;5;14m";
-    }else if (op < 500.0){
-        s = "EXCEPTIONAL";
-        clr = "\x1b[38;5;13m";
-    }else if (op < 1000.0){
-        s = "SUPREME";
-        clr = "\x1b[38;5;5m";
-    }else {
-        s = "ABSOLUTE";
-        clr = "\x1b[48;5;5m\x1b[1m";
+    for (const auto& data : output_data) {
+        if (op < data.threshold) {
+            return std::format("{}{}\x1b[0m", data.color, data.text);
+        }
     }
-    return clr + s + "\x1b[0m";
+    return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
 }
 
 

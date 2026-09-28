@@ -3,34 +3,34 @@
 
 #include <algorithm>
 
-void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedSupportValues& sv, const double mult){
+void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& sv, const double mult){
     switch(st){
         case SupportType::Offense:
                 if (!sv.saved){
-                    sv.s_strength = owner.State().strength; 
+                    sv.value = owner.State().strength; 
                 }
-                owner.State().strength = sv.s_strength * mult;
+                owner.State().strength = sv.value * mult;
             break;
         case SupportType::Defense:
                 if (!sv.saved){
-                    sv.s_durability = owner.State().durability; 
+                    sv.value = owner.State().durability; 
                 }
-                owner.State().durability = sv.s_durability * mult;
+                owner.State().durability = sv.value * mult;
             break;
         case SupportType::Output:
             if (auto* crs = owner.CanUseSorcery()){
                 if (!sv.saved){
-                    sv.s_output = crs->Output().max_output_potential; 
+                    sv.value = crs->Output().max_output_potential; 
                 }
-                crs->Output().max_output_potential = sv.s_output * mult;
+                crs->Output().max_output_potential = sv.value * mult;
             }
             break;
         case SupportType::CursedEnergyRegen:
             if (auto* crs = owner.CanUseSorcery()){
                 if (!sv.saved){
-                    sv.s_ce_regen = crs->CursedEnergy().regeneration_amount; 
+                    sv.value = crs->CursedEnergy().regeneration_amount; 
                 }
-                crs->CursedEnergy().regeneration_amount = sv.s_ce_regen * mult;
+                crs->CursedEnergy().regeneration_amount = sv.value * mult;
             }
             break;
     }
@@ -45,36 +45,36 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
     if (sk.summon_type != SummonType::Active){
         sk.hp.health = std::min(sk.hp.health + sk.hp.regen_speed, sk.hp.max_health);
         if (sk.summon_type == SummonType::Shadow){
-            if (!sk.saved_val.undone){
-                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.saved_val);
-                sk.saved_val.undone = true;
+            if (!sk.rollback.undone){
+                ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.rollback);
+                sk.rollback.undone = true;
             }
             return;
         }
     }
-    if (sk.saved_val.undone){
-        sk.saved_val.undone = false;
+    if (sk.rollback.undone){
+        sk.rollback.undone = false;
     }
     const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
-    ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.saved_val, mult);
+    ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.rollback, mult);
 }
 
-void ShikigamiSystem::HandleShadow(CurseUser& owner, const SupportType& st, const SavedSupportValues& sv){
+void ShikigamiSystem::HandleShadow(CurseUser& owner, const SupportType& st, const SavedValue& sv){
     switch(st){
         case SupportType::Offense:
-            owner.State().strength = sv.s_strength;
+            owner.State().strength = sv.value;
             break;
         case SupportType::Defense:
-            owner.State().durability = sv.s_durability;
+            owner.State().durability = sv.value;
             break;
         case SupportType::Output:
             if (auto* crs = owner.CanUseSorcery()){
-                crs->Output().max_output_potential = sv.s_output;
+                crs->Output().max_output_potential = sv.value;
             }
             break;
         case SupportType::CursedEnergyRegen:
             if (auto* crs = owner.CanUseSorcery()){
-                crs->CursedEnergy().regeneration_amount = sv.s_ce_regen;
+                crs->CursedEnergy().regeneration_amount = sv.value;
             }
             break;
     }

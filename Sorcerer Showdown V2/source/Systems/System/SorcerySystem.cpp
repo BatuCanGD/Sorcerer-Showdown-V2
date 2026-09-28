@@ -16,9 +16,15 @@ double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) 
 }
 
 double SorcerySystem::ApplyRCTCost(const double amount) {
+    if (amount <= 0.0) {
+        return 0.0;
+    }
     return amount * (0.70 * std::exp(amount / 100.0));
 }
 double SorcerySystem::ApplyReinforcementCost(const double amount) {
+    if (amount <= 0.0) {
+        return 0.0;
+    }
     return amount * (0.80 * std::exp(amount / 150.0));
 }
 double SorcerySystem::ApplySixEyes(const double amount){
