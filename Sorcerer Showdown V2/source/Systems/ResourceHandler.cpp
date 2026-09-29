@@ -1,11 +1,15 @@
 #include "../../header/Systems/ResourceHandler.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
 #include <vector>
 
 void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
     for (auto& c : ste){
         c.turn_amount--;
+        if (c.turn_amount <= 0){
+            // reset effects function // i remember now
+        }
     }
     std::erase_if(ste, [&](const auto& c){
         return c.turn_amount <= 0;
@@ -28,6 +32,7 @@ void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
 }
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
     if (!curse_user.RCTSystem().can_use_rct) return;
-    curse_user.CursedEnergy(OpType::Subtract, curse_user.RCTSystem().rct_output); // add a function that multiplies output with rct level
-    curse_user.Health(OpType::Add, curse_user.RCTSystem().rct_output);
+    const double& output = curse_user.RCTSystem().rct_output;
+    curse_user.CursedEnergy(OpType::Subtract, SorcerySystem::ApplyRCTCost(output)); // add a function that multiplies output with rct level
+    curse_user.Health(OpType::Add, output);
 }

@@ -18,6 +18,8 @@ bool endgame() {
 }
 
 bool rungameloop(Battlefield& bf, const playerchoices& pc) {
+    const bool skip_all  = pc.skip_type == SkipType::All;
+    const bool skip_turns = pc.skip_type == SkipType::Turns || pc.skip_type == SkipType::All;
     for(const auto& c : bf.battlefield){
         Log::CharacterInfo(*c);
         if (pc.user_character == c.get()){
@@ -25,11 +27,11 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc) {
         }else {
 
         }
-        if (pc.skip_type == SkipType::Turns || pc.skip_type == SkipType::All){
+        if (skip_turns){
             hold_input();
         }
     }
-    if (pc.skip_type == SkipType::All){
+    if (skip_all){
         hold_input();
     }
 

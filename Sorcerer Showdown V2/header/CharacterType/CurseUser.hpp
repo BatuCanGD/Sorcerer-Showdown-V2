@@ -49,7 +49,6 @@ struct ReverseCTSystem final {
 };
 
 class CurseUser final : public Character {
-protected:
     JujutsuSystem jujutsu;
     CursedEnergySystem ce_system;
     CurseUserOutput output;

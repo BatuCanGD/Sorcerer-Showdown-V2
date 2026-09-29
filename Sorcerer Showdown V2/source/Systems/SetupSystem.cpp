@@ -133,11 +133,10 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c){
     for (const auto& b : bf.battlefield){
         std::println("{}:{}", ++x, b->Name());
     }
-    x = get_input<size_t>();
-    if (x == 0 || x > bf.battlefield.size()) {
+    x = get_input<size_t>() - 1;
+    if (x >= bf.battlefield.size()) {
         return;
     } 
-    --x;
     if (bf.battlefield[x].get() == c) c = nullptr;
     bf.battlefield.erase(bf.battlefield.begin() + x);
 }
