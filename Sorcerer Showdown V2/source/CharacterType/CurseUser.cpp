@@ -1,6 +1,7 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 
-#include <stdexcept>
+CurseUser::CurseUser() {};
+CurseUser::~CurseUser() = default;
 
 const JujutsuSystem& CurseUser::Jujutsu() const noexcept {
     return jujutsu;
@@ -31,37 +32,6 @@ const SorceryTrait& CurseUser::Traits() const noexcept {
 }
 SorceryTrait& CurseUser::Traits() noexcept {
     return traits;
-}
-
-
-double CurseUser::CursedEnergy(ValType type) const noexcept {
-    switch (type) {
-        case ValType::Current:  return ce_system.cursed_energy;
-        case ValType::Maximum:  return ce_system.max_cursed_energy;
-    }
-    return -1.0;
-}
-
-void CurseUser::CursedEnergy(OpType type, double amount) {
-    if (amount <= 0.0){
-        throw std::range_error("Cannot use 0 or negative amounts");
-    }
-    switch (type) {
-        case OpType::Add:  
-            ce_system.cursed_energy += amount;
-            break;
-        case OpType::Subtract:
-            ce_system.cursed_energy -= amount;
-            break;
-        case OpType::Set:
-            ce_system.cursed_energy = amount;
-            break;
-        case OpType::Get:
-            throw std::invalid_argument("This overload function is not a getter");
-    }
-    if (ce_system.cursed_energy > ce_system.max_cursed_energy){
-        ce_system.cursed_energy = ce_system.max_cursed_energy;
-    }
 }
 
 const CurseUser* CurseUser::CanUseSorcery() const noexcept {

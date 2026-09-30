@@ -1,5 +1,4 @@
 #include "../../header/Systems/Stringet.hpp"
-
 #include <format>
 #include <array>
 

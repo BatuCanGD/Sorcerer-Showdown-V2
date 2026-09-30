@@ -1,10 +1,8 @@
 #include "../../header/CharacterType/Character.hpp"
 #include "../../header/Systems/System/CombatSystem.hpp"
 
-#include <stdexcept>
-
+Character::Character() {};
 Character::~Character() = default;
-
 
 const EntityInfo& Character::Identity() const noexcept {
     return identity;
@@ -29,40 +27,6 @@ const BattleIQ& Character::Style() const noexcept {
 }
 BattleIQ& Character::Style() noexcept {
     return style;
-}
-
-std::string Character::Name() const noexcept {
-    return identity.color + identity.name + (identity.color.empty() ? "" : "\x1b[0m");
-}
-
-double Character::Health(ValType type) const noexcept {
-    switch (type) {
-        case ValType::Current:  return state.health;
-        case ValType::Maximum:  return state.max_health;
-    }
-    return -1.0;
-}
-
-void Character::Health(OpType type, double amount) {
-    if (amount <= 0.0){
-        throw std::range_error("Cannot use 0 or negative amounts");
-    }
-    switch (type) {
-        case OpType::Add:  
-            state.health += amount;
-            break;
-        case OpType::Subtract:
-            state.health -= amount;
-            break;
-        case OpType::Set:
-            state.health = amount;
-            break;
-        case OpType::Get:
-            throw std::invalid_argument("This overload function is not a getter");
-    }
-    if (state.health > state.max_health){
-        state.health = state.max_health;
-    }
 }
 
 DamageStruct Character::Damage(double amount, globalums::DamageType type){

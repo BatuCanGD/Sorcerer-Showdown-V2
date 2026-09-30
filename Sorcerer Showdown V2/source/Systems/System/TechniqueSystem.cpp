@@ -20,7 +20,7 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, Te
     if (user.HasSixEyes()){
         cursed_energy_consumption = SorcerySystem::ApplySixEyes(cursed_energy_consumption);
     }
-    if (user.CursedEnergy(ValType::Current) < cursed_energy_consumption){
+    if (user.CursedEnergy().cursed_energy < cursed_energy_consumption){
         return {false, 0.0};
     }
     return {true, cursed_energy_consumption};

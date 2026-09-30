@@ -14,9 +14,9 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
             double highest_hp{std::numeric_limits<double>::lowest()};
             for (const auto& c : bf.battlefield){
                 if (c.get() == &user) continue;
-                if (c->Health() > highest_hp || !target){
+                if (c->State().health > highest_hp || !target){
                     target = c.get();
-                    highest_hp = c->Health();
+                    highest_hp = c->State().health;
                 }
             }
             break;
@@ -25,9 +25,9 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
             double lowest_hp{std::numeric_limits<double>::max()};
             for (const auto& c : bf.battlefield){
                 if (c.get() == &user) continue;
-                if (c->Health() < lowest_hp || !target){
+                if (c->State().health < lowest_hp || !target){
                     target = c.get();
-                    lowest_hp = c->Health();
+                    lowest_hp = c->State().health;
                 }
             }
             break;

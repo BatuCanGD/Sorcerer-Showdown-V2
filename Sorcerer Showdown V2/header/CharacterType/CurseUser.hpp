@@ -6,7 +6,6 @@
 #include "../Sorcery/Technique.hpp"
 #include "../Sorcery/Domain.hpp"
 #include "../Sorcery/Neutralizer.hpp"
-#include "../Enums.hpp"
 
 struct JujutsuSystem final {
     std::vector<BindingVow> binding_vows;
@@ -56,6 +55,9 @@ class CurseUser final : public Character {
     ReverseCTSystem rct_system;
     SorceryTrait traits;
 public:
+    CurseUser();
+    ~CurseUser() override;
+    
     [[nodiscard]] const JujutsuSystem& Jujutsu() const noexcept;
     [[nodiscard]] const CursedEnergySystem& CursedEnergy() const noexcept;
     [[nodiscard]] const CurseUserOutput& Output() const noexcept;
@@ -70,12 +72,6 @@ public:
     SorceryTrait& Traits() noexcept;
     ReverseCTSystem& RCTSystem() noexcept;
     
-    double CursedEnergy(ValType type) const noexcept;
-    void CursedEnergy(OpType type, double amount);
-
-    double Output(ValType type) const noexcept;
-    void Output(OpType type, double amount);
-
     [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
     CurseUser* CanUseSorcery() noexcept override;
 

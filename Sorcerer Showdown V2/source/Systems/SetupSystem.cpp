@@ -23,7 +23,7 @@ SkipType SetupSystem::GetPlayerSkipType() noexcept {
 const std::map<std::string, int> SetupSystem::SetList(const Battlefield &bf){
     std::map<std::string, int> list;
     for (const auto& c : bf.battlefield){
-        list[c->Name()]++;
+        list[GetInfo::Name(c->Identity())]++;
     }
     return list;
 }
@@ -98,7 +98,7 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c){
     size_t x{0};
     const auto list = SetupSystem::GetCharacterList();
     for (const auto& z : list) {
-        std::println("{}:{}", ++x, z->Name());
+        std::println("{}:{}", ++x, GetInfo::Name(z->Identity()));
     }
     x = get_input<size_t>();
     if (x == 0 || x > list.size()) {
@@ -115,7 +115,7 @@ void SetupSystem::AddCharacters(Battlefield& bf){
     size_t g{0};
     const auto list = SetupSystem::GetCharacterList();
     for (const auto& z : list){
-        std::println("{}:{}", ++g, z->Name());
+        std::println("{}:{}", ++g, GetInfo::Name(z->Identity()));
     }
     std::println("Which character would you like to add");
     g = get_input<size_t>() - 1;
@@ -131,7 +131,7 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c){
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& b : bf.battlefield){
-        std::println("{}:{}", ++x, b->Name());
+        std::println("{}:{}", ++x, GetInfo::Name(b->Identity()));
     }
     x = get_input<size_t>() - 1;
     if (x >= bf.battlefield.size()) {
@@ -154,7 +154,7 @@ void SetupSystem::ViewCharacterInfo(Battlefield &bf){
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& c : bf.battlefield){
-        std::println("{}:{}", ++x, c->Name());
+        std::println("{}:{}", ++x, GetInfo::Name(c->Identity()));
     }
     std::println("Who's info would you like to view");
     x = get_input<size_t>();

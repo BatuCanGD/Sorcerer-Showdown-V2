@@ -1,10 +1,10 @@
 #pragma once
-#include "../Structs.hpp"
+#include "../Info.hpp"
 #include <cstdint>
 
 enum class EffectType : std::uint8_t {
     None,
-    Decrease, // bleed effects
+    Decrease,
     Increase,
 };
 
@@ -17,10 +17,8 @@ enum class EffectForType : std::uint8_t {
     MaxOutput
 };
 
-
 struct StatusEffect final {
     EntityInfo id;
-    double saved_value{1.0};
     double effect_amount{1.0};
     int turn_amount{3};
     EffectType effect_type{EffectType::None};

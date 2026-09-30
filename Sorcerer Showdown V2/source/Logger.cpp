@@ -15,10 +15,10 @@
 
 
 void Log::CharacterInfo(const Character &c, const LogDetailType ct){
-    std::println("[{}]", c.Name());
-    std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.Health()), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
+    std::println("{}", ct == LogDetailType::Basic ? GetInfo::Name(c.Identity()) : GetInfo::Styalized(c.Identity()));
+    std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.State().health), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
-        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy(ValType::Current)) : std::format("{:.1f}", crs->CursedEnergy(ValType::Current));
+        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy().cursed_energy) : std::format("{:.1f}", crs->CursedEnergy().cursed_energy);
         const std::string output        = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->Output().current_output) : Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential);
         const std::string efficiency    = Stringet::EfficiencyStr(crs->CursedEnergy().efficiency);
         std::println("CE: [{}] | OUTPUT: [{}] | EFFICIENCY: [{}] ", cursed_energy, output, efficiency);
@@ -48,7 +48,7 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
 
 void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p) {
     for (const auto& s : p.first){
-        std::print("{} got affected by the {}{}{} effect and {} {} {}", p.second.Name(), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+        std::print("{} got affected by the {}{}{} effect and {} {} {}", GetInfo::Name(p.second.Identity()), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 
@@ -61,7 +61,7 @@ void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c
         std::println("You cannot attack yourself");
         return;
     }
-    const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", c1.Name(), ats.damage, c2.Name());
+    const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), ats.damage, GetInfo::Name(c2.Identity()));
     std::string word{};
     if (ats.is_critical){
         word.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
@@ -75,11 +75,11 @@ void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c
 
 void Log::Damage(const DamageStruct dms, const Character &attacked){
     if (dms.attack_blocked) {
-        std::println("{} took no damage. The attack was negated and blocked", attacked.Name());
+        std::println("{} took no damage. The attack was negated and blocked", GetInfo::Name(attacked.Identity()));
     } else if (dms.negated_damage == 0.0) {
-        std::println("{} took {:.1f} damage.", attacked.Name(), dms.damage);
+        std::println("{} took {:.1f} damage.", GetInfo::Name(attacked.Identity()), dms.damage);
     } else {
-        std::println("{} took {:.1f} damage. {:.1f} damage has been negated", attacked.Name(), dms.damage, dms.negated_damage);
+        std::println("{} took {:.1f} damage. {:.1f} damage has been negated", GetInfo::Name(attacked.Identity()), dms.damage, dms.negated_damage);
     }
 }
 
@@ -113,7 +113,7 @@ void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
 void Log::Death(const Battlefield& bf){
     std::vector<std::string> death_messages;
     for (const auto& c : bf.battlefield){
-        const double hp = c->Health();
+        const double hp = c->State().health;
         if (hp > 0.0) continue;
         std::string msg{""}, severity{"DEATH"}, color{"\x1b[38;5;237m"};
         
@@ -129,7 +129,7 @@ void Log::Death(const Battlefield& bf){
         }
 
         msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2}\x1b[0m)", color, severity, hp));
-        msg.append(std::format(" {} has been defeated\n", c->Name()));
+        msg.append(std::format(" {} has been defeated\n", GetInfo::Name(c->Identity())));
         death_messages.push_back(msg);
     }
     if (death_messages.empty()){

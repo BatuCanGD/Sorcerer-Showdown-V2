@@ -83,7 +83,7 @@ bool UserControl::GetConfirmation() {
 Character* UserControl::GetUserTarget(Battlefield& bf) {
     size_t z{0};
     for (const auto& c : bf.battlefield){
-        std::println("{}:{} | HP: {:.1f}", ++z, c->Name(), c->Health());
+        std::println("{}:{} | HP: {:.1f}", ++z, GetInfo::Name(c->Identity()), c->State().health);
     }
     std::println("Pick a target");
     size_t x = get_input<size_t>() - 1;

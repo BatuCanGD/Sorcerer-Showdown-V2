@@ -1,5 +1,5 @@
 #pragma once
-#include "../Structs.hpp"
+#include "../Info.hpp"
 #include "../Enums.hpp"
 
 enum class DomainType : std::uint8_t {

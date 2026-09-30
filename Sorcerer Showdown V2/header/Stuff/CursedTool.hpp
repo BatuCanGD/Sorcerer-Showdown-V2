@@ -1,6 +1,6 @@
 #pragma once
 #include "../Enums.hpp"
-#include "../Structs.hpp"
+#include "../Info.hpp"
 #include "StatusEffects.hpp"
 
 struct CursedTool {

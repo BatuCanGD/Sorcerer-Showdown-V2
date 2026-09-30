@@ -20,16 +20,13 @@ void ResourceHandler::TickAll(Battlefield& bf){
 void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
     for (auto& c : ste){
         c.turn_amount--;
-        if (c.turn_amount <= 0){
-            // reset effects function // i remember now
-        }
     }
     std::erase_if(ste, [&](const auto& c){
         return c.turn_amount <= 0;
     });
 }
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Add, curse_user.CursedEnergy().regeneration_amount);
+    curse_user.CursedEnergy().cursed_energy += curse_user.CursedEnergy().regeneration_amount;
 }
 void ResourceHandler::TickShikigami(CurseUser& curse_user){
     for (auto& c : curse_user.Jujutsu().shikigami){
@@ -39,8 +36,8 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
     if (!curse_user.RCTSystem().can_use_rct) return;
     const double& output = curse_user.RCTSystem().rct_output;
-    curse_user.CursedEnergy(OpType::Subtract, SorcerySystem::ApplyRCTCost(output)); // add a function that multiplies output with rct level
-    curse_user.Health(OpType::Add, output);
+    curse_user.CursedEnergy().cursed_energy -= SorcerySystem::ApplyRCTCost(output);
+    curse_user.State().health += output;
 }
 
 
@@ -48,8 +45,8 @@ void ResourceHandler::TickRCT(CurseUser& curse_user) {
 
 
 void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain_neutralizer->cost);
+    curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().domain_neutralizer->cost;
 }
 void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain->cost);
+   curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().domain->cost;
 }

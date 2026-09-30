@@ -83,7 +83,7 @@ std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Do
 }
 
 void DomainSystem::HandleSureHit(Character &c, const double damage, const bool does_paralyze){
-    c.Health(OpType::Subtract, damage);
+    c.State().health -= damage;
     if (does_paralyze){
         c.State().is_stunned = true;
     }

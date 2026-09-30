@@ -54,7 +54,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
         return{enough_output, enough_ce};
     }
 
-    attacker.CursedEnergy(OpType::Subtract, ce);
+    attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
     attacked.Damage(chosen_ct.damage);
     return {enough_output, enough_ce};

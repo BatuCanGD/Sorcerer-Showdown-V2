@@ -4,9 +4,8 @@
 #include "../Stuff/CursedTool.hpp"
 #include "../AI.hpp"
 #include "../Enums.hpp"
-#include "../Structs.hpp"
+#include "../Info.hpp"
 
-#include <string>
 #include <optional>
 #include <memory>
 #include <vector>
@@ -45,7 +44,7 @@ protected:
     CharState state;
     CharInv equipment;
 public:
-    Character() {};
+    Character();
     virtual ~Character();
 
     [[nodiscard]] const EntityInfo& Identity() const noexcept;
@@ -57,11 +56,6 @@ public:
     BattleIQ& Style() noexcept;
     CharState& State() noexcept;
     CharInv& Equipment() noexcept;
-
-    [[nodiscard]] std::string Name() const noexcept;
-
-    [[nodiscard]] double Health(ValType type = ValType::Current) const noexcept;
-    void Health(OpType type, double amount);
 
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
     AttackStruct Attack(Character& attacked);

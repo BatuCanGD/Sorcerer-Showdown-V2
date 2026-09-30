@@ -5,7 +5,7 @@
 void BattlefieldSystem::HandleDeadPeople(Battlefield &bf){
     Log::Death(bf);
     std::erase_if(bf.battlefield, [](const auto& s) { 
-        return s->Health() <= 0.0;
+        return s->State().health <= 0.0;
     });
 }
 

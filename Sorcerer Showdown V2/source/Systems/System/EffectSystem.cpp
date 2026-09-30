@@ -11,23 +11,16 @@ std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::Appl
 }
 
 void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
-    OpType tp{OpType::Subtract};
-    bool subtract{false};
-    switch(ste.effect_type) {
-        case EffectType::Increase:
-            tp = OpType::Add;
-            break;
-        case EffectType::Decrease:
-            tp = OpType::Subtract;
-            subtract = true;
-            break;
-        default: 
-            break;
-    }
+    const bool subtract{ste.effect_type == EffectType::Decrease};
+
     switch(ste.effect_for_type){
         case EffectForType::CursedEnergy:
             if (auto* crs = c.CanUseSorcery()){
-                crs->CursedEnergy(tp, ste.effect_amount);
+                if (subtract) {
+                    crs->CursedEnergy().cursed_energy -= ste.effect_amount;
+                } else {
+                    crs->CursedEnergy().cursed_energy += ste.effect_amount;
+                }
             }
             break;
         case EffectForType::Durability:
@@ -38,7 +31,11 @@ void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
             }
             break;
         case EffectForType::Health:
-            c.Health(tp, ste.effect_amount);
+            if (subtract) {
+                c.State().health -= ste.effect_amount;
+            } else {
+                c.State().health += ste.effect_amount;
+            }
             break;
         case EffectForType::MaxOutput:
             if (auto* crs = c.CanUseSorcery()){
