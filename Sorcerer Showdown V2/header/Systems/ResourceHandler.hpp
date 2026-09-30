@@ -4,9 +4,11 @@
 class Character;
 class CurseUser;
 
+struct Battlefield;
 struct StatusEffect;
 
 namespace ResourceHandler {
+    void TickAll(Battlefield& bf);
     void TickStatusEffects(std::vector<StatusEffect>& character);
     void TickCursedEnergy(CurseUser& curse_user);
     void TickShikigami(CurseUser& curse_user);

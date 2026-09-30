@@ -3,6 +3,8 @@
 #include "../header/Battlefield.hpp"
 #include "../header/Utilities/Input.hpp"
 #include "../header/Systems/SetupSystem.hpp"
+#include "../header/Systems/BattlefieldSystem.hpp"
+#include "../header/Systems/ResourceHandler.hpp"
 #include "../header/Systems/PlayerSystem.hpp"
 
 #include <print>
@@ -35,6 +37,10 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
         }
     }
 
+    BattlefieldSystem::HandleDeadPeople(bf);
+    ResourceHandler::TickAll(bf);
+    BattlefieldSystem::HandleSpawns(bf);
+    
 
     if (sp.skip_all){
         hold_input();

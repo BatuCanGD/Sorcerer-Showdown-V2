@@ -2,7 +2,20 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../header/Battlefield.hpp"
+
 #include <vector>
+
+void ResourceHandler::TickAll(Battlefield& bf){
+    for (auto& c : bf.battlefield){
+        ResourceHandler::TickStatusEffects(c->State().status_effects);
+        if (auto* crs = c->CanUseSorcery()){
+            ResourceHandler::TickCursedEnergy(*crs);
+            ResourceHandler::TickShikigami(*crs);
+            ResourceHandler::TickRCT(*crs);
+        }
+    }
+}
 
 void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
     for (auto& c : ste){
@@ -15,7 +28,6 @@ void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
         return c.turn_amount <= 0;
     });
 }
-
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
     curse_user.CursedEnergy(OpType::Add, curse_user.CursedEnergy().regeneration_amount);
 }
@@ -24,15 +36,20 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
         ShikigamiSystem::TickShikigami(c, curse_user);
     }
 }
-void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain_neutralizer->cost);
-}
-void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
-    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain->cost);
-}
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
     if (!curse_user.RCTSystem().can_use_rct) return;
     const double& output = curse_user.RCTSystem().rct_output;
     curse_user.CursedEnergy(OpType::Subtract, SorcerySystem::ApplyRCTCost(output)); // add a function that multiplies output with rct level
     curse_user.Health(OpType::Add, output);
+}
+
+
+
+
+
+void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
+    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain_neutralizer->cost);
+}
+void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
+    curse_user.CursedEnergy(OpType::Subtract, curse_user.Jujutsu().domain->cost);
 }
