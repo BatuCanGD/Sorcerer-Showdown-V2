@@ -2,13 +2,14 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../header/Systems/System/EffectSystem.hpp"
 #include "../../header/Battlefield.hpp"
 
 #include <vector>
 
 void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){
-        ResourceHandler::TickStatusEffects(c->State().status_effects);
+        EffectSystem::ApplyEffects(*c);
         if (auto* crs = c->CanUseSorcery()){
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);

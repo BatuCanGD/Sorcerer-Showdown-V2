@@ -2,12 +2,14 @@
 #include "../../../header/Systems/ResourceHandler.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
-std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::ApplyEffects(std::vector<StatusEffect>& ste, Character &c){
-    ResourceHandler::TickStatusEffects(ste);
-    for (const auto& x : ste){
+std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::ApplyEffects(Character &c){
+    auto& s = c.State().status_effects;
+    ResourceHandler::TickStatusEffects(s);
+    for (auto& x : s){
         EffectSystem::ApplyEffectsType(x,c);
+        x.turn_amount--;
     }
-    return {ste, c};
+    return {s, c};
 }
 
 void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
