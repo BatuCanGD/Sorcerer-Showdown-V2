@@ -31,7 +31,7 @@ BattleIQ& Character::Style() noexcept {
 
 DamageStruct Character::Damage(double amount, globalums::DamageType type){
     DamageStruct ds{.attack_blocked = true};
-    if (state.is_invulnerable){
+    if (state.is_invulnerable){ // godmode/dev character check
         return ds;
     }
     ds = CombatSystem::ResolveDamage(*this, type, amount);

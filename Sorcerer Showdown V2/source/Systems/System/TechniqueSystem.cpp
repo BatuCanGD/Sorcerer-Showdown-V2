@@ -17,7 +17,7 @@ std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, Cu
 
 std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, TechAbility chosen_ct, Character& target){
     double cursed_energy_consumption = chosen_ct.cost;
-    if (user.HasSixEyes()){
+    if (user.Traits().six_eyes){
         cursed_energy_consumption = SorcerySystem::ApplySixEyes(cursed_energy_consumption);
     }
     if (user.CursedEnergy().cursed_energy < cursed_energy_consumption){

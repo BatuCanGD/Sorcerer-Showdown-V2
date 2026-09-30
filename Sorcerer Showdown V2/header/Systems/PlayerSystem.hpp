@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <utility>
+#include <string>
 #include <vector>
 
 enum class SummonType : std::uint8_t;
@@ -18,7 +20,7 @@ enum class Action : std::uint8_t {
 };
 
 namespace UserControl {
-    std::vector<Action> GetChoices(const Character& c);
+    std::pair<std::vector<Action>, std::vector<std::string>> GetChoices(const Character& c);
     void GetPlayerTurn(Character& c, Battlefield& bf);
     bool GetConfirmation();
 

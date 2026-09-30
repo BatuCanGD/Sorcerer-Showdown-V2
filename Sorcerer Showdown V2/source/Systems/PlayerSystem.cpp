@@ -10,45 +10,55 @@
 
 #include <string_view>
 #include <optional>
+#include <format>
 #include <print>
 
 
-std::vector<Action> UserControl::GetChoices(const Character& c) {
+std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices(const Character& c) {
     std::vector<Action> ac;
+    std::vector<std::string> sc;
     int t{0};
-    auto add_ch([&](std::string_view sv, Action a){
-        std::println("{}:{}", ++t, sv);
+    auto add_ch = [&](std::string_view sv, Action a) {
+        sc.push_back(std::format("{}:{}", ++t, sv));
         ac.push_back(a);
-    });
+    };
 
     add_ch("Attack", Action::Attack);
 
-    if (c.Equipment().current_tool || c.Equipment().stored_tool || (c.Equipment().has_access_to_inventory && !c.Equipment().inventory.empty()))
+    if (c.Equipment().current_tool || c.Equipment().stored_tool || (c.Equipment().has_access_to_inventory && !c.Equipment().inventory.empty())) {
         add_ch("Inventory", Action::Inventory);
+    }
 
-    if (const auto& cr = c.CanUseSorcery()){
-        if (cr->Jujutsu().technique)
+    if (const auto* cr = c.CanUseSorcery()){
+        if (cr->Jujutsu().technique) {
             add_ch("Technique", Action::Technique);
-        if (cr->Jujutsu().domain)
+        }
+        if (cr->Jujutsu().domain) {
             add_ch("Domain", Action::Domain);
-        if (!cr->Jujutsu().shikigami.empty())
+        }
+        if (!cr->Jujutsu().shikigami.empty()) {
             add_ch("Shikigami", Action::Shikigami);
+        }
         add_ch("Sorcery", Action::Sorcery);
     }
-    return ac;
+    return {ac, sc};
 }
+
 void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
     const auto choices = UserControl::GetChoices(c);
     auto* crs = c.CanUseSorcery();
     bool looping = true;
     do{
+        for (const auto& str : choices.second){
+            std::println("{}", str);
+        }
         size_t idx = get_input<size_t>() - 1;
-        while (idx >= choices.size()) {
+        while (idx >= choices.first.size()) {
             std::println("Invalid Input");
             idx = get_input<size_t>() - 1;
         }
         if (UserControl::GetConfirmation()){
-            switch(choices[idx]){
+            switch(choices.first[idx]){
                 case Action::Attack:
                     looping = UserControl::DoAttack(c, *UserControl::GetUserTarget(bf));
                     break;
@@ -265,7 +275,7 @@ void UserControl::ForRCT(CurseUser& c){
     const double prv = rct;
     rct = std::max(get_input<double>(), 0.0);
 
-    std::println("New cost: {:.1f}", rct);
+    std::println("New cost: {:.1f}", SorcerySystem::ApplyRCTCost(rct));
     if (!UserControl::GetConfirmation()){
         rct = prv;
     }

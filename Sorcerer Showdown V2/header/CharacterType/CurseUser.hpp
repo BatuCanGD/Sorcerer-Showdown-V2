@@ -75,6 +75,5 @@ public:
     [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
     CurseUser* CanUseSorcery() noexcept override;
 
-    [[nodiscard]] bool HasSixEyes() const noexcept;
     [[nodiscard]] std::unique_ptr<Character> Clone() const override;
 };
