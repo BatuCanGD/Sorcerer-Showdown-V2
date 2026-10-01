@@ -33,22 +33,25 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
         }else {
             AI::Fight(*c, bf);
         }
-        if (sp.skip_turns){
+        if (!sp.skip_turns){
+            std::println("end of turn");
             hold_input();
         }
     }
 
     BattlefieldSystem::HandleDeadPeople(bf);
+    if (bf.battlefield.size() <= 1){
+        return false;
+    }
     ResourceHandler::TickAll(bf);
     BattlefieldSystem::HandleSpawns(bf);
     
 
-    if (sp.skip_all){
+    if (!sp.skip_all){
+        std::println("end of round");
         hold_input();
     }
-    if (bf.battlefield.size() <= 1){
-        return false;
-    }
+
     return true;
 }
 

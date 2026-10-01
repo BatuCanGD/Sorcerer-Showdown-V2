@@ -17,7 +17,7 @@ struct AttackStruct final {
 struct ToolStruct final {
     double damage;
     bool did_hit;
-    StatusEffect* applied_effect;
+    const StatusEffect* applied_effect;
 };
 
 struct DamageStruct final {

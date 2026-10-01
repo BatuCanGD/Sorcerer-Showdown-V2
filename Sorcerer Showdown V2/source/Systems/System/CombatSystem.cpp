@@ -24,6 +24,18 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
     return ds;
 }
 
+ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attacked){
+    [[maybe_unused]] const auto& current_tool = attacker.Equipment().current_tool;
+    const double& damage = current_tool->damage;
+    const auto& effect = current_tool->given_effect;
+    const auto& msg = attacked.Damage(damage, current_tool->damage_type);
+    const bool blocked = msg.attack_blocked;
+    if (!blocked){
+        attacked.State().status_effects.push_back(effect);
+    }
+    return {damage, blocked, &effect};
+}
+
 AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character &attacked) {
     if (&attacker == &attacked){
         return {-1.0};
