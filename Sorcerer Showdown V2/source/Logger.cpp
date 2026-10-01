@@ -53,7 +53,15 @@ void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> 
 }
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
-    
+    if (!tc.enough_ce){
+
+    }
+    if (!tc.enough_output){
+
+    }
+    if (tc.used_ability){
+        std::println("{} was used", GetInfo::Name(tc.used_ability->id));
+    }
 }
 
 void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {

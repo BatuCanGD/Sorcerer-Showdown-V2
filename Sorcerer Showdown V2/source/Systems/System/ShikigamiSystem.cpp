@@ -4,25 +4,27 @@
 #include <algorithm>
 
 void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& sv, const double mult){
+    const double amount = sv.value * mult;
+    
     switch(st){
         case SupportType::Offense:
                 if (!sv.saved){
                     sv.value = owner.State().strength; 
                 }
-                owner.State().strength = sv.value * mult;
+                owner.State().strength = amount;
             break;
         case SupportType::Defense:
                 if (!sv.saved){
                     sv.value = owner.State().durability; 
                 }
-                owner.State().durability = sv.value * mult;
+                owner.State().durability = amount;
             break;
         case SupportType::Output:
             if (auto* crs = owner.CanUseSorcery()){
                 if (!sv.saved){
                     sv.value = crs->Output().max_output_potential; 
                 }
-                crs->Output().max_output_potential = sv.value * mult;
+                crs->Output().max_output_potential = amount;
             }
             break;
         case SupportType::CursedEnergyRegen:
@@ -30,7 +32,7 @@ void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, Sav
                 if (!sv.saved){
                     sv.value = crs->CursedEnergy().regeneration_amount; 
                 }
-                crs->CursedEnergy().regeneration_amount = sv.value * mult;
+                crs->CursedEnergy().regeneration_amount = amount;
             }
             break;
     }

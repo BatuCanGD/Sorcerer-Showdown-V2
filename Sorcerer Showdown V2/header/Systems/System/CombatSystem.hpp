@@ -27,6 +27,7 @@ struct DamageStruct final {
 };
 
 struct TechniqueStruct final {
+    const TechAbility* used_ability;
     bool enough_output;
     bool enough_ce;
 };
