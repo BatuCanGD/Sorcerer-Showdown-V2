@@ -13,47 +13,27 @@ std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::Appl
 }
 
 void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
-    const bool subtract{ste.effect_type == EffectType::Decrease};
+    const double amount = ste.effect_type == EffectType::Decrease ? -ste.effect_amount : ste.effect_amount;
 
     switch(ste.effect_for_type){
         case EffectForType::CursedEnergy:
             if (auto* crs = c.CanUseSorcery()){
-                if (subtract) {
-                    crs->CursedEnergy().cursed_energy -= ste.effect_amount;
-                } else {
-                    crs->CursedEnergy().cursed_energy += ste.effect_amount;
-                }
+                crs->CursedEnergy().cursed_energy += amount;
             }
             break;
         case EffectForType::Durability:
-            if (subtract) {
-                c.State().durability -= ste.effect_amount;
-            } else {
-                c.State().durability += ste.effect_amount;
-            }
+            c.State().durability += amount;
             break;
         case EffectForType::Health:
-            if (subtract) {
-                c.State().health -= ste.effect_amount;
-            } else {
-                c.State().health += ste.effect_amount;
-            }
+            c.State().health += amount;
             break;
         case EffectForType::MaxOutput:
             if (auto* crs = c.CanUseSorcery()){
-                if (subtract){
-                    crs->Output().max_output_potential -= ste.effect_amount;
-                }else {
-                    crs->Output().max_output_potential += ste.effect_amount;
-                }
+                crs->Output().max_output_potential += amount;
             }
             break;
         case EffectForType::Strength:
-            if (subtract){
-                c.State().strength -= ste.effect_amount;
-            }else {
-                c.State().strength += ste.effect_amount;
-            }
+            c.State().strength += amount;
             break;
         default:
             break;
