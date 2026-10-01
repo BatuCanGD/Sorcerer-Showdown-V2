@@ -328,7 +328,7 @@ bool UserControl::DoDomain(CurseUser* c) {
         return true;
     }    
     const auto& domain = c->Jujutsu().domain;
-    const auto& neutralizer = c->Jujutsu().domain_neutralizer;
+    const auto& neutralizer = c->Jujutsu().neutralizer;
 
     if (!(domain && neutralizer)) {
         std::println("You do not have a domain or anything that can neutralize it");

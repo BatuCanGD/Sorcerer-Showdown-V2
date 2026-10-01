@@ -73,11 +73,10 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
 }
 
 DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
-    ResourceHandler::SpendDomainCost(attacker);
     const auto& domain = attacker.Jujutsu().domain;
     const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
-    int hit_amount = 0;
 
+    int hit_amount = 0;
     for (const auto& c : bf.battlefield) {
         const auto& [can_hit, damage] = DomainSystem::CalculateHit(domain, c);
         if (can_hit){

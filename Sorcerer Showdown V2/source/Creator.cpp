@@ -83,7 +83,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     c->CursedEnergy().max_cursed_energy = cursed_energy;
     c->CursedEnergy().cursed_energy = cursed_energy;
     c->Jujutsu().domain = domain;
-    c->Jujutsu().domain_neutralizer = neutralizer;
+    c->Jujutsu().neutralizer = neutralizer;
     c->Jujutsu().technique = technique;
     c->CursedEnergy().efficiency = ce_efficiency;
     c->Traits().six_eyes = true;

@@ -12,7 +12,7 @@ struct JujutsuSystem final {
     std::vector<Shikigami> shikigami;
     std::optional<Technique> technique{};
     std::optional<Domain> domain{};
-    std::optional<Neutralizer> domain_neutralizer{};
+    std::optional<Neutralizer> neutralizer{};
 };
 
 struct CurseUserAmplification final {

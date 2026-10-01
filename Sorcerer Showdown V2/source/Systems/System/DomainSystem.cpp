@@ -9,7 +9,7 @@ std::pair<bool, double> DomainSystem::CalculateHit(const std::optional<Domain>& 
     double damage{caster_domain->damage};
 
     if (const auto* c = character->CanUseSorcery()) { 
-        if (const auto& nl = c->Jujutsu().domain_neutralizer){
+        if (const auto& nl = c->Jujutsu().neutralizer){
             if (nl->is_active){
                 if (nl->neutralizer_type == NeutralizerType::ReducedDamage){
                     if (caster_domain->surehit_type == SurehitType::Basic){

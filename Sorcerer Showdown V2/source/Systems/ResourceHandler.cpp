@@ -2,6 +2,7 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../header/Systems/System/VowSystem.hpp"
 #include "../../header/Systems/System/EffectSystem.hpp"
 #include "../../header/Battlefield.hpp"
 
@@ -11,6 +12,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){
         EffectSystem::ApplyEffects(*c);
         if (auto* crs = c->CanUseSorcery()){
+            VowSystem::ApplyVows(*crs);
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);
             ResourceHandler::TickRCT(*crs);
@@ -46,8 +48,5 @@ void ResourceHandler::TickRCT(CurseUser& curse_user) {
 
 
 void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
-    curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().domain_neutralizer->cost;
-}
-void ResourceHandler::SpendDomainCost(CurseUser& curse_user){
-   curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().domain->cost;
+    curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().neutralizer->cost;
 }

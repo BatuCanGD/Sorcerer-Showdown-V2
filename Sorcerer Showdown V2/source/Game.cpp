@@ -40,12 +40,10 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
     }
 
     BattlefieldSystem::HandleDeadPeople(bf);
-    if (bf.battlefield.size() <= 1){
-        return false;
-    }
+    if (bf.battlefield.size() <= 1)return false;
     ResourceHandler::TickAll(bf);
     BattlefieldSystem::HandleSpawns(bf);
-    
+    BattlefieldSystem::HandleDomainInteraction(bf);
 
     if (!sp.skip_all){
         std::println("end of round");

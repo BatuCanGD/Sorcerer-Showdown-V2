@@ -1,5 +1,6 @@
 #pragma once
 #include "../Info.hpp"
+#include "../Structs.hpp"
 
 #include <cstdint>
 
@@ -10,12 +11,6 @@ enum class SupportType : std::uint8_t {
     Defense,
     Output,
     CursedEnergyRegen
-};
-
-struct SavedValue final {
-    double value{};
-    bool saved{};
-    bool undone{};
 };
 
 enum class SummonType : std::uint8_t {
