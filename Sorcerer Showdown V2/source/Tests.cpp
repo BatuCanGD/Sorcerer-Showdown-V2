@@ -77,20 +77,13 @@ TEST(TechniqueSystemTest, BarrierCheck){
 TEST(CombatSystemTest, BlackFlashTest){
     std::unique_ptr<CurseUser> c1 = std::make_unique<CurseUser>();
     std::unique_ptr<Character> c2 = std::make_unique<Character>();
-    c1->CursedEnergy().bf_chance = 100;
-    const auto r = CombatSystem::ResolveAttacking(*c1, *c2);
-    ASSERT_TRUE(r.is_blackflash);
-
-}
-TEST(CombatSystemTest, BlackFlashDamageTest){
-    std::unique_ptr<CurseUser> c1 = std::make_unique<CurseUser>();
-    std::unique_ptr<Character> c2 = std::make_unique<Character>();
     c1->CursedEnergy().bf_chance = 100; // 2.5 multiplier with blackflash
     c1->State().strength = 50.0; // should be 125.0 damage
     c2->State().max_health = 250.0;
     c2->State().health = c2->State().max_health;
     c2->State().durability = 0.0;
-    CombatSystem::ResolveAttacking(*c1, *c2);
+    const auto r = CombatSystem::ResolveAttacking(*c1, *c2);
+    ASSERT_TRUE(r.is_blackflash);
     ASSERT_DOUBLE_EQ(c2->State().health, 125.0);
 }
 TEST(CombatSystemTest, BasicDamageTest){
