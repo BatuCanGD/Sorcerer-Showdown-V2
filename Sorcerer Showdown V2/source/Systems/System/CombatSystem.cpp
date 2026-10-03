@@ -1,6 +1,7 @@
 #include "../../../header/Systems/System/CombatSystem.hpp"
 #include "../../../header/Systems/System/TechniqueSystem.hpp"
 #include "../../../header/Systems/System/DomainSystem.hpp"
+#include "../../../header/Systems/System/NeutralizerSystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
 #include "../../../header/Battlefield.hpp"
 #include "../../../header/Utilities/Random.hpp"
@@ -78,10 +79,15 @@ DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
 
     int hit_amount = 0;
     for (const auto& c : bf.battlefield) {
+        if (c.get() == &attacker) continue;
         const auto& [can_hit, damage] = DomainSystem::CalculateHit(domain, c);
         if (can_hit){
             hit_amount++;
             DomainSystem::HandleSureHit(*c, damage, does_paralyze);
+        }else if (const auto& sp = c->CanUseSorcery()){
+            if (auto& k =sp->Jujutsu().neutralizer){
+                NeutralizerSystem::HandleDamage(*k, damage);
+            }
         }
     }
     return {hit_amount, does_paralyze};

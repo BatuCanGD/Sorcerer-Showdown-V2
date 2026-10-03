@@ -41,8 +41,8 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     constexpr double cursed_energy = 4000.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
-    const Technique technique = Create::IdleTransfiguration();
-    const Domain domain{};
+    const Technique technique{Create::IdleTransfiguration()};
+    const Domain domain{Create::SelfEmbodimentOfPerfection()};
 
     c->Identity() = id;
     c->Style() = style;
@@ -74,8 +74,8 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr auto rct_level = ReverseCTSystem::RCTLevel::Absolute;
 
     const Technique technique{Create::Limitless()};
-    const Domain domain{};
-    const Neutralizer neutralizer{};
+    const Domain domain{Create::UnlimitedVoid()};
+    const Neutralizer neutralizer{Create::SimpleDomain()};
 
     c->Identity() = id;
     c->Style() = style;
@@ -113,7 +113,6 @@ Technique Create::Limitless() {
     const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
     const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
     const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
-    
 
     c.Abilities().push_back(blue);
     c.Abilities().push_back(red);
@@ -128,8 +127,8 @@ Technique Create::Limitless() {
 Technique Create::IdleTransfiguration() {
     Technique c{};
 
-    EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
-    EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
+    const EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
+    const EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
     
     c.Identity() = id;
 
@@ -140,6 +139,79 @@ Technique Create::IdleTransfiguration() {
     
     c.Abilities().push_back(transfiguration);
     
+    return c;
+}
+
+// domains
+
+Domain Create::UnlimitedVoid() {
+    Domain c{};
+    c.identity = {"Unlimited Void", "\x1b[34m", "A domain that floods the targets mind with endless information, paralyzing them"};
+    c.damage_type = globalums::DamageType::BypassAll;
+    c.surehit_type = SurehitType::Paralyzing;
+    c.refinement = Refinement::Absolue;
+    c.type = DomainType::Closed;
+    c.cost = 2500.0;
+    c.max_health = 500.0;
+    c.health = c.max_health;
+    c.damage = 225.0;
+    c.durability = 7.5;
+    c.range = 125;
+    return c;
+}
+
+Domain Create::MalevolentShrine() {
+    Domain c{};
+    c.identity = {"Malevolent Shrine", "\x1b[31m", "A domain that relentlessly cuts anything within its range"};
+    c.damage_type = globalums::DamageType::BypassTech;
+    c.surehit_type = SurehitType::Basic; // allows survival even with neutralizers that reduce damage
+    c.refinement = Refinement::Absolue;
+    c.type = DomainType::Open;
+    c.cost = 1250.0;
+    c.max_health = 600.0;
+    c.health = c.max_health;
+    c.damage = 165.0;
+    c.durability = 20.0;
+    c.range = 200;
+    return c;
+}
+
+Domain Create::SelfEmbodimentOfPerfection() {
+    Domain c{};
+    c.identity = {"Self Embodiment of Perfection", "\x1b[35m", "A domain that allows the manipulation of any entities soul inside the domain without requiring technique activation"};
+    c.damage_type = globalums::DamageType::BypassAll;
+    c.damage = 250.0;
+    c.cost = 1000.0;
+    c.refinement = Refinement::Overwhelming;
+    c.surehit_type = SurehitType::Normal;
+    c.max_health = 400.0;
+    c.health = c.max_health;
+    c.range = 85;
+    return c;
+}
+
+// neutralizers
+
+Neutralizer Create::SimpleDomain() {
+    Neutralizer c{};
+    c.identity = {"Simple Domain", "\x1b[33m", "A barrier technique that creates a small zone to neutralize cursed techniques"};
+    c.neutralizer_type = NeutralizerType::FullyProtected;
+    c.cost = 100.0;
+    c.turn_type = NeutralizerTurnType::SelfSustained;
+    c.max_health = 200.0;
+    c.health = c.max_health;
+    c.durability = 200.0;
+    return c;
+}
+Neutralizer Create::FallingBlossomEmotion() {
+    Neutralizer c{};
+    c.identity = {"Falling Blossom Emotion", "\x1b[32m", "An anti-domain technique that automatically counters incoming attacks using cursed energy"};
+    c.cost = 50.0;
+    c.max_health = 50.0;
+    c.health = c.max_health;
+    c.durability = 50.0;
+    c.neutralizer_type = NeutralizerType::ReducedDamage;
+    c.turn_type = NeutralizerTurnType::UserSustained;
     return c;
 }
 

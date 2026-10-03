@@ -1,5 +1,6 @@
 #include "../../header/Systems/BattlefieldSystem.hpp"
 #include "../../header/Systems/System/DomainSystem.hpp"
+#include "../../header/Systems/System/NeutralizerSystem.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/Battlefield.hpp"
@@ -9,33 +10,50 @@
 
 
 void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
-    std::vector<CurseUser*> cbv;
+    std::vector<CurseUser*> domain_users;
     for (const auto& c : bf.battlefield){
         if (auto* cr = c->CanUseSorcery()){
-            const double& ce = cr->CursedEnergy().cursed_energy;
-            if (cr->Jujutsu().domain && cr->Jujutsu().domain->is_active){
-                if (ce < cr->Jujutsu().domain->cost){
-                    DomainSystem::ResetDomain(cr->Jujutsu().domain);
-                    continue;
+            double& ce = cr->CursedEnergy().cursed_energy;
+            if (auto& d = cr->Jujutsu().domain){
+                if (d->is_active){
+                    if (ce < d->cost){
+                        DomainSystem::ResetDomain(cr->Jujutsu().domain);
+                    }else {
+                        ce -= d->cost;
+                        domain_users.push_back(cr);
+                    }
                 }
-                cr->CursedEnergy().cursed_energy -= cr->Jujutsu().domain->cost;
-                cbv.push_back(cr);
             }
-            if (cr->Jujutsu().neutralizer && cr->Jujutsu().neutralizer->is_active){
-                cr->CursedEnergy().cursed_energy -= cr->Jujutsu().neutralizer->cost;
+            if (auto& n = cr->Jujutsu().neutralizer){
+                if (n->is_active){
+                    if (ce < n->cost){
+                        NeutralizerSystem::ResetNeutralizer(*n);
+                    }else {
+                        ce -= n->cost;
+                    }
+                }
             }
         }
     }
-    if (cbv.size() >= 3){
-        for (auto& c : cbv){
-            DomainSystem::ResetDomain(c->Jujutsu().domain);
+    switch (domain_users.size()) {
+        case 0: {
+            std::println("No domains are active this turn");
+            break;
         }
-    }else if (cbv.size() == 2){
-        DomainSystem::ClashDomains(cbv[0]->Jujutsu().domain, cbv[1]->Jujutsu().domain);
-    }else if (cbv.size() == 1){
-        CombatSystem::ResolveDomain(*cbv[0], bf);
-    }else {
-        std::println("No domains are active this turn");
+        case 1: {
+            CombatSystem::ResolveDomain(*domain_users[0], bf);
+            break;
+        }
+        case 2: {
+            DomainSystem::ClashDomains(domain_users[0]->Jujutsu().domain, domain_users[1]->Jujutsu().domain);
+            break;
+        }
+        default: {
+            for (auto* c : domain_users) {
+                DomainSystem::ResetDomain(c->Jujutsu().domain);
+            }
+            break;
+        }
     }
 }
 

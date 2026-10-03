@@ -47,18 +47,6 @@ std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Do
         return {winner, DomainWinCon::Refinement};
     }
 
-    const bool is_equal_range = first->range == second->range;
-
-    if (!is_equal_range){
-        if (first->range > second->range * 2){
-            DomainSystem::ResetDomain(second);
-            return {ClashWinner::First, DomainWinCon::Overwhelmed};
-        }else if (second->range > first->range * 2){
-            DomainSystem::ResetDomain(first);
-            return {ClashWinner::Second, DomainWinCon::Overwhelmed};
-        }
-    }
-
     double first_damage = first->damage * second->range / first->range;
     double second_damage = second->damage * first->range / second->range;
 

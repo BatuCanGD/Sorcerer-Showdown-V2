@@ -8,6 +8,8 @@ class CurseUser;
 class Technique;
 
 struct CursedTool;
+struct Domain;
+struct Neutralizer;
 struct StatusEffect;
 
 namespace Create {
@@ -16,9 +18,18 @@ namespace Create {
     [[nodiscard]] std::unique_ptr<CurseUser> Mahito();
     [[nodiscard]] std::unique_ptr<CurseUser> Gojo();
 
-    // technique class
+    // techniques
     [[nodiscard]] Technique Limitless();
     [[nodiscard]] Technique IdleTransfiguration();
+
+    // domains
+    [[nodiscard]] Domain UnlimitedVoid();
+    [[nodiscard]] Domain MalevolentShrine();
+    [[nodiscard]] Domain SelfEmbodimentOfPerfection();
+
+    // neutralizers
+    [[nodiscard]] Neutralizer SimpleDomain();
+    [[nodiscard]] Neutralizer FallingBlossomEmotion();
 
     // cursed tools
     [[nodiscard]] CursedTool InvertedSpearOfHeaven();

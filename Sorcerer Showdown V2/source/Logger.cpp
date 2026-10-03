@@ -110,9 +110,6 @@ void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
         case DomainWinCon::Refinement:
             std::println("being overwhelmed by the other's refinement!");
             break;
-        case DomainWinCon::Overwhelmed:
-            std::println("being overwhelmed by the range!");
-            break;
         default: 
             break;
     }
