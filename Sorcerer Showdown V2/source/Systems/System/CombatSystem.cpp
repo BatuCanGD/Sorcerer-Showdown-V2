@@ -69,26 +69,27 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
 
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
-    attacked.Damage(chosen_ct.damage);
+    attacked.Damage(chosen_ct.damage, chosen_ct.damage_type);
     return {&chosen_ct , enough_output, enough_ce};
 }
 
 DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
     const auto& domain = attacker.Jujutsu().domain;
+    const auto& damage_type = domain->damage_type;
     const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
 
     int hit_amount = 0;
     for (const auto& c : bf.battlefield) {
         if (c.get() == &attacker) continue;
-        const auto& [can_hit, damage] = DomainSystem::CalculateHit(domain, c);
-        if (can_hit){
+        const auto [damage, does_hit] = DomainSystem::CalculateHit(domain, c);
+        if (does_hit){
             hit_amount++;
-            DomainSystem::HandleSureHit(*c, damage, does_paralyze);
+            DomainSystem::HandleSureHit(*c, damage, does_paralyze, damage_type);
         }else if (const auto& sp = c->CanUseSorcery()){
             if (auto& k =sp->Jujutsu().neutralizer){
                 NeutralizerSystem::HandleDamage(*k, damage);
             }
         }
     }
-    return {hit_amount, does_paralyze};
+    return {hit_amount};
 }

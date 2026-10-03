@@ -2,32 +2,26 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../header/Logger.hpp"
 #include "../../header/Systems/System/VowSystem.hpp"
 #include "../../header/Systems/System/EffectSystem.hpp"
 #include "../../header/Battlefield.hpp"
 
-#include <vector>
+#include <utility>
 
 void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){
-        EffectSystem::ApplyEffects(*c);
+        const auto ef = EffectSystem::ApplyEffects(*c);
         if (auto* crs = c->CanUseSorcery()){
             VowSystem::ApplyVows(*crs);
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);
             ResourceHandler::TickRCT(*crs);
         }
+        Log::Effects(ef);
     }
 }
 
-void ResourceHandler::TickStatusEffects(std::vector<StatusEffect> &ste){
-    for (auto& c : ste){
-        c.turn_amount--;
-    }
-    std::erase_if(ste, [&](const auto& c){
-        return c.turn_amount <= 0;
-    });
-}
 void ResourceHandler::TickCursedEnergy(CurseUser& curse_user){
     curse_user.CursedEnergy().cursed_energy += curse_user.CursedEnergy().regeneration_amount;
 }
@@ -41,12 +35,4 @@ void ResourceHandler::TickRCT(CurseUser& curse_user) {
     const double& output = curse_user.RCTSystem().rct_output;
     curse_user.CursedEnergy().cursed_energy -= SorcerySystem::ApplyRCTCost(output);
     curse_user.State().health += output;
-}
-
-
-
-
-
-void ResourceHandler::SpendNeutralizerCost(CurseUser& curse_user){
-    curse_user.CursedEnergy().cursed_energy -= curse_user.Jujutsu().neutralizer->cost;
 }

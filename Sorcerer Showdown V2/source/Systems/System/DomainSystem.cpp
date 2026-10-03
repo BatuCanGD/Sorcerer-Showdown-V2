@@ -1,11 +1,12 @@
 #include "../../../header/Systems/System/DomainSystem.hpp"
 #include "../../../header/Sorcery/Domain.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Systems/System/CombatSystem.hpp"
 
 #include <optional>
 #include <stdexcept>
 
-std::pair<bool, double> DomainSystem::CalculateHit(const std::optional<Domain>& caster_domain, const std::unique_ptr<Character>& character){
+DomainHitStruct DomainSystem::CalculateHit(const std::optional<Domain>& caster_domain, const std::unique_ptr<Character>& character){
     bool can_hit{true}; 
     double damage{caster_domain->damage};
 
@@ -24,10 +25,10 @@ std::pair<bool, double> DomainSystem::CalculateHit(const std::optional<Domain>& 
             }
         }
     }
-    return {can_hit, damage};
+    return {damage,can_hit};
 }
 
-std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Domain> &first, std::optional<Domain> &second) {
+DomainClashStruct DomainSystem::ClashDomains(std::optional<Domain> &first, std::optional<Domain> &second) {
     if (!(first->is_active && second->is_active)) {
         throw std::invalid_argument("Both domains must be active for the clash"); 
     }
@@ -74,8 +75,8 @@ std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Do
     return {winner, win_con};
 }
 
-void DomainSystem::HandleSureHit(Character &c, const double damage, const bool does_paralyze){
-    c.State().health -= damage;
+void DomainSystem::HandleSureHit(Character &c, const double damage, const bool does_paralyze, const globalums::DamageType dt){
+    c.Damage(damage, dt);
     if (does_paralyze){
         c.State().is_stunned = true;
     }

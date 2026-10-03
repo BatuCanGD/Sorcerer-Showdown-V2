@@ -54,10 +54,10 @@ void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> 
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
     if (!tc.enough_ce){
-
+        std::println("{} couldn't be actived due to insufficient Cursed Energy", GetInfo::Name(tc.used_ability->id));
     }
     if (!tc.enough_output){
-
+        std::println("{} couldn't be performed due to insufficient Output", GetInfo::Name(tc.used_ability->id));
     }
     if (tc.used_ability){
         std::println("{} was used", GetInfo::Name(tc.used_ability->id));

@@ -41,11 +41,11 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
             break;
         }
         case 1: {
-            CombatSystem::ResolveDomain(*domain_users[0], bf);
+            [[maybe_unused]] const auto l = CombatSystem::ResolveDomain(*domain_users[0], bf);
             break;
         }
         case 2: {
-            DomainSystem::ClashDomains(domain_users[0]->Jujutsu().domain, domain_users[1]->Jujutsu().domain);
+            [[maybe_unused]] const auto l = DomainSystem::ClashDomains(domain_users[0]->Jujutsu().domain, domain_users[1]->Jujutsu().domain);
             break;
         }
         default: {
