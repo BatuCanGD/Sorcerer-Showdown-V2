@@ -1,5 +1,6 @@
 #include "../../header/Systems/BattlefieldSystem.hpp"
 #include "../../header/Systems/System/DomainSystem.hpp"
+#include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Systems/System/NeutralizerSystem.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Logger.hpp"
@@ -19,7 +20,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
                     if (ce < d->cost){
                         DomainSystem::ResetDomain(cr->Jujutsu().domain);
                     }else {
-                        ce -= d->cost;
+                        ce -= SorcerySystem::ApplySpendingMultiplier(d->cost, *cr);
                         domain_users.push_back(cr);
                     }
                 }
@@ -29,7 +30,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
                     if (ce < n->cost){
                         NeutralizerSystem::ResetNeutralizer(*n);
                     }else {
-                        ce -= n->cost;
+                        ce -= SorcerySystem::ApplySpendingMultiplier(n->cost, *cr);
                     }
                 }
             }

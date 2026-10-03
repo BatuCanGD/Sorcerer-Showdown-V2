@@ -31,6 +31,6 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
     if (!curse_user.RCTSystem().can_use_rct) return;
     const double& output = curse_user.RCTSystem().rct_output;
-    curse_user.CursedEnergy().cursed_energy -= SorcerySystem::ApplyRCTCost(output);
+    curse_user.CursedEnergy().cursed_energy -= SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), curse_user);
     curse_user.State().health += output;
 }

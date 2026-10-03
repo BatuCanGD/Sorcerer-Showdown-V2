@@ -1,6 +1,13 @@
 #include "../../../header/Systems/System/SorcerySystem.hpp"
 #include <cmath>
 
+
+double SorcerySystem::ApplySpendingMultiplier(double amount, const CurseUser& c) {
+    amount *= SorcerySystem::EfficiencyMultiplier(c.CursedEnergy().efficiency);
+    if (c.Traits().six_eyes) amount = SorcerySystem::ApplySixEyes(amount);
+    return amount;
+}
+
 double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept {
     switch(type){
         case CursedEnergySystem::Efficiency::Absolute: return 0.40;
