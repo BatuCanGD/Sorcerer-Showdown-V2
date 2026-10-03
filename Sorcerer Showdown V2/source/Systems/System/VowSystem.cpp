@@ -49,7 +49,6 @@ VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ /
     const double sac_mult = bv.sacrifice_percentage;
     
     double sacrifice_amount{};
-
     switch(bv.sacrifice_type){
         case SacrificeType::CursedEnergy:
             sacrifice_amount = c.CursedEnergy().max_cursed_energy * sac_mult;
@@ -65,7 +64,6 @@ VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ /
     }
 
     double gain_amount{};
-
     switch (bv.gain_type) {
         case SacrificeType::CursedEnergy:
             switch (bv.sacrifice_type) {
@@ -85,7 +83,6 @@ VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ /
                 case SacrificeType::CursedEnergy:
                     gain_amount = sacrifice_amount * 0.05;
                     break;
-
                 case SacrificeType::OutputPotential:
                     gain_amount = sacrifice_amount * 5.0;
                     break;
@@ -101,7 +98,6 @@ VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ /
                 case SacrificeType::Health:
                     gain_amount = sacrifice_amount * 0.20;
                     break;
-
                 default:
                     break;
             }

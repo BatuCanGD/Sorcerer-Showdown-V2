@@ -3,6 +3,7 @@
 #include "../../../header/CharacterType/CurseUser.hpp"
 
 #include <optional>
+#include <stdexcept>
 
 std::pair<bool, double> DomainSystem::CalculateHit(const std::optional<Domain>& caster_domain, const std::unique_ptr<Character>& character){
     bool can_hit{true}; 
@@ -27,6 +28,9 @@ std::pair<bool, double> DomainSystem::CalculateHit(const std::optional<Domain>& 
 }
 
 std::pair<ClashWinner, DomainWinCon> DomainSystem::ClashDomains(std::optional<Domain> &first, std::optional<Domain> &second) {
+    if (!(first->is_active && second->is_active)) {
+        throw std::invalid_argument("Both domains must be active for the clash"); 
+    }
     ClashWinner winner{ClashWinner::None};
     DomainWinCon win_con{DomainWinCon::None};
 
