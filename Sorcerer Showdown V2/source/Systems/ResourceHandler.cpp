@@ -7,8 +7,6 @@
 #include "../../header/Systems/System/EffectSystem.hpp"
 #include "../../header/Battlefield.hpp"
 
-#include <utility>
-
 void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){
         const auto ef = EffectSystem::ApplyEffects(*c);

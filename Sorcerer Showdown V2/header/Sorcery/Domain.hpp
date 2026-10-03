@@ -36,5 +36,5 @@ struct Domain final {
     DomainType type{DomainType::Closed};
     Refinement refinement{Refinement::Standard};
     SurehitType surehit_type{SurehitType::Normal};
-    globalums::DamageType damage_type{globalums::DamageType::Normal};
+    globalums::DamageType damage_type{globalums::DamageType::BypassTech};
 };
