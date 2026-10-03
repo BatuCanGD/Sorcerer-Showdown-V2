@@ -119,6 +119,9 @@ Technique Create::Limitless() {
     c.Abilities().push_back(red);
     c.Abilities().push_back(purple);
 
+    c.Barrier().can_use_barrier = true;
+    c.Barrier().is_active = true;
+
     return c;
 }
 
