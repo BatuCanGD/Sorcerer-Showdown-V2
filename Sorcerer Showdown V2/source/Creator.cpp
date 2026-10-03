@@ -114,10 +114,12 @@ Technique Create::Limitless() {
     const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
     const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
     
-
     c.Abilities().push_back(blue);
     c.Abilities().push_back(red);
     c.Abilities().push_back(purple);
+
+    c.Barrier().can_use_barrier = true;
+    c.Barrier().is_active = true;
 
     return c;
 }
