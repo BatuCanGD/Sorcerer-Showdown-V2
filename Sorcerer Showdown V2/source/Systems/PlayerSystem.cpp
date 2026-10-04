@@ -93,7 +93,7 @@ bool UserControl::GetConfirmation() {
 Character* UserControl::GetUserTarget(Battlefield& bf) {
     size_t z{0};
     for (const auto& c : bf.battlefield){
-        std::println("{}:{} | HP: {:.1f}", ++z, GetInfo::Name(c->Identity()), c->State().health);
+        std::println("{0}:{1} | HP: {2:.1f}", ++z, GetInfo::Name(c->Identity()), c->State().health);
     }
     std::println("Pick a target");
     size_t x = get_input<size_t>() - 1;
@@ -326,22 +326,64 @@ bool UserControl::DoDomain(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
         return true;
-    }    
-    const auto& domain = c->Jujutsu().domain;
-    const auto& neutralizer = c->Jujutsu().neutralizer;
+    } 
+    auto& domain = c->Jujutsu().domain;
+    auto& neutralizer = c->Jujutsu().neutralizer;
 
     if (!(domain && neutralizer)) {
         std::println("You do not have a domain or anything that can neutralize it");
         return true;
     }
+    enum class dmn : std::uint8_t { Domain, Neutralizer };
+    std::vector<dmn> dm;
+    unsigned short a = 0;
+    auto add_ch = [&](dmn s){ 
+        dm.push_back(s);
+        std::print("{}:{} ", ++a, s == dmn::Domain ? "Domain" : "Neutralizer");
+    };
     if (domain){
+        add_ch(dmn::Domain);
         std::println("[{}{}{}] - {}", domain->identity.color, domain->identity.name, domain->identity.color.empty() ? "" : "\x1b[0m", domain->is_active ? "Active" : "Inactive");
     }
     if (neutralizer) {
-        std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive");
+        add_ch(dmn::Neutralizer);
+        std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive"); 
     }
 
-    return false;
+    size_t pl = get_input<size_t>() - 1;
+    if (pl >= dm.size()){
+        return true;
+    }
+    switch(dm[pl]){
+        case dmn::Domain: {
+            std::println("[{}{}{}] - {}", domain->identity.color, domain->identity.name, domain->identity.color.empty() ? "" : "\x1b[0m", domain->is_active ? "Active" : "Inactive");
+            std::println("1 - Activate | 2 - Deactivate\n=>");
+            int pch = get_input<int>();
+            if (pch == 1){
+                domain->is_active = true;
+            }else if (pch == 2){
+                domain->is_active = false;
+            }else {
+                return true;
+            }
+            break;
+        }
+        case dmn::Neutralizer: {
+            std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive"); 
+            std::println("1 - Activate | 2 - Deactivate\n=>");
+            int pch = get_input<int>();
+            if (pch == 1){
+                neutralizer->is_active = true;
+            }else if (pch == 2){
+                neutralizer->is_active = false;
+            }else {
+                return true;
+            }
+            break;
+        }
+    }
+
+    return true;
 }
 
 //

@@ -69,3 +69,10 @@ void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
         bf.battlefield.push_back(std::move(c));
     }
 }
+bool BattlefieldSystem::CheckAlive(Battlefield &bf){
+    size_t i{};
+    for ([[maybe_unused]] const auto& _ : bf.battlefield){
+        i++;
+    }
+    return i <= 0;
+}

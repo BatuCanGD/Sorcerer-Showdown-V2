@@ -4,8 +4,8 @@
 
 std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::ApplyEffects(Character &c){
     auto& s = c.State().status_effects;
-    std::erase_if(s, [&](const auto& c){
-        return c.turn_amount <= 0;
+    std::erase_if(s, [&](const auto& z){
+        return z.turn_amount <= 0;
     });
     for (auto& x : s){
         EffectSystem::ApplyEffectsType(x,c);

@@ -24,6 +24,6 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, Te
 }
 
 const TechAbility TechniqueSystem::ChooseAbility(const Technique& tech) {
-    Log::TechniqueInfo(tech);
+    Log::TechniqueInfo(tech, Log::CTLogType::Both, Log::LogDetailType::Detailed);
     return tech.GetAbility(get_input<size_t>());
 }

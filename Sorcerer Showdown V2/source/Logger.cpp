@@ -15,7 +15,10 @@
 
 
 void Log::CharacterInfo(const Character &c, const LogDetailType ct){
-    std::println("{}", ct == LogDetailType::Basic ? GetInfo::Name(c.Identity()) : GetInfo::Styalized(c.Identity()));
+    std::println("{}{}", 
+        ct == LogDetailType::Basic ? GetInfo::Name(c.Identity()) : GetInfo::Styalized(c.Identity()),
+        c.State().is_stunned ? "[STUNNED]" : ""
+    );
     std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.State().health), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
     if (const auto* crs = c.CanUseSorcery()){
         const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy().cursed_energy) : std::format("{:.1f}", crs->CursedEnergy().cursed_energy);
@@ -133,7 +136,7 @@ void Log::Death(const Battlefield& bf){
             color = "\x1b[38;5;9m";
         }
 
-        msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2}\x1b[0m)", color, severity, hp));
+        msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2:.1f}\x1b[0m)", color, severity, hp));
         msg.append(std::format(" {} has been defeated\n", GetInfo::Name(c->Identity())));
         death_messages.push_back(msg);
     }

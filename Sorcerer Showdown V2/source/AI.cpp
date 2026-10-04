@@ -13,7 +13,7 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
         case TargetingType::HighestHP: {
             double highest_hp{std::numeric_limits<double>::lowest()};
             for (const auto& c : bf.battlefield){
-                if (c.get() == &user) continue;
+                if (c.get() == &user || c->State().health <= 0.0) continue;
                 if (c->State().health > highest_hp || !target){
                     target = c.get();
                     highest_hp = c->State().health;
@@ -24,7 +24,7 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
         case TargetingType::LowestHP: {
             double lowest_hp{std::numeric_limits<double>::max()};
             for (const auto& c : bf.battlefield){
-                if (c.get() == &user) continue;
+                if (c.get() == &user || c->State().health <= 0.0) continue;
                 if (c->State().health < lowest_hp || !target){
                     target = c.get();
                     lowest_hp = c->State().health;
@@ -34,7 +34,7 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
         }
         case TargetingType::Mixed: {
             for (const auto& c : bf.battlefield){
-                if (c.get() == &user) continue;
+                if (c.get() == &user || c->State().health <= 0.0) continue;
                 if (get_random<int>(0,100) >= 50 || !target){
                     target = c.get();
                 }
