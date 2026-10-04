@@ -74,5 +74,5 @@ bool BattlefieldSystem::CheckAlive(Battlefield &bf){
     for ([[maybe_unused]] const auto& _ : bf.battlefield){
         i++;
     }
-    return i <= 0;
+    return i <= 1;
 }
