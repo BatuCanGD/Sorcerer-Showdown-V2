@@ -32,14 +32,10 @@ struct TechniqueStruct final {
     bool enough_ce;
 };
 
-struct DomainStruct final {
-    int hit_amount;
-};
-
 struct CombatSystem final  {
     static DamageStruct ResolveDamage(const Character& c, globalums::DamageType type, double amount);
     static AttackStruct ResolveAttacking(const Character& attacker, Character& attacked);
     static ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
     static TechniqueStruct ResolveTechnique(CurseUser& attacker, const TechAbility& tc, Character& attacked);
-    static DomainStruct ResolveDomain(CurseUser& attacker, Battlefield& bf);
+    static void ResolveDomain(CurseUser& attacker, Battlefield& bf);
 };

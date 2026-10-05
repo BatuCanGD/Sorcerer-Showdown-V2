@@ -6,26 +6,27 @@
 #include <optional>
 #include <stdexcept>
 
-DomainHitStruct DomainSystem::CalculateHit(const std::optional<Domain>& caster_domain, const std::unique_ptr<Character>& character){
-    bool can_hit{true}; 
-    double damage{caster_domain->damage};
 
-    if (const auto* c = character->CanUseSorcery()) { 
-        if (const auto& nl = c->Jujutsu().neutralizer){
-            if (nl->is_active){
-                if (nl->neutralizer_type == NeutralizerType::ReducedDamage){
-                    if (caster_domain->surehit_type == SurehitType::Basic){
-                        can_hit = false;
-                    }else{
-                        damage /= 2.5;
-                    }
-                }else{
-                    can_hit = false;
-                }
+double CalculateHitDamage(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c) {
+    double damage{domain->damage};
+    if (const auto* cc = c->CanUseSorcery()) { 
+        if (const auto& nl = cc->Jujutsu().neutralizer){
+            if (nl->is_active && nl->neutralizer_type == NeutralizerType::ReducedDamage){
+                damage /= 2.5;
             }
         }
     }
-    return {damage,can_hit};
+    return damage;
+}
+bool CalculateActualHit(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c) {
+    if (const auto* cc = c->CanUseSorcery()) { 
+        if (const auto& nl = cc->Jujutsu().neutralizer){
+            if (nl->is_active){
+                return nl->neutralizer_type == NeutralizerType::ReducedDamage && domain->surehit_type != SurehitType::Basic;
+            }
+        }
+    }
+    return true;
 }
 
 DomainClashStruct DomainSystem::ClashDomains(std::optional<Domain> &first, std::optional<Domain> &second) {
@@ -75,11 +76,12 @@ DomainClashStruct DomainSystem::ClashDomains(std::optional<Domain> &first, std::
     return {winner, win_con};
 }
 
-void DomainSystem::HandleSureHit(Character &c, const double damage, const bool does_paralyze, const globalums::DamageType dt){
-    c.Damage(damage, dt);
-    if (does_paralyze){
+SurehitStruct DomainSystem::HandleSureHit(Character &c, const std::optional<Domain>& dm){    
+    const auto& x = c.Damage(dm->damage, dm->damage_type);
+    if (dm->surehit_type == SurehitType::Paralyzing){
         c.State().is_stunned = true;
     }
+    return{x.damage, &c, &*dm};
 }
 
 void DomainSystem::ResetDomain(std::optional<Domain>& domain){

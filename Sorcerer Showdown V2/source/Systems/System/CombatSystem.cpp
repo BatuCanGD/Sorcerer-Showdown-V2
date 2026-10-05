@@ -1,5 +1,6 @@
 #include "../../../header/Systems/System/CombatSystem.hpp"
 #include "../../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../../header/Logger.hpp"
 #include "../../../header/Systems/System/DomainSystem.hpp"
 #include "../../../header/Systems/System/NeutralizerSystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
@@ -26,7 +27,7 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
 }
 
 ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attacked){
-    [[maybe_unused]] const auto& current_tool = attacker.Equipment().current_tool;
+    const auto& current_tool = attacker.Equipment().current_tool;
     const double& damage = current_tool->damage;
     const auto& effect = current_tool->given_effect;
     const auto& msg = attacked.Damage(damage, current_tool->damage_type);
@@ -73,23 +74,20 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
     return {&chosen_ct , enough_output, enough_ce};
 }
 
-DomainStruct CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
+void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
     const auto& domain = attacker.Jujutsu().domain;
-    const auto& damage_type = domain->damage_type;
-    const bool does_paralyze = domain->surehit_type == SurehitType::Paralyzing;
 
-    int hit_amount = 0;
     for (const auto& c : bf.battlefield) {
         if (c.get() == &attacker) continue;
-        const auto [damage, does_hit] = DomainSystem::CalculateHit(domain, c);
+        const bool does_hit = DomainSystem::CalculateActualHit(domain, c);
         if (does_hit){
-            hit_amount++;
-            DomainSystem::HandleSureHit(*c, damage, does_paralyze, damage_type);
-        }else if (const auto& sp = c->CanUseSorcery()){
-            if (auto& k =sp->Jujutsu().neutralizer){
-                NeutralizerSystem::HandleDamage(*k, damage);
+            Log::DomainSurehit(DomainSystem::HandleSureHit(*c, domain));
+        }
+        if (const auto& sp = c->CanUseSorcery()){
+            if (auto& k = sp->Jujutsu().neutralizer; k && k->is_active){
+                NeutralizerSystem::HandleDamage(*k, domain->damage);
+                Log::DomainSurehit({domain->damage, &*c, &*domain}, Log::SurehitHit::Neutralizer);
             }
         }
     }
-    return {hit_amount};
 }

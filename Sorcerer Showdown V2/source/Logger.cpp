@@ -49,6 +49,14 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
     }
 }
 
+void Log::DomainSurehit(const SurehitStruct st, const SurehitHit ht){
+    if (ht == SurehitHit::Person){
+        std::println("{} got hit by {} for {} damage!", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.dm->identity), st.damage);
+    }else{
+        std::println("{}'s {} got damaged by {} for {} damage", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.c->CanUseSorcery()->Jujutsu().neutralizer->identity), GetInfo::Name(st.dm->identity), st.damage);
+    } //                                                                                                                         oh my goodness
+}
+
 void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p) {
     for (const auto& s : p.first){
         std::print("{} got affected by the {}{}{} effect and {} {} {}", GetInfo::Name(p.second.Identity()), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));

@@ -42,7 +42,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
             break;
         }
         case 1: {
-            [[maybe_unused]] const auto l = CombatSystem::ResolveDomain(*domain_users[0], bf);
+            CombatSystem::ResolveDomain(*domain_users[0], bf);
             break;
         }
         case 2: {

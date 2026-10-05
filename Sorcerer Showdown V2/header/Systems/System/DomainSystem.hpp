@@ -1,5 +1,4 @@
 #pragma once
-#include "../../Enums.hpp"
 #include <optional>
 #include <memory>
 #include <cstdint>
@@ -29,10 +28,16 @@ struct DomainClashStruct final {
     ClashWinner winner;
     DomainWinCon win_condition;
 };
+struct SurehitStruct final {
+    double damage;
+    const Character* c;
+    const Domain* dm;
+};
 
 namespace DomainSystem {
-    DomainHitStruct CalculateHit(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c); 
+    double CalculateHitDamage(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c);
+    bool CalculateActualHit(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c); 
     DomainClashStruct ClashDomains(std::optional<Domain>& first, std::optional<Domain>& second); // use case for already active domains
-    void HandleSureHit(Character& c, const double damage, const bool does_paralyze, const globalums::DamageType dt); 
+    SurehitStruct HandleSureHit(Character& c, const std::optional<Domain>& dm); 
     void ResetDomain(std::optional<Domain>& domain);
 };

@@ -100,11 +100,11 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c){
     for (const auto& z : list) {
         std::println("{}:{}", ++x, GetInfo::Name(z->Identity()));
     }
-    x = get_input<size_t>();
-    if (x == 0 || x > list.size()) {
+    x = get_input<size_t>() - 1;
+    if (x >= list.size()) {
         return;
     }
-    bf.battlefield.push_back(list[--x]->Clone());
+    bf.battlefield.push_back(list[x]->Clone());
     if (pc == 1) {
         c = bf.battlefield.back().get();
     }
