@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-enum class NeutralizerTurnType : std::uint8_t {
+enum class NeutralizerTurnType : std::uint8_t { // on god when am i going to actually use this, please let my creativity be better in the future
     SelfSustained, // use it once, you are good until it gets destroyed
     UserSustained, // sustained by cursed energy, user has to take care of it every turn
 };

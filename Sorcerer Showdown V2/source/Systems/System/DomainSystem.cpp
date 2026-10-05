@@ -85,7 +85,7 @@ SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){
 }
 
 bool DomainSystem::HandleDamage(Domain& c, const double damage) {
-    if (!c.is_active) return;
+    if (!c.is_active) return true;
     c.health -= damage / c.durability;
     if (c.health <= 0.0){
         DomainSystem::ResetDomain(c);
