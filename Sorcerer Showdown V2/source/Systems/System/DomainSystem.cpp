@@ -45,7 +45,7 @@ DomainClashStruct DomainSystem::ClashDomains(Domain& first, Domain& second) {
             winner = ClashWinner::Second;
             DomainSystem::ResetDomain(first);
         }
-        return {&*first, &*second, 0.0, 0.0, winner, DomainWinCon::Refinement};
+        return {&first, &second, 0.0, 0.0, winner, DomainWinCon::Refinement};
     }
 
     double first_damage = first.damage * second.range / first.range;
@@ -57,8 +57,8 @@ DomainClashStruct DomainSystem::ClashDomains(Domain& first, Domain& second) {
         second_damage *= 2.5;
     }
 
-    first.health -= second_damage / first.durability;
-    second.health -= first_damage / second.durability;
+    DomainSystem::HandleDamage(first, second_damage);
+    DomainSystem::HandleDamage(second, first_damage);
 
     if (first.health <= 0.0 || second.health <= 0.0) {
         if (first.health <= 0.0 && second.health <= 0.0){
@@ -82,6 +82,14 @@ SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){
         c.State().is_stunned = true;
     }
     return{x.damage, &c, &dm};
+}
+
+void DomainSystem::HandleDamage(Domain& c, const double damage) {
+    if (!c.is_active) return;
+    c.health -= damage / c.durability;
+    if (c.health <= 0.0){
+        DomainSystem::ResetDomain(c);
+    }
 }
 
 void DomainSystem::ResetDomain(Domain& domain){
