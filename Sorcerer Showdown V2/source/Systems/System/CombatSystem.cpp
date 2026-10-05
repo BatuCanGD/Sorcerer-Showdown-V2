@@ -65,7 +65,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 
     if (!(enough_output && enough_ce)) {
-        return{nullptr,enough_output, enough_ce};
+        return{&chosen_ct,enough_output, enough_ce};
     }
 
     attacker.CursedEnergy().cursed_energy -= ce;
@@ -79,9 +79,9 @@ void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
 
     for (const auto& c : bf.battlefield) {
         if (c.get() == &attacker) continue;
-        const bool does_hit = DomainSystem::CalculateActualHit(domain, c);
+        const bool does_hit = DomainSystem::CalculateActualHit(*domain, *c);
         if (does_hit){
-            Log::DomainSurehit(DomainSystem::HandleSureHit(*c, domain));
+            Log::DomainSurehit(DomainSystem::HandleSureHit(*c, *domain));
         }
         if (const auto& sp = c->CanUseSorcery()){
             if (auto& k = sp->Jujutsu().neutralizer; k && k->is_active){

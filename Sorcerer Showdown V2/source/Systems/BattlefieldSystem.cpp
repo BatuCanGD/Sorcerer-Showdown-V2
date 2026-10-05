@@ -17,20 +17,22 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
             double& ce = cr->CursedEnergy().cursed_energy;
             if (auto& d = cr->Jujutsu().domain){
                 if (d->is_active){
-                    if (ce < d->cost){
-                        DomainSystem::ResetDomain(cr->Jujutsu().domain);
+                    const double cost = SorcerySystem::ApplySpendingMultiplier(d->cost, *cr);
+                    if (ce < cost){
+                        DomainSystem::ResetDomain(*cr->Jujutsu().domain);
                     }else {
-                        ce -= SorcerySystem::ApplySpendingMultiplier(d->cost, *cr);
+                        ce -= cost;
                         domain_users.push_back(cr);
                     }
                 }
             }
             if (auto& n = cr->Jujutsu().neutralizer){
                 if (n->is_active){
-                    if (ce < n->cost){
+                    const double cost = SorcerySystem::ApplySpendingMultiplier(n->cost, *cr);
+                    if (ce < cost){
                         NeutralizerSystem::ResetNeutralizer(*n);
                     }else {
-                        ce -= SorcerySystem::ApplySpendingMultiplier(n->cost, *cr);
+                        ce -= cost;
                     }
                 }
             }
@@ -46,12 +48,12 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
             break;
         }
         case 2: {
-            [[maybe_unused]] const auto l = DomainSystem::ClashDomains(domain_users[0]->Jujutsu().domain, domain_users[1]->Jujutsu().domain);
+            [[maybe_unused]] const auto l = DomainSystem::ClashDomains(*domain_users[0]->Jujutsu().domain, *domain_users[1]->Jujutsu().domain);
             break;
         }
         default: {
             for (auto* c : domain_users) {
-                DomainSystem::ResetDomain(c->Jujutsu().domain);
+                DomainSystem::ResetDomain(*c->Jujutsu().domain);
             }
             break;
         }

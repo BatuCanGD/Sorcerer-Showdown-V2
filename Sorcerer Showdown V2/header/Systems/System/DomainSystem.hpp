@@ -1,6 +1,4 @@
 #pragma once
-#include <optional>
-#include <memory>
 #include <cstdint>
 
 class Character;
@@ -39,9 +37,9 @@ struct SurehitStruct final {
 };
 
 namespace DomainSystem {
-    double CalculateHitDamage(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c);
-    bool CalculateActualHit(const std::optional<Domain>& domain, const std::unique_ptr<Character>& c); 
-    DomainClashStruct ClashDomains(std::optional<Domain>& first, std::optional<Domain>& second); // use case for already active domains
-    SurehitStruct HandleSureHit(Character& c, const std::optional<Domain>& dm); 
-    void ResetDomain(std::optional<Domain>& domain);
+    double CalculateHitDamage(const Domain& domain, const Character& c);
+    bool CalculateActualHit(const Domain& domain, const Character& c); 
+    DomainClashStruct ClashDomains(Domain& first, Domain& second); // use case for already active domains
+    SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
+    void ResetDomain(Domain& domain);
 };
