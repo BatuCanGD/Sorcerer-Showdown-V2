@@ -28,13 +28,13 @@ bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
     }
     switch(vcs.bv->sacrifice_type){
         case SacrificeType::CursedEnergy:
-            c.CursedEnergy().max_cursed_energy += vcs.sacrifice;
+            c.CursedEnergy().max_cursed_energy += vcs.gain;
             break;
         case SacrificeType::Health:
-            c.State().max_health += vcs.sacrifice;
+            c.State().max_health += vcs.gain;
             break;
         case SacrificeType::OutputPotential:
-            c.Output().max_output_potential += vcs.sacrifice;
+            c.Output().max_output_potential += vcs.gain;
             break;
         default:
             throw std::runtime_error("Unexpected SacrificeType Type");

@@ -20,14 +20,14 @@ void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
     switch(ste.effect_for_type){
         case EffectForType::CursedEnergy:
             if (auto* crs = c.CanUseSorcery()){
-                crs->CursedEnergy().cursed_energy += amount;
+                crs->CursedEnergy().cursed_energy = std::min(crs->CursedEnergy().cursed_energy + amount, crs->CursedEnergy().max_cursed_energy);
             }
             break;
         case EffectForType::Durability:
             c.State().durability += amount;
             break;
         case EffectForType::Health:
-            c.State().health += amount;
+            c.State().health = std::min(c.State().health + amount, c.State().max_health);
             break;
         case EffectForType::MaxOutput:
             if (auto* crs = c.CanUseSorcery()){
