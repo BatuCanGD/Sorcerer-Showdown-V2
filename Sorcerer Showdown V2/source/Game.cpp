@@ -37,7 +37,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
             std::println("end of turn");
             hold_input();
         }
-        if (BattlefieldSystem::CheckAlive(bf)) break;
+        if (BattlefieldSystem::NoTargetsRemain(bf)) break;
     }
 
     BattlefieldSystem::HandleDeadPeople(bf);

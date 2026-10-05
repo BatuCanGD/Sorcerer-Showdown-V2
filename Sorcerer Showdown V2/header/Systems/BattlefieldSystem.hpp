@@ -7,5 +7,5 @@ namespace BattlefieldSystem {
     void HandleDomainInteraction(Battlefield& bf);
     void HandleDeadPeople(Battlefield& bf);
     void HandleSpawns(Battlefield& bf);
-    bool CheckAlive(Battlefield& bf);
+    bool NoTargetsRemain(Battlefield& bf);
 };
