@@ -16,9 +16,11 @@ bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
     switch(vcs.bv->gain_type) {
         case SacrificeType::CursedEnergy:
             c.CursedEnergy().max_cursed_energy -= vcs.sacrifice;
+            if (c.CursedEnergy().cursed_energy > c.CursedEnergy().max_cursed_energy) c.CursedEnergy().cursed_energy = c.CursedEnergy().max_cursed_energy;
             break;
         case SacrificeType::Health:
             c.State().max_health -= vcs.sacrifice;
+            if (c.State().health > c.State().max_health) c.State().health = c.State().max_health;
             break;
         case SacrificeType::OutputPotential:
             c.Output().max_output_potential -= vcs.sacrifice;

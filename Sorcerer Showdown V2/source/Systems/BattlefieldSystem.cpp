@@ -73,8 +73,8 @@ void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
 }
 bool BattlefieldSystem::NoTargetsRemain(Battlefield &bf){
     size_t i{};
-    for ([[maybe_unused]] const auto& _ : bf.battlefield){
-        i++;
+    for (const auto& c : bf.battlefield){
+        if (c->State().health > 0.0) i++;
     }
     return i <= 1;
 }

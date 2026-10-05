@@ -11,18 +11,18 @@
 #include <cmath>
 
 DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
-    DamageStruct ds{};
-    ds.negated_damage = amount;
+    const double temp = amount;
     amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
     if (const auto& crs = c.CanUseSorcery()){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
-                ds.attack_blocked = true;
+                return {.attack_blocked = true};
             }
         }
     }
+    DamageStruct ds{};
     ds.damage = amount;
-    ds.negated_damage = ds.negated_damage - ds.damage; 
+    ds.negated_damage = temp - ds.damage; 
     return ds;
 }
 
@@ -35,7 +35,7 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attac
     if (!blocked){
         attacked.State().status_effects.push_back(effect);
     }
-    return {damage, blocked, &effect};
+    return {msg.damage, blocked, &effect};
 }
 
 AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character &attacked) {
@@ -55,9 +55,9 @@ AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character
             is_blackflash = true;
         }
     }
-    attacked.Damage(attack_damage, attack_type);
-    const bool is_critical = attack_damage >= 100.0;
-    return {attack_damage, is_critical, is_blackflash};
+    const auto rs = attacked.Damage(attack_damage, attack_type);
+    const bool is_critical = rs.damage >= 100.0;
+    return {rs.damage, is_critical, is_blackflash};
 }
 
 TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAbility& chosen_ct, Character& attacked){
