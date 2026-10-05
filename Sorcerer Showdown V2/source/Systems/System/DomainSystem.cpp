@@ -46,7 +46,7 @@ DomainClashStruct DomainSystem::ClashDomains(std::optional<Domain> &first, std::
             winner = ClashWinner::Second;
             DomainSystem::ResetDomain(first);
         }
-        return {winner, DomainWinCon::Refinement};
+        return {&*first, &*second, 0.0, 0.0, winner, DomainWinCon::Refinement};
     }
 
     double first_damage = first->damage * second->range / first->range;
@@ -73,7 +73,7 @@ DomainClashStruct DomainSystem::ClashDomains(std::optional<Domain> &first, std::
         }
         win_con = DomainWinCon::Attrition;
     }
-    return {winner, win_con};
+    return {&*first, &*second, first_damage, second_damage, winner, win_con};
 }
 
 SurehitStruct DomainSystem::HandleSureHit(Character &c, const std::optional<Domain>& dm){    

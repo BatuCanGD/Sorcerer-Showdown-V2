@@ -25,6 +25,10 @@ struct DomainHitStruct final {
     bool does_hit;
 };
 struct DomainClashStruct final {
+    const Domain* first;
+    const Domain* second;
+    double f_damage;
+    double s_damage;
     ClashWinner winner;
     DomainWinCon win_condition;
 };
