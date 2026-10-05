@@ -41,6 +41,6 @@ namespace DomainSystem {
     bool CalculateActualHit(const Domain& domain, const Character& c); 
     DomainClashStruct ClashDomains(Domain& first, Domain& second); // use case for already active domains
     SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
-    void HandleDamage(Domain& dm, const double d);
+    bool HandleDamage(Domain& dm, const double d);
     void ResetDomain(Domain& domain);
 };
