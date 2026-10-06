@@ -1,4 +1,4 @@
-#include "../../../header/Systems/System/VowSystem.hpp"
+#include "../../../header/Systems/Mechanics/VowSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/Systems/Stringet.hpp"

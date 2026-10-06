@@ -1,4 +1,4 @@
-#include "../../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../../header/Systems/Mechanics/ShikigamiSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 
 #include <algorithm>

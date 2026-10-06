@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Stuff/StatusEffects.hpp"
+#include "General/StatusEffects.hpp"
 #include <memory>
 
 class Character;

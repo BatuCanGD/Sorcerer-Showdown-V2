@@ -1,8 +1,8 @@
-#include "../../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Logger.hpp"
 #include "../../../header/Utilities/Input.hpp"
-#include "../../../header/Systems/System/SorcerySystem.hpp"
+#include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Sorcery/Technique.hpp"
 
 std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {

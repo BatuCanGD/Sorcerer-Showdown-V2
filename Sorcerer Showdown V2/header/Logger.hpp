@@ -1,6 +1,6 @@
 #pragma once
-#include "Systems/System/CombatSystem.hpp"
-#include "Systems/System/DomainSystem.hpp"
+#include "Systems/Mechanics/CombatSystem.hpp"
+#include "Systems/Mechanics/DomainSystem.hpp"
 
 #include <vector>
 

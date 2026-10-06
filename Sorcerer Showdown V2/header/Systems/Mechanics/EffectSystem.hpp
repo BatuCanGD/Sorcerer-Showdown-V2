@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Stuff/StatusEffects.hpp"
+#include "../../General/StatusEffects.hpp"
 #include <utility>
 #include <vector>
 

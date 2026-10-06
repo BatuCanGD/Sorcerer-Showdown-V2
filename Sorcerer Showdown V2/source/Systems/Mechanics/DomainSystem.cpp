@@ -1,7 +1,7 @@
-#include "../../../header/Systems/System/DomainSystem.hpp"
+#include "../../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../../header/Sorcery/Domain.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
-#include "../../../header/Systems/System/CombatSystem.hpp"
+#include "../../../header/Systems/Mechanics/CombatSystem.hpp"
 
 #include <stdexcept>
 

@@ -2,7 +2,7 @@
 #include "../header/Utilities/Random.hpp"
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
-#include "../header/Stuff/CursedTool.hpp"
+#include "../header/General/CursedTool.hpp"
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 

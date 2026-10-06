@@ -1,4 +1,4 @@
-#include "../../../header/Systems/System/NeutralizerSystem.hpp"
+#include "../../../header/Systems/Mechanics/NeutralizerSystem.hpp"
 #include "../../../header/Sorcery/Neutralizer.hpp"
 
 void NeutralizerSystem::HandleDamage(Neutralizer& c, const double damage) {

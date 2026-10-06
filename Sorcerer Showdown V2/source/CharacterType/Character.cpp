@@ -1,5 +1,5 @@
 #include "../../header/CharacterType/Character.hpp"
-#include "../../header/Systems/System/CombatSystem.hpp"
+#include "../../header/Systems/Mechanics/CombatSystem.hpp"
 
 Character::Character() {};
 Character::~Character() = default;

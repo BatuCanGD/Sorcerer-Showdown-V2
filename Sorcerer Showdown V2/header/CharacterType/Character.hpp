@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Stuff/StatusEffects.hpp"
-#include "../Stuff/CursedTool.hpp"
+#include "../General/StatusEffects.hpp"
+#include "../General/CursedTool.hpp"
 #include "../AI.hpp"
 #include "../Enums.hpp"
 #include "../Info.hpp"

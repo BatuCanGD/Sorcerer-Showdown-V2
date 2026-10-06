@@ -1,10 +1,10 @@
 #include "../../header/Systems/ResourceHandler.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
-#include "../../header/Systems/System/SorcerySystem.hpp"
-#include "../../header/Systems/System/ShikigamiSystem.hpp"
+#include "../../header/Systems/Mechanics/SorcerySystem.hpp"
+#include "../../header/Systems/Mechanics/ShikigamiSystem.hpp"
 #include "../../header/Logger.hpp"
-#include "../../header/Systems/System/VowSystem.hpp"
-#include "../../header/Systems/System/EffectSystem.hpp"
+#include "../../header/Systems/Mechanics/VowSystem.hpp"
+#include "../../header/Systems/Mechanics/EffectSystem.hpp"
 #include "../../header/Battlefield.hpp"
 
 #include <algorithm>

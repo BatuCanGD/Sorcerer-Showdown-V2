@@ -1,4 +1,4 @@
-#include "../../../header/Systems/System/EffectSystem.hpp"
+#include "../../../header/Systems/Mechanics/EffectSystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 

@@ -1,9 +1,5 @@
 #pragma once
 #include <cstdint>
-
-enum class OpType : std::uint8_t { Get, Set, Add, Subtract };
-enum class ValType : std::uint8_t { Current, Maximum };
-
 namespace globalums // enums that are used by multiple systems
 {
     enum class DamageType : std::uint8_t {

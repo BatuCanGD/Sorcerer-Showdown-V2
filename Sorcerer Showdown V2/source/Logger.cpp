@@ -3,9 +3,9 @@
 #include "../header/CharacterType/Character.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
 #include "../header/Sorcery/Technique.hpp"
-#include "../header/Systems/System/CombatSystem.hpp"
-#include "../header/Systems/System/DomainSystem.hpp"
-#include "../header/Systems/System/EffectSystem.hpp"
+#include "../header/Systems/Mechanics/CombatSystem.hpp"
+#include "../header/Systems/Mechanics/DomainSystem.hpp"
+#include "../header/Systems/Mechanics/EffectSystem.hpp"
 #include "../header/Systems/Stringet.hpp"
 
 #include <print>

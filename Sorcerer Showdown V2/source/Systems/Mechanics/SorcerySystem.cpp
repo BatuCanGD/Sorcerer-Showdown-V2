@@ -1,4 +1,4 @@
-#include "../../../header/Systems/System/SorcerySystem.hpp"
+#include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include <cmath>
 
 
