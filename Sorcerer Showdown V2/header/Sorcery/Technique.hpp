@@ -31,9 +31,6 @@ public:
     TechBarrier& Barrier() noexcept;
     std::vector<TechAbility>& Abilities() noexcept;
 
-    const std::string Name() const noexcept;
-
-
     void Barrier(bool set);
     bool HasBarrier() const noexcept;
 

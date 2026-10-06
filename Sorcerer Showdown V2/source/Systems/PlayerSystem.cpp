@@ -130,7 +130,7 @@ bool UserControl::DoInventoryManagement(Character& c) {
     size_t ww{0};
 
     auto add_wp([&](CursedTool& w, Origin origin, size_t index = 0){
-        std::println("{}:{}{}{}", ++ww, w.identity.color, w.identity.name, w.identity.color.empty() ? "" : "\x1b[0m");
+        std::println("{}:{}", ++ww, GetInfo::Name(w.identity));
         wp.push_back({&w, origin, index});
     });
 
@@ -158,7 +158,7 @@ bool UserControl::DoInventoryManagement(Character& c) {
     }
 
     const Candidate chosen = wp[input];
-    std::println("Chosen Tool: [{}{}{}]", chosen.tool->identity.color, chosen.tool->identity.name, chosen.tool->identity.color.empty() ? "" : "\x1b[0m");
+    std::println("Chosen Tool: [{}]", GetInfo::Name(chosen.tool->identity));
     std::println("1 - Move to main hand\n2 - Move to Offhand\n{}", has_inv ? "3 - Move to Inventory" : "");
 
     auto extract_chosen = [&]() -> CursedTool {
@@ -395,11 +395,11 @@ bool UserControl::DoDomain(CurseUser* c) {
     };
     if (domain){
         add_ch(dmn::Domain);
-        std::println("[{}{}{}] - {}", domain->identity.color, domain->identity.name, domain->identity.color.empty() ? "" : "\x1b[0m", domain->is_active ? "Active" : "Inactive");
+        std::println("[{}] - {}", GetInfo::Name(domain->identity), domain->is_active ? "Active" : "Inactive");
     }
     if (neutralizer) {
         add_ch(dmn::Neutralizer);
-        std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive"); 
+        std::println("[{}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->is_active ? "Active" : "Inactive"); 
     }
 
     size_t pl = get_input<size_t>() - 1;
@@ -408,7 +408,7 @@ bool UserControl::DoDomain(CurseUser* c) {
     }
     switch(dm[pl]){
         case dmn::Domain: {
-            std::println("[{}{}{}] - {}", domain->identity.color, domain->identity.name, domain->identity.color.empty() ? "" : "\x1b[0m", domain->is_active ? "Active" : "Inactive");
+            std::println("[{}] - {}", GetInfo::Name(domain->identity), domain->is_active ? "Active" : "Inactive");
             std::println("1 - Activate | 2 - Deactivate\n=>");
             int pch = get_input<int>();
             if (pch == 1){
@@ -421,7 +421,7 @@ bool UserControl::DoDomain(CurseUser* c) {
             break;
         }
         case dmn::Neutralizer: {
-            std::println("[{}{}{}] - {}", neutralizer->identity.color, neutralizer->identity.name, neutralizer->identity.color.empty() ? "" : "\x1b[0m", neutralizer->is_active ? "Active" : "Inactive"); 
+            std::println("[{}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->is_active ? "Active" : "Inactive"); 
             std::println("1 - Activate | 2 - Deactivate\n=>");
             int pch = get_input<int>();
             if (pch == 1){
@@ -458,7 +458,7 @@ bool UserControl::DoShikigami(CurseUser* c) {
 Shikigami* UserControl::ChooseShikigami(std::vector<Shikigami>& sh) {
     size_t idx{0};
     for (const auto& x : sh){
-        std::println("{}:{}{}{}", ++idx, x.id.color, x.id.name, x.id.color.empty() ? "" : "\x1b[0m");
+        std::println("{}:{}", ++idx, GetInfo::Name(x.id));
     }
 
     idx = get_input<size_t>() - 1;
@@ -484,12 +484,7 @@ void UserControl::UseShikigami(Shikigami& c) {
             active = "In Shadow";
             break;
     }
-    std::println("Chosen: {}{}{} -  {}\n1 - Manifest\n2 - Partial Manifestation\n3 - Dismiss", 
-        active,
-        c.id.color, 
-        c.id.name, 
-        c.id.color.empty() ? "" : "\x1b[0m"
-    );
+    std::println("Chosen: {} -  {}\n1 - Manifest\n2 - Partial Manifestation\n3 - Dismiss", GetInfo::Name(c.id), active);
     int g = get_input<int>();
     switch(g) {
         case 1:

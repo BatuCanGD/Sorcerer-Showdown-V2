@@ -27,7 +27,7 @@ bool endgame() {
 bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
     for(const auto& c : bf.battlefield){
         if (c->State().health <= 0.0) continue;
-        Log::CharacterInfo(*c, Log::LogDetailType::Detailed);
+        Log::CharacterInfo(*c);
         if (pc.user_character == c.get()){
             UserControl::GetPlayerTurn(*c, bf);
         }else {

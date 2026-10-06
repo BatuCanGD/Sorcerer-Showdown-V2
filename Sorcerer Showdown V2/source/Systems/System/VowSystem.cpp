@@ -129,9 +129,9 @@ const EntityInfo VowSystem::GenerateVowId(const BindingVow& bv) {
     const auto g = Stringet::SacrificeStr(bv.gain);
     name = l + " for " + g;
 
-    desc = std::format("Sacrifices {:.0f}% of {} for {}", bv.percentage * 100.0, l, g);
+    desc = std::format("Sacrifices {:.1f}% of {} for {}", bv.percentage * 100.0, l, g);
 
-    return {color, name, desc};
+    return {name,color , desc};
 }
 const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
     BindingVow vow{};

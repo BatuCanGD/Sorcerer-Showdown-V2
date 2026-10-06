@@ -28,10 +28,6 @@ bool Technique::HasBarrier() const noexcept {
     return barrier.can_use_barrier && barrier.is_active;
 }
 
-const std::string Technique::Name() const noexcept {
-    return identity.color + identity.name + (identity.color.empty() ? "" : "\x1b[0m");
-}
-
 const TechAbility& Technique::GetAbility(size_t idx) const {
     if (idx >= abilities.size()){
         throw std::invalid_argument("Invalid Value");

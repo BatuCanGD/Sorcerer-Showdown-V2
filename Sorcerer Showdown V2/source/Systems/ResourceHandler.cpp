@@ -18,7 +18,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
             ResourceHandler::TickShikigami(*crs);
             ResourceHandler::TickRCT(*crs);
         }
-        Log::Effects(ef);
+        Log::Effects(ef.first, ef.second);
     }
 }
 

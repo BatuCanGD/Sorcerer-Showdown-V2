@@ -14,23 +14,12 @@
 #include <format>
 
 
-void Log::CharacterInfo(const Character &c, const LogDetailType ct){
-    const bool detailed = ct == LogDetailType::Detailed;
-    std::println("{}{}", 
-        ct == LogDetailType::Basic ? GetInfo::Name(c.Identity()) : GetInfo::Styalized(c.Identity()),
-        c.State().is_stunned ? "[STUNNED]" : ""
-    );
-    if (detailed){
-        std::println("Health-[{:.1f}] | Durability-[{:.1f}] | Strength-[{:.1f}]", c.State().health, c.State().durability, c.State().strength);
-    }else {
-        std::println("Health-[{}] | Durability-[{}] | Strength-[{}]", Stringet::HealthStr(c.State().health), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
-    }
+void Log::CharacterInfo(const Character &c){
+    std::println("[{}]", GetInfo::Name(c.Identity()));
+    std::println("Health-[{:.1f}] | Durability-[{:.1f}] | Strength-[{:.1f}]", c.State().health, c.State().durability, c.State().strength);
+    
     if (const auto* crs = c.CanUseSorcery()){
-        if (detailed){
-            std::println("Cursed Energy-[{:.1f}] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
-        }else{
-            std::print("Cursed Energy-[{}] ", Stringet::CursedEnergyStr(crs->CursedEnergy().cursed_energy));
-        }
+        std::println("Cursed Energy-[{:.1f}] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
         if (const auto& tech = crs->Jujutsu().technique){
             std::print("Technique: [{}] ", GetInfo::Name(tech->Identity()));
         }
@@ -46,14 +35,14 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
     const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
 
     if (log_name){
-        std::println("TECHNIQUE: [{}]", ct.Name());
+        std::println("TECHNIQUE: [{}]", GetInfo::Name(ct.Identity()));
     }
     if (log_abilities){
         std::println("ABILITIES");
         size_t i = 0;
         for (const auto& c : ct.Abilities()){
-            std::println("{}:[{}{}{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
-                ++i, c.id.color, c.id.name, c.id.color.empty() ? "" : "\x1b[0m", c.damage, c.output, c.cost);
+            std::println("{}:[{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
+                ++i, GetInfo::Name(c.id), c.damage, c.output, c.cost);
         }
     }
 }
@@ -66,9 +55,9 @@ void Log::DomainSurehit(const SurehitStruct st, const SurehitHit ht){
     } //                                                                                                                         oh my goodness
 }
 
-void Log::Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p) {
-    for (const auto& s : p.first){
-        std::print("{} got affected by the {}{}{} effect and {} {} {}", GetInfo::Name(p.second.Identity()), s.id.color ,s.id.name, s.id.color.empty() ? "" : "\x1b[0m", s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
+    for (const auto& s : v){
+        std::print("{} got affected by the {} effect and {} {} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 

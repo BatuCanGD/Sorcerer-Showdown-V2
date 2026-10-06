@@ -3,7 +3,6 @@
 #include "Systems/System/DomainSystem.hpp"
 
 #include <vector>
-#include <utility>
 
 enum class ClashWinner : std::uint8_t;
 enum class DomainWinCon : std::uint8_t;
@@ -23,7 +22,7 @@ namespace Log {
     enum class CTLogType      : std::uint8_t { Name, Abilities, Both };
     enum class SurehitHit     : std::uint8_t { Person, Neutralizer };
 
-    void CharacterInfo(const Character& c, const LogDetailType info_type = LogDetailType::Basic);
+    void CharacterInfo(const Character& c);
     void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name, const LogDetailType info_type = LogDetailType::Basic);
 
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);
@@ -31,6 +30,6 @@ namespace Log {
     void TechniqueAttack(const TechniqueStruct tc);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const DomainClashStruct ds);
-    void Effects(std::pair<const std::vector<StatusEffect>&, const Character&> p);
+    void Effects(const std::vector<StatusEffect>&, const Character& p);
     void Death(const Battlefield& bf);
 }

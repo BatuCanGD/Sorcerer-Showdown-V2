@@ -66,7 +66,7 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
     return;
 }
 void AI::DoResourceManagement(Character& user, const Battlefield& bf ,const ResourceUsage& ru) { // possible shikigami, reinforcement and rct use
-    Technique* tech{nullptr};
+    [[maybe_unused]] Technique* tech{nullptr};
     if (const auto* c = user.CanUseSorcery()){
         if (auto t = c->Jujutsu().technique){
             tech = &*t;
