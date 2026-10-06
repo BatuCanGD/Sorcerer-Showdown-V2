@@ -257,7 +257,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
         std::println("{} - {} |", ++k, sv);
         sp.push_back(s);
     });
-    if (c.RCTSystem().can_use_rct){
+    if (c.RCT().can_use_rct){
         add_p("RCT", SorceryType::RCT);
     }
     add_p("Reinforcement", SorceryType::Reinforcement);
@@ -267,7 +267,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 
 
 void UserControl::ForRCT(CurseUser& c){
-    double& rct = c.RCTSystem().rct_output;
+    double& rct = c.RCT().rct_output;
     std::println("Total RCT output: {0:.1f} | Cost: {1:.1f} CE per turn\n1 - Set Output | 2 - Return", rct, SorcerySystem::ApplyRCTCost(rct));
     if (get_input<int>() != 1) return;
     std::print("Enter Output Amount: ");

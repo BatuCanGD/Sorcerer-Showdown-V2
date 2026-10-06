@@ -43,8 +43,6 @@ struct SorceryTrait final {
 struct ReverseCTSystem final {
     double rct_output{0.0};
     bool can_use_rct{false};
-    enum class RCTLevel : std::uint8_t { Wasteful, Crude, Adept, Expert, Absolute };
-    RCTLevel rct_level{RCTLevel::Adept};
 };
 
 class CurseUser final : public Character {
@@ -63,14 +61,14 @@ public:
     [[nodiscard]] const CurseUserOutput& Output() const noexcept;
     [[nodiscard]] const CurseUserAmplification& Amplification() const noexcept;
     [[nodiscard]] const SorceryTrait& Traits() const noexcept;
-    [[nodiscard]] const ReverseCTSystem& RCTSystem() const noexcept;
+    [[nodiscard]] const ReverseCTSystem& RCT() const noexcept;
 
     JujutsuSystem& Jujutsu() noexcept;
     CursedEnergySystem& CursedEnergy() noexcept;
     CurseUserOutput& Output() noexcept;
     CurseUserAmplification& Amplification() noexcept;
     SorceryTrait& Traits() noexcept;
-    ReverseCTSystem& RCTSystem() noexcept;
+    ReverseCTSystem& RCT() noexcept;
     
     [[nodiscard]] const CurseUser* CanUseSorcery() const noexcept override;
     CurseUser* CanUseSorcery() noexcept override;

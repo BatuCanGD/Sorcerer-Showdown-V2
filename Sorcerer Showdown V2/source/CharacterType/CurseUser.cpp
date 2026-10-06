@@ -42,11 +42,11 @@ CurseUser* CurseUser::CanUseSorcery() noexcept {
     return this;
 }
 
-const ReverseCTSystem& CurseUser::RCTSystem() const noexcept{
+const ReverseCTSystem& CurseUser::RCT() const noexcept{
     return rct_system;
 }
 
-ReverseCTSystem& CurseUser::RCTSystem() noexcept{
+ReverseCTSystem& CurseUser::RCT() noexcept{
     return rct_system;
 }
 

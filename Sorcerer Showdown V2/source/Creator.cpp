@@ -71,7 +71,6 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     constexpr double cursed_energy = 5000.0;
 
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
-    constexpr auto rct_level = ReverseCTSystem::RCTLevel::Absolute;
 
     const Technique technique{Create::Limitless()};
     const Domain domain{Create::UnlimitedVoid()};
@@ -87,8 +86,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     c->Jujutsu().technique = technique;
     c->CursedEnergy().efficiency = ce_efficiency;
     c->Traits().six_eyes = true;
-    c->RCTSystem().can_use_rct = true;
-    c->RCTSystem().rct_level = rct_level;
+    c->RCT().can_use_rct = true;
 
     return c;
 }

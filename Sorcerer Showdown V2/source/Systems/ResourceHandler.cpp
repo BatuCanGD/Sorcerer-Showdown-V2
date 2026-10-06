@@ -31,8 +31,8 @@ void ResourceHandler::TickShikigami(CurseUser& curse_user){
     }
 }
 void ResourceHandler::TickRCT(CurseUser& curse_user) {
-    if (!curse_user.RCTSystem().can_use_rct) return;
-    const double& output = curse_user.RCTSystem().rct_output;
+    if (!curse_user.RCT().can_use_rct) return;
+    const double& output = curse_user.RCT().rct_output;
     curse_user.CursedEnergy().cursed_energy = std::clamp(curse_user.CursedEnergy().cursed_energy - SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), curse_user), 0.0, curse_user.CursedEnergy().max_cursed_energy);
     curse_user.State().health = std::min(curse_user.State().health + output, curse_user.State().max_health);
 }

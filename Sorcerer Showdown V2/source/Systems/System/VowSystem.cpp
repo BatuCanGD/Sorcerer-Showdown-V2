@@ -15,7 +15,7 @@ void VowSystem::ApplyVows(CurseUser &c) {
 }
 
 bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
-    switch(vcs.bv->gain) {
+    switch(vcs.bv->loss) {
         case SacrificeType::CursedEnergy:
             c.CursedEnergy().max_cursed_energy -= vcs.sacrifice;
             if (c.CursedEnergy().cursed_energy > c.CursedEnergy().max_cursed_energy) c.CursedEnergy().cursed_energy = c.CursedEnergy().max_cursed_energy;
@@ -30,7 +30,7 @@ bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
         default:
             throw std::runtime_error("Unexpected SacrificeType Type");
     }
-    switch(vcs.bv->loss){
+    switch(vcs.bv->gain){
         case SacrificeType::CursedEnergy:
             c.CursedEnergy().max_cursed_energy += vcs.gain;
             break;
