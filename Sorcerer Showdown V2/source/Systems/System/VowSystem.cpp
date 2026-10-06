@@ -1,5 +1,6 @@
 #include "../../../header/Systems/System/VowSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Utilities/Random.hpp"
 
 #include <stdexcept>
 
@@ -44,7 +45,7 @@ bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
     return true;
 }
 
-VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ // for the stat multiplier
+const VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ // for the stat multiplier
     if (bv.gain_type == bv.sacrifice_type){ 
         return {};
     }
@@ -109,4 +110,63 @@ VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ /
     }
 
     return {&bv ,sacrifice_amount, gain_amount};
+}
+
+const EntityInfo VowSystem::GetRandomId(const BindingVow& bv) {
+    std::string name{}, color{};
+
+    if (bv.sacrifice_percentage >= 0.70){
+        color = "\x1b[36m";
+    }else if (bv.sacrifice_percentage >= 35){
+        color = "\x1b[33m";
+    }else{
+        color = "\x1b[34m";
+    }
+
+    
+
+    return {color, name};
+}
+const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
+    BindingVow vow{};
+
+    SacrificeType gain{};
+    SacrificeType loss{};
+    double percentage{};
+
+    switch(bq.fighting_style){
+        case FightingStyle::Aggressive:
+            if (get_random<uint8_t>(0, 1) == 1){
+                loss = c.State().health < c.State().max_health * 0.20 ? SacrificeType::OutputPotential : SacrificeType::Health;
+            }else{
+                loss = SacrificeType::CursedEnergy;
+            }
+            break;
+        case FightingStyle::Defensive:
+
+            break;
+        case FightingStyle::Mixed:
+
+            break;
+    }
+
+    switch(bq.resource_usage){
+        case ResourceUsage::AllOut:
+            percentage = get_random<double>(0.75, 0.99);
+            break;
+        case ResourceUsage::Conservative:
+            percentage = get_random<double>(0.01, 0.25);
+            break;
+        case ResourceUsage::Mixed:
+            percentage = get_random<double>(0.25, 0.75);
+            break;
+    }
+
+    vow.sacrifice_percentage = percentage;
+    vow.gain_type = gain;
+    vow.sacrifice_type = loss;
+
+    VowSystem::GetRandomId(vow);
+    c.Jujutsu().binding_vows.push_back(vow);
+    return vow;
 }
