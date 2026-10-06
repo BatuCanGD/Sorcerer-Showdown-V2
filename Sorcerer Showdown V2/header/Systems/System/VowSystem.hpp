@@ -20,6 +20,6 @@ namespace VowSystem {
     void ApplyVows(CurseUser& c);
     bool DoVow(CurseUser& c, const VowCostSystem& vcs);
     const VowCostSystem GetVowCost(const CurseUser& c, const BindingVow& bv);
-    const EntityInfo GetRandomId(const BindingVow& bv);
+    const EntityInfo GenerateVowId(const BindingVow& bv);
     const BindingVow CreateVow(CurseUser& j, const BattleIQ& bq);
 }

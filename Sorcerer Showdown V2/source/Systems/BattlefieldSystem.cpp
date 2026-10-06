@@ -49,6 +49,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
         }
         case 2: {
             [[maybe_unused]] const auto l = DomainSystem::ClashDomains(*domain_users[0]->Jujutsu().domain, *domain_users[1]->Jujutsu().domain);
+            Log::Clash(l);
             break;
         }
         default: {

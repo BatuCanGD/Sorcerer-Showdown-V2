@@ -15,18 +15,27 @@
 
 
 void Log::CharacterInfo(const Character &c, const LogDetailType ct){
+    const bool detailed = ct == LogDetailType::Detailed;
     std::println("{}{}", 
         ct == LogDetailType::Basic ? GetInfo::Name(c.Identity()) : GetInfo::Styalized(c.Identity()),
         c.State().is_stunned ? "[STUNNED]" : ""
     );
-    std::println("HP: [{}] | DURA: [{}] | STR: [{}]", Stringet::HealthStr(c.State().health), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
+    if (detailed){
+        std::println("Health-[{:.1f}] | Durability-[{:.1f}] | Strength-[{:.1f}]", c.State().health, c.State().durability, c.State().strength);
+    }else {
+        std::println("Health-[{}] | Durability-[{}] | Strength-[{}]", Stringet::HealthStr(c.State().health), Stringet::DurabilityStr(c.State().durability), Stringet::StrengthStr(c.State().strength));
+    }
     if (const auto* crs = c.CanUseSorcery()){
-        const std::string cursed_energy = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->CursedEnergy().cursed_energy) : std::format("{:.1f}", crs->CursedEnergy().cursed_energy);
-        const std::string output        = ct == LogDetailType::Basic ? Stringet::OutputStr(crs->Output().current_output) : Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential);
-        const std::string efficiency    = Stringet::EfficiencyStr(crs->CursedEnergy().efficiency);
-        std::println("CE: [{}] | OUTPUT: [{}] | EFFICIENCY: [{}] ", cursed_energy, output, efficiency);
+        if (detailed){
+            std::println("Cursed Energy-[{:.1f}] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
+        }else{
+            std::print("Cursed Energy-[{}] ", Stringet::CursedEnergyStr(crs->CursedEnergy().cursed_energy));
+        }
         if (const auto& tech = crs->Jujutsu().technique){
-            Log::TechniqueInfo(*tech, CTLogType::Name ,ct);
+            std::print("Technique: [{}] ", GetInfo::Name(tech->Identity()));
+        }
+        if (const auto& domain = crs->Jujutsu().domain){
+            std::print("Domain: [{}][{}] ", GetInfo::Name(domain->identity), domain->is_active ? "Active":"Inactive");
         }
     }
     std::println();
@@ -102,19 +111,20 @@ void Log::Damage(const DamageStruct dms, const Character &attacked){
     }
 }
 
-void Log::Clash(const ClashWinner winner, const DomainWinCon win_con) {
-    if (winner == ClashWinner::None) {
-        std::println("The domains are locked in battle with each other, cancelling out the sure-hits.");
+void Log::Clash(const DomainClashStruct ds) {
+    if (ds.winner == ClashWinner::None) {
+        std::println("{} and {} are locked in battle with each other, cancelling out the sure-hits.", GetInfo::Name(ds.first->identity), GetInfo::Name(ds.second->identity));
+        std::println("{0} took {3:.1f} damage and {1} took {2:.1f} damage!", GetInfo::Name(ds.first->identity), GetInfo::Name(ds.second->identity), ds.f_damage, ds.s_damage);
         return;
     }
-    const bool both_domains = winner == ClashWinner::Both;
-    if (both_domains) {
+
+    if (ds.winner == ClashWinner::Both) {
         std::print("Both domains have collapsed due to ");
     }else{
-        std::print("A domain has collapsed due to ");
+        std::print("{} has collapsed due to ", ds.winner == ClashWinner::First ? GetInfo::Name(ds.second->identity) : GetInfo::Name(ds.first->identity));
     }
 
-    switch(win_con){
+    switch(ds.win_condition){
         case DomainWinCon::Attrition:
             std::println("sustaining too much damage!");
             break;

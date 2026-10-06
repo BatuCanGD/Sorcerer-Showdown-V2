@@ -1,4 +1,5 @@
 #pragma once
+#include "../Info.hpp"
 #include <cstdint>
 
 enum class SacrificeType : std::uint8_t {
@@ -8,8 +9,9 @@ enum class SacrificeType : std::uint8_t {
 };
 
 struct BindingVow final {
-    double sacrifice_percentage{0.5}; // 0.01 -- 0.99
-    bool applied_vow{};
-    SacrificeType sacrifice_type{};
-    SacrificeType gain_type{};
+    EntityInfo identity{};
+    double percentage{0.5}; // 0.01 -- 0.99
+    bool applied{};
+    SacrificeType loss{};
+    SacrificeType gain{};
 };

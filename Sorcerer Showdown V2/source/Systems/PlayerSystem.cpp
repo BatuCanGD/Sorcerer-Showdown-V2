@@ -3,6 +3,7 @@
 #include "../../header/Battlefield.hpp"
 #include "../../header/Systems/System/CombatSystem.hpp"
 #include "../../header/Systems/System/TechniqueSystem.hpp"
+#include "../../header/Systems/System/VowSystem.hpp"
 #include "../../header/Systems/System/SorcerySystem.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/CharacterType/Character.hpp"
@@ -268,9 +269,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 void UserControl::ForRCT(CurseUser& c){
     double& rct = c.RCTSystem().rct_output;
     std::println("Total RCT output: {0:.1f} | Cost: {1:.1f} CE per turn\n1 - Set Output | 2 - Return", rct, SorcerySystem::ApplyRCTCost(rct));
-    if (get_input<int>() != 1){
-        return;
-    }
+    if (get_input<int>() != 1) return;
     std::print("Enter Output Amount: ");
     const double prv = rct;
     rct = std::max(get_input<double>(), 0.0);
@@ -298,13 +297,66 @@ void UserControl::ForReinforcement(CurseUser& c){
         rf = prv;
     }
 }
-void UserControl::ForBindingVows(CurseUser& c){ // no binding vows yet :C
-    return;
-    std::println("currently used vows | description"); // placeholders
+void UserControl::ForBindingVows(CurseUser& c){ 
+    std::println("Binding vows can only be created and are not able to be removed!");
+    std::println("Current Binding Vows: ");
+    if (c.Jujutsu().binding_vows.empty()) {
+        std::println("None");
+    }
+    for (const auto& cc : c.Jujutsu().binding_vows){
+        std::println("[{}]-{}", GetInfo::Name(cc.identity), cc.identity.description);
+    }
+    std::println("1 - Create Binding Vow | 2 - Return");
 
-    std::println("add | remove | do nothing");
+    if (get_input<int>() != 1) return;
+    BindingVow bv{};
 
-    std::println("choose | return");
+    std::println("Which will you sacrifice?");
+
+    std::vector<SacrificeType> stv;
+    auto opt = [&](std::string_view s, SacrificeType st){
+        stv.push_back(st);
+        std::println("{}:{}", stv.size(), s);
+    };
+    opt("Health", SacrificeType::Health);
+    opt("Cursed Energy", SacrificeType::CursedEnergy);
+    opt("Cursed Energy Output", SacrificeType::OutputPotential);
+
+    const size_t sac = get_input<size_t>() - 1;
+    if (sac >= stv.size()){
+        return;
+    }
+    const auto sack = stv[sac];
+    stv.clear();
+    std::println("Which will you gain?");
+
+    opt("Health", SacrificeType::Health);
+    opt("Cursed Energy", SacrificeType::CursedEnergy);
+    opt("Cursed Energy Output", SacrificeType::OutputPotential);
+
+    const size_t gan = get_input<size_t>() - 1;
+    if (gan >= stv.size()) return;
+    const auto gain = stv[gan];
+    if (gain == sack) {
+        std::println("You cannot sacrifice and gain the same thing");
+        return;
+    }
+    std::println("How much will you sacrifice?\n 100-1/0.01-0.99\n=> ");
+    double dp = get_input<double>();
+    if (dp < 0.01) {
+        std::println("You must sacrifice at least 1%");
+        return;
+    } else if (dp > 99.9 || (dp > 0.99 && dp < 1.0)){
+        std::println("You cannot just sacrifice 100% or more");
+        return;
+    }
+    const double sdp = (dp >= 1.0 && dp <= 99.9) ? dp * 0.01 : dp;
+
+    bv.gain = gain;
+    bv.loss = sack;
+    bv.percentage = sdp;
+    bv.identity = VowSystem::GenerateVowId(bv);
+    c.Jujutsu().binding_vows.push_back(bv);
 }
 
 

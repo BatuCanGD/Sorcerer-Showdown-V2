@@ -12,4 +12,5 @@ namespace Stringet {
     const std::string EfficiencyStr(const CursedEnergySystem::Efficiency& efficiency);
     const std::string OutputStr(const double max);                      // "X"
     const std::string OutputCmpStr(const double cur, const double max); // "X/Y"
+    const std::string SacrificeStr(const SacrificeType st);
 }

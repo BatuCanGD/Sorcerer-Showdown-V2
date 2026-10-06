@@ -8,9 +8,12 @@
 #include <stdexcept>
 
 Character* AI::GetTarget(const Character& user, const TargetingType& tp, const Battlefield &bf){
-    Character* target{nullptr};
+    if (bf.battlefield.size() <= 1){
+        throw std::runtime_error("0-1 Entities left in vector, Impossible to find target");
+    }
     switch(tp){
         case TargetingType::HighestHP: {
+            Character* target{nullptr};
             double highest_hp{std::numeric_limits<double>::lowest()};
             for (const auto& c : bf.battlefield){
                 if (c.get() == &user || c->State().health <= 0.0) continue;
@@ -19,9 +22,10 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
                     highest_hp = c->State().health;
                 }
             }
-            break;
+            return target;
         }
         case TargetingType::LowestHP: {
+            Character* target{nullptr};
             double lowest_hp{std::numeric_limits<double>::max()};
             for (const auto& c : bf.battlefield){
                 if (c.get() == &user || c->State().health <= 0.0) continue;
@@ -30,22 +34,13 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
                     lowest_hp = c->State().health;
                 }
             }
-            break;
+            return target;
         }
         case TargetingType::Mixed: {
-            for (const auto& c : bf.battlefield){
-                if (c.get() == &user || c->State().health <= 0.0) continue;
-                if (get_random<int>(0,100) >= 50 || !target){
-                    target = c.get();
-                }
-            }
-            break;
+            return bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get(); 
         }
     }
-    if (!target){
-        throw std::runtime_error("0-1 Entities left in vector, Impossible to find target");
-    }
-    return target;
+    return nullptr;
 }
 
 void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { // possible technique/domain use
@@ -71,8 +66,7 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
     return;
 }
 void AI::DoResourceManagement(Character& user, const Battlefield& bf ,const ResourceUsage& ru) { // possible shikigami, reinforcement and rct use
-
-    [[maybe_unused]] Technique* tech{nullptr};
+    Technique* tech{nullptr};
     if (const auto* c = user.CanUseSorcery()){
         if (auto t = c->Jujutsu().technique){
             tech = &*t;

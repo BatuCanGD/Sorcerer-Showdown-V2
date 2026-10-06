@@ -71,6 +71,26 @@ const std::string Stringet::StrengthStr(const double str){
     return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
 }
 
+const std::string Stringet::CursedEnergyStr(const double str){
+    static constexpr std::array<StringData, 9> ce_data{
+        StringData{25.0,   "VERY LOW",      "\x1b[38;5;8m"},
+        StringData{50.0,   "LOW",           "\x1b[38;5;1m"},
+        StringData{75.0,   "BELOW AVERAGE", "\x1b[38;5;3m"},
+        StringData{100.0,  "AVERAGE",       "\x1b[38;5;7m"},
+        StringData{150.0,  "ABOVE AVERAGE", "\x1b[38;5;2m"},
+        StringData{200.0,  "HIGH",          "\x1b[38;5;10m"},
+        StringData{300.0,  "VERY HIGH",     "\x1b[38;5;14m"},
+        StringData{500.0,  "EXCEPTIONAL",   "\x1b[38;5;13m"},
+        StringData{1000.0, "SUPREME",       "\x1b[38;5;5m"}
+    };
+    for (const auto& data : ce_data) {
+        if (str < data.threshold) {
+            return std::format("{}{}\x1b[0m", data.color, data.text);
+        }
+    }
+    return "\x1b[48;5;5m\x1b[1mABSOLUTE\x1b[0m";
+}
+
 struct EnumStringData final {
     std::string_view text;
     std::string_view color;
@@ -123,5 +143,21 @@ const std::string Stringet::OutputCmpStr(const double cur, const double max){
     }else if (cur > max * 0.25){
         clr = "\x1b[38;5;208m";
     }
-    return std::format("{}{}/{}\x1b[0m", clr, cur, max);
+    return std::format("{}{:.1f}/{:.1f}\x1b[0m", clr, cur, max);
+}
+
+const std::string Stringet::SacrificeStr(const SacrificeType type){
+    switch (type) {
+        case SacrificeType::Health:
+            return "Health";
+
+        case SacrificeType::CursedEnergy:
+            return "Cursed Energy";
+
+        case SacrificeType::OutputPotential:
+            return "Output";
+
+        default:
+            return "Unknown";
+    }
 }
