@@ -7,8 +7,6 @@
 
 **This is a project that i have been thinking about for a long time, i have been wanting to really rework the systems and remove clutter that the old project carries, and improve the project long term with my current C++ knowledge.**
 
----
-
 ## Current Project Structure
 
 Basic overview of the project structure, for more detail look at [MODDING.md](MODDING.md)
@@ -64,8 +62,6 @@ Includes base header files related to CurseUser class Characters
 
 Includes the Character classes
 
----
-
 ## To build the Project
 
 To build the project, using CMake with a compiler that has the libraries and support for c++23 is recommended \
@@ -79,8 +75,6 @@ cmake --build build
 ./build/SorcererShowdownV2
 # runs the project
 ```
-
----
 
 ## Modding
 
