@@ -38,7 +38,7 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attac
     return {msg.damage, blocked, &effect};
 }
 
-AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character &attacked) {
+AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &attacked) {
     if (&attacker == &attacked){
         return {-1.0};
     }
@@ -46,13 +46,22 @@ AttackStruct CombatSystem::ResolveAttacking(const Character &attacker, Character
     auto attack_type = globalums::DamageType::Normal;
     bool is_blackflash{false};
 
-    if (const auto& crs = attacker.CanUseSorcery()) {
+    if (auto* crs = attacker.CanUseSorcery()) {
         if (crs->Amplification().is_usable && crs->Amplification().is_active){
             attack_type = globalums::DamageType::BypassTech;
         }
         if (get_random<std::uint8_t>(1, 100) <= crs->CursedEnergy().bf_chance){
             attack_damage *= 2.5;
             is_blackflash = true;
+            auto& op = crs->Output();
+            if (op.status == CurseUserOutput::Status::Boosted){
+                op.status = CurseUserOutput::Status::Max;
+            }else if (op.status == CurseUserOutput::Status::Regular || op.status == CurseUserOutput::Status::BurntOut){
+                op.status = CurseUserOutput::Status::Boosted;
+            }
+            if (op.normalize_tick > 0) {
+                op.normalize_tick--;
+            }
         }
     }
     const auto rs = attacked.Damage(attack_damage, attack_type);

@@ -23,6 +23,9 @@ struct CurseUserAmplification final {
 struct CurseUserOutput final {
     double max_output_potential{100.0};
     double current_output{0.0};
+    std::uint8_t normalize_tick{0};
+    enum class Status : std::uint8_t { Regular, BurntOut, Boosted, Max };
+    Status status{Status::Regular};
 };
 
 struct CursedEnergySystem final {

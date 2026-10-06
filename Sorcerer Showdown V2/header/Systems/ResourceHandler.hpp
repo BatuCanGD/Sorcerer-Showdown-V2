@@ -10,4 +10,5 @@ namespace ResourceHandler {
     void TickCursedEnergy(CurseUser& curse_user);
     void TickShikigami(CurseUser& curse_user);
     void TickRCT(CurseUser& sorcerer);
+    void TickOutputStatus(CurseUser& curse_user);
 }
