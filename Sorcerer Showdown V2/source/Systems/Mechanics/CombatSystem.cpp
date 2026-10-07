@@ -11,8 +11,6 @@
 #include <cmath>
 
 DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
-    const double temp = amount;
-    amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
     if (const auto& crs = c.CanUseSorcery()){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
@@ -20,9 +18,10 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
             }
         }
     }
-    DamageStruct ds{};
+    DamageStruct ds{.negated_damage = amount};
+    amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
     ds.damage = amount;
-    ds.negated_damage = temp - ds.damage; 
+    ds.negated_damage -= ds.damage; 
     return ds;
 }
 
