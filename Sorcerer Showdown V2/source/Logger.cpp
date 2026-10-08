@@ -16,10 +16,10 @@
 
 void Log::CharacterInfo(const Character &c){
     std::println("[{}]", GetInfo::Name(c.Identity()));
-    std::println("Health-[{:.1f}] | Durability-[{:.1f}] | Strength-[{:.1f}]", c.State().health, c.State().durability, c.State().strength);
+    std::println("Health-[\x1b[31m{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().durability, c.State().strength);
     
     if (const auto* crs = c.CanUseSorcery()){
-        std::println("Cursed Energy-[{:.1f}] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
+        std::println("Cursed Energy-[\x1b[36m{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
         if (const auto& tech = crs->Jujutsu().technique){
             std::print("Technique: [{}] ", GetInfo::Name(tech->Identity()));
         }

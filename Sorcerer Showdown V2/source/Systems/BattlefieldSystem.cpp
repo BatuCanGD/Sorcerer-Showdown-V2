@@ -72,10 +72,12 @@ void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
         bf.battlefield.push_back(std::move(c));
     }
 }
-bool BattlefieldSystem::NoTargetsRemain(Battlefield &bf){
-    size_t i{};
+bool BattlefieldSystem::CanContinueFight(Battlefield &bf){
+    std::uint8_t i{};
     for (const auto& c : bf.battlefield){
-        if (c->State().health > 0.0) i++;
+        if (c->State().health > 0.0 && ++i > 1) {
+            return true;
+        }
     }
-    return i <= 1;
+    return false;
 }

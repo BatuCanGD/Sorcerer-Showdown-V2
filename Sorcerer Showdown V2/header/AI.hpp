@@ -32,6 +32,10 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 namespace AI {
     Character* GetTarget(const Character& user, const TargetingType& tp, const Battlefield& bf);
     
+    enum class WeaponPlacement : std::uint8_t { Hand, Offhand, Inventory };
+    enum class WeaponChoice : std::uint8_t { None, HighestDamage, EffectInducing, TechniqueBypassing };
+    void SwitchWeapons(WeaponPlacement which, WeaponPlacement where, WeaponChoice wc, const bool& can_use_inventory);
+
     void DoFighting(Character& user, Character* target, const BattleIQ& iq);
     void DoResourceManagement(Character& user, const Battlefield& bf, const ResourceUsage& ru);
 

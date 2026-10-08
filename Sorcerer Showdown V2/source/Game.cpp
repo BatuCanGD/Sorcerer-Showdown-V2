@@ -24,7 +24,7 @@ bool endgame() {
     return get_input<int>() == 1;
 }
 
-bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
+bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { // final checklist: Improve logging and finish the AI Implementation
     for(const auto& c : bf.battlefield){
         if (c->State().health <= 0.0) continue;
         Log::CharacterInfo(*c);
@@ -37,7 +37,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
             std::println("end of turn");
             hold_input();
         }
-        if (BattlefieldSystem::NoTargetsRemain(bf)) break;
+        if (!BattlefieldSystem::CanContinueFight(bf)) break;
     }
 
     BattlefieldSystem::HandleDeadPeople(bf);
