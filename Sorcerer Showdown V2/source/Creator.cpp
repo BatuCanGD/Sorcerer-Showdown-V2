@@ -39,6 +39,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
+    constexpr double regen_amount = 125.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
     const Technique technique{Create::IdleTransfiguration()};
@@ -49,6 +50,7 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     c->State() = stats;
     c->CursedEnergy().max_cursed_energy = cursed_energy;
     c->CursedEnergy().cursed_energy = cursed_energy;
+    c->CursedEnergy().regeneration_amount = regen_amount;
     c->CursedEnergy().efficiency = ce_efficiency;
     c->Jujutsu().domain = domain;
     c->Jujutsu().technique = technique;
@@ -69,7 +71,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 5000.0;
-
+    constexpr double regen_amount = 175.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
 
     const Technique technique{Create::Limitless()};
@@ -81,6 +83,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     c->State() = stats;
     c->CursedEnergy().max_cursed_energy = cursed_energy;
     c->CursedEnergy().cursed_energy = cursed_energy;
+    c->CursedEnergy().regeneration_amount = regen_amount;
     c->Jujutsu().domain = domain;
     c->Jujutsu().neutralizer = neutralizer;
     c->Jujutsu().technique = technique;

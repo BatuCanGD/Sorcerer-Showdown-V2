@@ -22,7 +22,7 @@ namespace Log {
     enum class CTLogType      : std::uint8_t { Name, Abilities, Both };
     enum class SurehitHit     : std::uint8_t { Person, Neutralizer };
 
-    void CharacterInfo(const Character& c);
+    void CharacterPresentation(const Character& c);
     void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name, const LogDetailType info_type = LogDetailType::Basic);
 
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);

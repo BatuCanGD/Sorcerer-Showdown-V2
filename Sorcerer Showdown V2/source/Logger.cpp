@@ -14,12 +14,13 @@
 #include <format>
 
 
-void Log::CharacterInfo(const Character &c){
+void Log::CharacterPresentation(const Character &c){
     std::println("[{}]", GetInfo::Name(c.Identity()));
     std::println("Health-[\x1b[31m{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().durability, c.State().strength);
     
     if (const auto* crs = c.CanUseSorcery()){
         std::println("Cursed Energy-[\x1b[36m{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
+        std::print("Status: [{}] ", Stringet::OutputStatusStr(crs->Output().status));
         if (const auto& tech = crs->Jujutsu().technique){
             std::print("Technique: [{}] ", GetInfo::Name(tech->Identity()));
         }
@@ -49,15 +50,15 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
 
 void Log::DomainSurehit(const SurehitStruct st, const SurehitHit ht){
     if (ht == SurehitHit::Person){
-        std::println("{} got hit by {} for {} damage!", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.dm->identity), st.damage);
+        std::println("{} got hit by {} for {:.1f} damage!", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.dm->identity), st.damage);
     }else{
-        std::println("{}'s {} got damaged by {} for {} damage", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.c->CanUseSorcery()->Jujutsu().neutralizer->identity), GetInfo::Name(st.dm->identity), st.damage);
+        std::println("{}'s {} got damaged by {} for {:.1f} damage", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.c->CanUseSorcery()->Jujutsu().neutralizer->identity), GetInfo::Name(st.dm->identity), st.damage);
     } //                                                                                                                         oh my goodness
 }
 
 void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
     for (const auto& s : v){
-        std::print("{} got affected by the {} effect and {} {} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+        std::print("{} got affected by the {} effect and {} {:.1f} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 

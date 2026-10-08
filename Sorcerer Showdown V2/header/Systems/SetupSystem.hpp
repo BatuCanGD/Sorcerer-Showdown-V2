@@ -22,9 +22,9 @@ namespace SetupSystem {
     bool SetupOptions(Battlefield& bf, Character*& c);
     void BattlefieldSetup(Battlefield& bf);
 
-    void AddCharacter(Battlefield& bf, Character*& c);
+    void AddCharacter(Battlefield& bf, Character*& c, bool p_choose = false);
     void AddCharacters(Battlefield& bf);
-    void RemoveCharacter(Battlefield& bf, Character*& c);
+    void RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose = false);
     void RemoveLast(Battlefield& bf, Character*& c);
     void ClearBattlefield(Battlefield& bf, Character*& c);
     void ViewCharacterInfo(Battlefield& bf);

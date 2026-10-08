@@ -18,14 +18,34 @@ const std::string Stringet::SacrificeStr(const SacrificeType type){
     switch (type) {
         case SacrificeType::Health:
             return "Health";
-
         case SacrificeType::CursedEnergy:
             return "Cursed Energy";
-
         case SacrificeType::OutputPotential:
             return "Output";
-
         default:
             return "Unknown";
     }
+}
+
+const std::string Stringet::OutputStatusStr(const CurseUserOutput::Status s) {
+    std::string n{}, c{};
+    switch(s){
+        case CurseUserOutput::Status::BurntOut: 
+            c = "\x1b[31m";
+            n = "Burnt Out";
+            break;
+        case CurseUserOutput::Status::Regular:
+            c = "\x1b[38;5;208m";
+            n = "Regular Output";
+            break;
+        case CurseUserOutput::Status::Boosted:  
+            c = "\x1b[36";
+            n = "Increased Output";
+            break;
+        case CurseUserOutput::Status::Max:
+            c = "\x1b[34";
+            n = "120%";
+            break;
+    }
+    return c + n + "\x1b[0m";
 }

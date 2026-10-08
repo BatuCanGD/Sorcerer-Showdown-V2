@@ -27,7 +27,7 @@ bool endgame() {
 bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { // final checklist: Improve logging and finish the AI Implementation
     for(const auto& c : bf.battlefield){
         if (c->State().health <= 0.0) continue;
-        Log::CharacterInfo(*c);
+        Log::CharacterPresentation(*c);
         if (pc.user_character == c.get()){
             UserControl::GetPlayerTurn(*c, bf);
         }else {

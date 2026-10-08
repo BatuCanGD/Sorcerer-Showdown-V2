@@ -39,6 +39,7 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     bool looping{true};
     while(looping){
+        std::println("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             std::println("{}x {}", num, name);
         }
@@ -50,8 +51,8 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 
 
 void SetupSystem::LogSetupOptions() {
-    std::println("1 - Add Character         | 11 - Add multiple characters\n"
-                 "2 - Remove Character      | 22 - Remove last character\n"
+    std::println("1 - Add Character         | 11 - Add multiple characters         | 111 - Choose Character\n"
+                 "2 - Remove Character      | 22 - Remove last character          |  222 - Choose from battlefield\n"
                  "3 - Clear Battlefield     | 33 - Additional Character Info\n"
                  "0 - Start Game");
 }
@@ -64,11 +65,17 @@ bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c) {
         case 11:
             SetupSystem::AddCharacters(bf);
             break;
+        case 111:
+            SetupSystem::AddCharacter(bf, c, true);
+            break;
         case 2:
             SetupSystem::RemoveCharacter(bf, c);
             break;
         case 22:
             SetupSystem::RemoveLast(bf, c);
+            break;
+        case 222:
+            SetupSystem::RemoveCharacter(bf, c, true);
             break;
         case 3:
             SetupSystem::ClearBattlefield(bf, c);
@@ -89,12 +96,7 @@ bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c) {
     return true;
 }
 
-void SetupSystem::AddCharacter(Battlefield& bf, Character*& c){
-    int pc{0};
-    if (c == nullptr){
-        std::println("Would you like to set your character\n1 - Yes | 2 - No");
-        pc = get_input<int>();
-    }
+void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool p_choosing){
     size_t x{0};
     const auto list = SetupSystem::GetCharacterList();
     for (const auto& z : list) {
@@ -105,13 +107,11 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c){
         return;
     }
     bf.battlefield.push_back(list[x]->Clone());
-    if (pc == 1) {
+    if (p_choosing) {
         c = bf.battlefield.back().get();
     }
 }
 void SetupSystem::AddCharacters(Battlefield& bf){
-    std::println("How much of a character would you like to add\n=> ");
-    int x = get_input<int>();
     size_t g{0};
     const auto list = SetupSystem::GetCharacterList();
     for (const auto& z : list){
@@ -122,12 +122,14 @@ void SetupSystem::AddCharacters(Battlefield& bf){
     if (g >= list.size()){
         return;
     }
+    std::println("How many?\n=> ");
+    int x = get_input<int>();
     for (int i = 0; i < x; i++){
         bf.battlefield.push_back(list[g]->Clone());
     }
 }
 
-void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c){
+void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose){
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& b : bf.battlefield){
@@ -137,8 +139,12 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c){
     if (x >= bf.battlefield.size()) {
         return;
     } 
-    if (bf.battlefield[x].get() == c) c = nullptr;
-    bf.battlefield.erase(bf.battlefield.begin() + x);
+    if (p_choose){
+        c = bf.battlefield[x].get();
+    }else{
+        if (bf.battlefield[x].get() == c) c = nullptr;
+        bf.battlefield.erase(bf.battlefield.begin() + x);
+    }
 }
 void SetupSystem::RemoveLast(Battlefield& bf, Character*& c) {
     if (bf.battlefield.empty()) return;
@@ -161,5 +167,5 @@ void SetupSystem::ViewCharacterInfo(Battlefield &bf){
     if (x == 0 || x > bf.battlefield.size()){
         return;
     }
-    Log::CharacterInfo(*bf.battlefield[--x]);
+    Log::CharacterPresentation(*bf.battlefield[--x]);
 }
