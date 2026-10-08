@@ -34,7 +34,7 @@ namespace AI {
     
     enum class WeaponPlacement : std::uint8_t { Hand, Offhand, Inventory };
     enum class WeaponChoice : std::uint8_t { None, HighestDamage, EffectInducing, TechniqueBypassing };
-    void SwitchWeapons(WeaponPlacement which, WeaponPlacement where, WeaponChoice wc, const bool& can_use_inventory);
+    void SwitchWeapons(Character& c, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc);
 
     void DoFighting(Character& user, Character* target, const BattleIQ& iq);
     void DoResourceManagement(Character& user, const Battlefield& bf, const ResourceUsage& ru);

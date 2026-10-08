@@ -2,10 +2,10 @@
 #include "../Enums.hpp"
 #include "../Info.hpp"
 #include "StatusEffects.hpp"
-
+#include <optional>
 struct CursedTool {
     EntityInfo identity;
     double damage{1.0};
-    StatusEffect given_effect{};
+    std::optional<StatusEffect> given_effect;
     globalums::DamageType damage_type{globalums::DamageType::Normal};
 };
