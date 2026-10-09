@@ -214,6 +214,8 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
         case AI::WeaponPlacement::Inventory:
             if (has_inv){
                 inv.push_back(std::move(wp));
+            }else{
+                throw std::runtime_error("Cannot put weapon in inventory without access to inventory");
             }
             break;
     }
