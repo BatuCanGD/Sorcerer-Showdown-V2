@@ -1,10 +1,12 @@
 #pragma once
+#include <vector>
 #include <cstdint>
 
 class Character;
 class Technique;
 
 struct CursedTool;
+struct CharInv;
 struct BattleIQ;
 struct BindingVow;
 struct Domain;
@@ -34,7 +36,10 @@ namespace AI {
     
     enum class WeaponPlacement : std::uint8_t { Hand, Offhand, Inventory };
     enum class WeaponChoice : std::uint8_t { None, HighestDamage, EffectInducing, TechniqueBypassing };
-    void SwitchWeapons(Character& c, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc);
+    CursedTool GetFromInv(CharInv& inv, WeaponChoice wc);
+    CursedTool GetWeapon(CharInv& inv, WeaponPlacement which, WeaponChoice which_type);
+    void MoveWeapon(CharInv& inv, CursedTool wp, WeaponPlacement where);
+    void SwitchWeapons(CharInv& inv, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc);
 
     void DoFighting(Character& user, Character* target, const BattleIQ& iq);
     void DoResourceManagement(Character& user, const Battlefield& bf, const ResourceUsage& ru);

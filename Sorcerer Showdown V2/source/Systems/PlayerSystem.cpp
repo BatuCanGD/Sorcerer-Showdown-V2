@@ -115,12 +115,12 @@ bool UserControl::DoInventoryManagement(Character& c) {
     auto& equip = c.Equipment();
     const bool has_inv = equip.has_access_to_inventory;
 
-    enum class Origin { 
+    enum class Origin : std::uint8_t { 
         MainHand,
         OffHand,
         Inventory
     };
-    struct Candidate { 
+    struct Candidate final { 
         CursedTool* tool;
         Origin origin;
         size_t index;
