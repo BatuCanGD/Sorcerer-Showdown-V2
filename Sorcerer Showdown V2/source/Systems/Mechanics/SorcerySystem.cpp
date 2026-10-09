@@ -22,6 +22,16 @@ double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) 
     return 1.0;
 }
 
+double SorcerySystem::OutputStatusMultiplier(CurseUserOutput::Status type) noexcept {
+    switch(type){
+        case CurseUserOutput::Status::BurntOut: return 0.15;
+        case CurseUserOutput::Status::Regular:  return 1.0;
+        case CurseUserOutput::Status::Boosted:  return 1.45;
+        case CurseUserOutput::Status::Max:      return 2.0;
+    }
+    return 1.0;
+    
+}
 double SorcerySystem::ApplyRCTCost(const double amount) {
     if (amount <= 0.0) {
         return 0.0;

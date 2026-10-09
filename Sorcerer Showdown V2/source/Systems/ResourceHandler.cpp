@@ -17,12 +17,22 @@ void ResourceHandler::TickAll(Battlefield& bf){
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);
             ResourceHandler::TickRCT(*crs);
+            ResourceHandler::TickTraits(*crs);
             ResourceHandler::TickOutputStatus(*crs);
+            ResourceHandler::TickOutput(*crs);
         }
         Log::Effects(ef.first, ef.second);
     }
 }
 
+void ResourceHandler::TickOutput(CurseUser &crs){
+    crs.Output().current_output = std::max(crs.Output().current_output - crs.Output().output_cooldown_amount, 0.0);
+}
+void ResourceHandler::TickTraits(CurseUser &crs){
+    if (crs.Traits().passive_healing){
+        crs.State().health = std::min(crs.State().health + 35.0, crs.State().max_health);
+    }
+}
 void ResourceHandler::TickCursedEnergy(CurseUser& crs){
     crs.CursedEnergy().cursed_energy = std::min(crs.CursedEnergy().cursed_energy + crs.CursedEnergy().regeneration_amount, crs.CursedEnergy().max_cursed_energy);
 }

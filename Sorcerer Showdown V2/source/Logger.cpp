@@ -15,7 +15,7 @@
 
 
 void Log::CharacterPresentation(const Character &c){
-    std::println("[{}]", GetInfo::Name(c.Identity()));
+    std::println("[{}]{}", GetInfo::Name(c.Identity()), c.State().is_stunned ? "[Stunned]" : "");
     std::println("Health-[\x1b[31m{:.1f}/{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().max_health, c.State().durability, c.State().strength);
     
     if (const auto* crs = c.CanUseSorcery()){

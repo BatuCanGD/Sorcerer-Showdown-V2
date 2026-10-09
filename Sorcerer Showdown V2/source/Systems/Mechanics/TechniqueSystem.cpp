@@ -6,9 +6,7 @@
 #include "../../../header/Sorcery/Technique.hpp"
 
 std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {
-    const double efficiency = SorcerySystem::EfficiencyMultiplier(user.CursedEnergy().efficiency);
-    const double op = chosen_ct.output * efficiency;
-
+    const double op = chosen_ct.output * SorcerySystem::EfficiencyMultiplier(user.CursedEnergy().efficiency);
     if (user.Output().current_output + op > user.Output().max_output_potential){
         return {false, 0.0};
     }

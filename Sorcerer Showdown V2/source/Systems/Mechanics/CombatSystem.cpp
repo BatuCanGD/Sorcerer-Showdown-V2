@@ -1,13 +1,17 @@
 #include "../../../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../../../header/Systems/Mechanics/TechniqueSystem.hpp"
-#include "../../../header/Logger.hpp"
 #include "../../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../../header/Systems/Mechanics/NeutralizerSystem.hpp"
+#include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
-#include "../../../header/Battlefield.hpp"
-#include "../../../header/Utilities/Random.hpp"
+
+
+
 #include "../../../header/CharacterType/CurseUser.hpp"
 
+#include "../../../header/Utilities/Random.hpp"
+#include "../../../header/Battlefield.hpp"
+#include "../../../header/Logger.hpp"
 #include <cmath>
 
 DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
@@ -78,7 +82,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
 
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
-    attacked.Damage(chosen_ct.damage, chosen_ct.damage_type);
+    attacked.Damage(chosen_ct.damage * SorcerySystem::OutputStatusMultiplier(attacker.Output().status), chosen_ct.damage_type);
     return {&chosen_ct , enough_output, enough_ce};
 }
 

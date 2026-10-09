@@ -28,11 +28,13 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
     for(const auto& c : bf.battlefield){
         if (c->State().health <= 0.0) continue;
         Log::CharacterPresentation(*c);
+        std::println();
         if (pc.user_character == c.get()){
             UserControl::GetPlayerTurn(*c, bf);
         }else {
             AI::Fight(*c, bf);
         }
+        std::println();
         if (!sp.skip_turns){
             std::println("end of turn");
             hold_input();
