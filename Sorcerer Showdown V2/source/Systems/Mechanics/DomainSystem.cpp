@@ -59,8 +59,8 @@ DomainClashStruct DomainSystem::ClashDomains(CurseUser& frs, CurseUser& scd) {
         second_damage *= 2.5;
     }
 
-    const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage);
-    const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage);
+    const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage, &frs);
+    const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage, &scd);
 
     if (f_destroyed || s_destroyed) {
         if (f_destroyed && s_destroyed){
@@ -86,11 +86,11 @@ SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){
     return{x.damage, &c, &dm};
 }
 
-bool DomainSystem::HandleDamage(Domain& c, const double damage) {
+bool DomainSystem::HandleDamage(Domain& c, const double damage, CurseUser* crs) {
     if (!c.is_active) return true;
     c.health -= damage / c.durability;
     if (c.health <= 0.0){
-        DomainSystem::ResetDomain(c);
+        DomainSystem::ResetDomain(c, crs);
         return true;
     }
     return false;
