@@ -40,18 +40,17 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
         if (!BattlefieldSystem::CanContinueFight(bf)) break;
     }
 
-    BattlefieldSystem::HandleDeadPeople(bf);
-    if (bf.battlefield.size() <= 1)return false;
     ResourceHandler::TickAll(bf);
     BattlefieldSystem::HandleSpawns(bf);
     BattlefieldSystem::HandleDomainInteraction(bf);
+    BattlefieldSystem::HandleDeadPeople(bf);
 
     if (!sp.skip_all){
         std::println("end of round");
         hold_input();
     }
 
-    return true;
+    return bf.battlefield.size() > 1;
 }
 
 bool rungame()  {

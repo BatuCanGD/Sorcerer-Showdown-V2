@@ -28,37 +28,39 @@ bool DomainSystem::CalculateActualHit(const Domain& domain, const Character& c) 
     return true;
 }
 
-DomainClashStruct DomainSystem::ClashDomains(Domain& first, Domain& second) {
-    if (!(first.is_active && second.is_active)) {
+DomainClashStruct DomainSystem::ClashDomains(CurseUser& frs, CurseUser& scd) {
+    auto& first  = frs.Jujutsu().domain;
+    auto& second = scd.Jujutsu().domain;
+    if (!(first->is_active && second->is_active)) {
         throw std::invalid_argument("Both domains must be active for the clash"); 
     }
     ClashWinner winner{ClashWinner::None};
     DomainWinCon win_con{DomainWinCon::None};
 
-    const bool is_equal_ref = first.refinement == second.refinement;
+    const bool is_equal_ref = first->refinement == second->refinement;
 
     if (!is_equal_ref){
-        if (first.refinement > second.refinement){
+        if (first->refinement > second->refinement){
             winner = ClashWinner::First;
-            DomainSystem::ResetDomain(second);
+            DomainSystem::ResetDomain(*second, &scd);
         }else{
             winner = ClashWinner::Second;
-            DomainSystem::ResetDomain(first);
+            DomainSystem::ResetDomain(*first, &frs);
         }
-        return {&first, &second, 0.0, 0.0, winner, DomainWinCon::Refinement};
+        return {&*first, &*second, 0.0, 0.0, winner, DomainWinCon::Refinement};
     }
 
-    double first_damage = first.damage * second.range / first.range;
-    double second_damage = second.damage * first.range / second.range;
+    double first_damage = first->damage * second->range / first->range;
+    double second_damage = second->damage * first->range / second->range;
 
-    if (first.type == DomainType::Open && second.type == DomainType::Closed){
+    if (first->type == DomainType::Open && second->type == DomainType::Closed){
         first_damage *= 2.5;
-    }else if (second.type == DomainType::Open && first.type == DomainType::Closed) {
+    }else if (second->type == DomainType::Open && first->type == DomainType::Closed) {
         second_damage *= 2.5;
     }
 
-    const bool f_destroyed = DomainSystem::HandleDamage(first, second_damage);
-    const bool s_destroyed = DomainSystem::HandleDamage(second, first_damage);
+    const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage);
+    const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage);
 
     if (f_destroyed || s_destroyed) {
         if (f_destroyed && s_destroyed){
@@ -72,7 +74,7 @@ DomainClashStruct DomainSystem::ClashDomains(Domain& first, Domain& second) {
         }
         win_con = DomainWinCon::Attrition;
     }
-    return {&first, &second, first_damage, second_damage, winner, win_con};
+    return {&*first, &*second, first_damage, second_damage, winner, win_con};
 }
 
 SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){    
@@ -94,7 +96,10 @@ bool DomainSystem::HandleDamage(Domain& c, const double damage) {
     return false;
 }
 
-void DomainSystem::ResetDomain(Domain& domain){
+void DomainSystem::ResetDomain(Domain& domain, CurseUser* crs){
     domain.is_active = false;
     domain.health = domain.max_health;
+    if (crs){
+        crs->Output().status = CurseUserOutput::Status::BurntOut;
+    }
 }

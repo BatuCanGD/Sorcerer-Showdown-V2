@@ -39,8 +39,8 @@ struct SurehitStruct final {
 namespace DomainSystem {
     double CalculateHitDamage(const Domain& domain, const Character& c);
     bool CalculateActualHit(const Domain& domain, const Character& c); 
-    DomainClashStruct ClashDomains(Domain& first, Domain& second); // use case for already active domains
+    DomainClashStruct ClashDomains(CurseUser& first, CurseUser& second); // use case for already active domains
     SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
     bool HandleDamage(Domain& dm, const double d);
-    void ResetDomain(Domain& domain);
+    void ResetDomain(Domain& domain, CurseUser* crs = nullptr);
 };

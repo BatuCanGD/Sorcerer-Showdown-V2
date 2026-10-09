@@ -37,7 +37,11 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
             return target;
         }
         case TargetingType::Mixed: {
-            return bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get(); 
+            Character* target{nullptr};
+            do {
+                target = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
+            }while(target->State().health <= 0.0 || target == &user);
+            return target;
         }
     }
     return nullptr;
