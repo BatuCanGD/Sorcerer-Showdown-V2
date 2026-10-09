@@ -128,7 +128,6 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
             for (size_t i = 1; i < inv.size(); ++i) {
                 if (inv[i].damage > inv[chosen].damage) {
                     chosen = i;
-                    break;
                 }
             }
             break;
