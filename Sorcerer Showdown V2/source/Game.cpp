@@ -25,8 +25,10 @@ bool endgame() {
 }
 
 bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { // final checklist: Improve logging and finish the AI Implementation
-    for(const auto& c : bf.battlefield){
+    for(size_t idx = 0; idx < bf.battlefield.size(); ++idx){
+        auto& c = bf.battlefield[idx];
         if (c->State().health <= 0.0) continue;
+        std::print("({})", idx + 1);
         Log::CharacterPresentation(*c);
         std::println();
         if (pc.user_character == c.get()){

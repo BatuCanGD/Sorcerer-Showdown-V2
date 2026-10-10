@@ -53,7 +53,12 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
     }
     switch(fs.fighting_style){
         case FightingStyle::Aggressive: {
+            if ([[maybe_unused]]const auto& c = user.CanUseSorcery()){
+                [[maybe_unused]]const bool use_tech = fs.resource_usage != ResourceUsage::Conservative && c->Output().status != CurseUserOutput::Status::BurntOut && !(c->Output().current_output * 1.25 > c->Output().max_output_potential);
+                
+            }
             
+            //SwitchWeapons(user.Equipment(), (user.Equipment().has_access_to_inventory && !user.Equipment().inventory.empty()) ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
             break;
         }
         case FightingStyle::Defensive: {
@@ -115,13 +120,15 @@ void AI::Fight(Character &user, Battlefield &bf) {
 
 CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
     auto& inv = eq.inventory;
-    if (inv.empty()) throw std::runtime_error("No inventory items to choose");
+    if (inv.empty()) {
+        throw std::runtime_error("No inventory items to choose");
+    }
 
     size_t chosen = inv.size();
     switch (wc) {
         case WeaponChoice::EffectInducing:
             for (size_t i = 0; i < inv.size(); ++i) {
-                if (inv[i].given_effect) {
+                if (chosen == inv.size() || inv[i].given_effect) {
                     chosen = i;
                     break;
                 }
@@ -130,14 +137,14 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
         case WeaponChoice::HighestDamage:
             chosen = 0;
             for (size_t i = 1; i < inv.size(); ++i) {
-                if (inv[i].damage > inv[chosen].damage) {
+                if (chosen == inv.size() || inv[i].damage > inv[chosen].damage) {
                     chosen = i;
                 }
             }
             break;
         case WeaponChoice::TechniqueBypassing:
             for (size_t i = 0; i < inv.size(); ++i) {
-                if (inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
+                if (chosen == inv.size() || inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
                     chosen = i;
                     break;
                 }
@@ -148,10 +155,6 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
             break;
         default:
             throw std::runtime_error("Invalid weapon choice");
-    }
-
-    if (chosen == inv.size()) {
-        throw std::runtime_error("No inventory weapon matches the requested choice");
     }
     CursedTool selected = std::move(inv[chosen]);
     inv.erase(inv.begin() + chosen);
@@ -176,6 +179,8 @@ CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_
             break;
         case AI::WeaponPlacement::Inventory:
             return AI::GetFromInv(eq, which_type);
+        default:
+            break;
     }
     throw std::runtime_error("No Weapon able to be chosen");
 }

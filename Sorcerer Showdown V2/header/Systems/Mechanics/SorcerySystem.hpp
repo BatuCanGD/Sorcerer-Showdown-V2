@@ -9,4 +9,6 @@ namespace SorcerySystem {
     double ApplySixEyes(const double amount);
     double ApplyRCTCost(const double amount);
     double ApplyReinforcementCost(const double amount);
+
+    void ApplyBurnOut(CurseUser& c);
 }

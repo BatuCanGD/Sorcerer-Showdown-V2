@@ -18,8 +18,8 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
             if (auto& d = cr->Jujutsu().domain){
                 if (d->is_active){
                     const double cost = SorcerySystem::ApplySpendingMultiplier(d->cost, *cr);
-                    if (ce < cost){
-                        DomainSystem::ResetDomain(*cr->Jujutsu().domain);
+                    if (ce < cost || cr->Output().status == CurseUserOutput::Status::BurntOut){
+                        DomainSystem::ResetDomain(*cr->Jujutsu().domain, cr);
                     }else {
                         ce -= cost;
                         domain_users.push_back(cr);
@@ -54,7 +54,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
         }
         default: {
             for (auto* c : domain_users) {
-                DomainSystem::ResetDomain(*c->Jujutsu().domain);
+                DomainSystem::ResetDomain(*c->Jujutsu().domain, c);
             }
             break;
         }
@@ -71,6 +71,7 @@ void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
     for (auto& c : bf.spawn_next){
         bf.battlefield.push_back(std::move(c));
     }
+    bf.spawn_next.clear();
 }
 bool BattlefieldSystem::CanContinueFight(Battlefield &bf){
     std::uint8_t i{};

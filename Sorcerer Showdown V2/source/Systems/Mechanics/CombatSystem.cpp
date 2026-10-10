@@ -35,9 +35,7 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attac
     const auto& effect = current_tool->given_effect;
     const auto& msg = attacked.Damage(damage, current_tool->damage_type);
     const bool blocked = msg.attack_blocked;
-    if (!blocked){
-        attacked.State().status_effects.push_back(*effect);
-    }
+    if (!blocked) attacked.State().status_effects.push_back(*effect);
     return {msg.damage, blocked, &*effect};
 }
 

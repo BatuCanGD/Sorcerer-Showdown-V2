@@ -1,7 +1,10 @@
 #include "../../../header/Systems/Mechanics/DomainSystem.hpp"
-#include "../../../header/Sorcery/Domain.hpp"
-#include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Systems/Mechanics/CombatSystem.hpp"
+#include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
+#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Sorcery/Domain.hpp"
+
+
 
 #include <stdexcept>
 
@@ -100,6 +103,6 @@ void DomainSystem::ResetDomain(Domain& domain, CurseUser* crs){
     domain.is_active = false;
     domain.health = domain.max_health;
     if (crs){
-        crs->Output().status = CurseUserOutput::Status::BurntOut;
+        SorcerySystem::ApplyBurnOut(*crs);
     }
 }
