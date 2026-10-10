@@ -4,18 +4,14 @@
 #include "../../../header/Systems/Mechanics/NeutralizerSystem.hpp"
 #include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
-
-
-
 #include "../../../header/CharacterType/CurseUser.hpp"
-
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/Battlefield.hpp"
 #include "../../../header/Logger.hpp"
-#include <cmath>
 
 DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
-    if (const auto& crs = c.CanUseSorcery()){
+    const auto& crs = c.CanUseSorcery();
+    if (crs){
         if (const auto& tech = crs->Jujutsu().technique){
             if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 return {.attack_blocked = true};
@@ -23,7 +19,9 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
         }
     }
     DamageStruct ds{.negated_damage = amount};
-    amount = amount * (0.10 + 0.90 * std::exp(-c.State().durability / 450.0));
+    const double reinforcement = crs && (type != globalums::DamageType::BypassAll && type != globalums::DamageType::BypassRein) ? crs->CursedEnergy().reinforcement_amount / 1.75 : 0.0;
+    const double durability = type != globalums::DamageType::BypassAll ? c.State().durability : 0.0;
+    amount = amount * (0.10 + 0.90 * std::exp(-(durability + reinforcement) / 450.0));
     ds.damage = amount;
     ds.negated_damage -= ds.damage; 
     return ds;
@@ -33,9 +31,9 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attac
     const auto& current_tool = attacker.Equipment().current_tool;
     const double& damage = current_tool->damage;
     const auto& effect = current_tool->given_effect;
-    const auto& msg = attacked.Damage(damage, current_tool->damage_type);
-    const bool blocked = msg.attack_blocked;
-    if (!blocked) attacked.State().status_effects.push_back(*effect);
+    const auto msg = attacked.Damage(damage, current_tool->damage_type);
+    const bool& blocked = msg.attack_blocked;
+    if (!blocked && effect) attacked.State().status_effects.push_back(*effect);
     return {msg.damage, blocked, &*effect};
 }
 

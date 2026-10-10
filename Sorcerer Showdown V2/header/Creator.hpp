@@ -1,22 +1,20 @@
 #pragma once
-
-#include "General/StatusEffects.hpp"
-#include <memory>
-
 class Character;
 class CurseUser;
 class Technique;
-
 struct CursedTool;
+struct Shikigami;
+struct StatusEffect;
 struct Domain;
 struct Neutralizer;
 struct StatusEffect;
 
 namespace Create {
     // characters
-    [[nodiscard]] std::unique_ptr<Character> TranfiguredHuman();
-    [[nodiscard]] std::unique_ptr<CurseUser> Mahito();
-    [[nodiscard]] std::unique_ptr<CurseUser> Gojo();
+    [[nodiscard]] Character TranfiguredHuman();
+    [[nodiscard]] CurseUser Mahito();
+    [[nodiscard]] CurseUser Gojo();
+    [[nodiscard]] CurseUser Sukuna();
 
     // techniques
     [[nodiscard]] Technique Limitless();
@@ -30,6 +28,10 @@ namespace Create {
     // neutralizers
     [[nodiscard]] Neutralizer SimpleDomain();
     [[nodiscard]] Neutralizer FallingBlossomEmotion();
+
+    // shikigami
+    [[nodiscard]] Shikigami Mahoraga();
+    [[nodiscard]] Shikigami Agito();
 
     // cursed tools
     [[nodiscard]] CursedTool InvertedSpearOfHeaven();

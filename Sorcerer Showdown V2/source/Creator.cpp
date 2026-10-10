@@ -6,11 +6,10 @@
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 
-#include <memory>
 #include <format>
 // Base Characters
-std::unique_ptr<Character> Create::TranfiguredHuman() {
-    auto c = std::make_unique<Character>();
+Character Create::TranfiguredHuman() {
+    Character c{};
 
     const EntityInfo id = {"Transfigured Human", "\x1b[38;5;22m", "A human, but with its body extremely disfigured"};
 
@@ -20,14 +19,14 @@ std::unique_ptr<Character> Create::TranfiguredHuman() {
 
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
-    c->Identity() = id;
-    c->State() = stats;
+    c.Identity() = id;
+    c.State() = stats;
 
     return c;
 }
 // Curse Users
-std::unique_ptr<CurseUser> Create::Mahito() {
-    auto c = std::make_unique<CurseUser>();
+CurseUser Create::Mahito() {
+    CurseUser c{};
 
     const EntityInfo id {"Mahito", "\x1b[38;5;129m", "Cursed Spirit with the ability to Reshape souls"};
     
@@ -47,25 +46,26 @@ std::unique_ptr<CurseUser> Create::Mahito() {
     const Technique technique{Create::IdleTransfiguration()};
     const Domain domain{Create::SelfEmbodimentOfPerfection()};
 
-    c->Identity() = id;
-    c->Style() = style;
-    c->State() = stats;
-    c->CursedEnergy().max_cursed_energy = cursed_energy;
-    c->CursedEnergy().cursed_energy = cursed_energy;
-    c->CursedEnergy().regeneration_amount = regen_amount;
-    c->CursedEnergy().efficiency = ce_efficiency;
-    c->Output().max_output_potential = max_output;
-    c->Output().output_cooldown_amount = output_regen;
-    c->Jujutsu().domain = domain;
-    c->Jujutsu().technique = technique;
-    c->Traits().passive_healing = true;
+    c.Identity() = id;
+    c.Style() = style;
+    c.State() = stats;
+    c.CursedEnergy().max_cursed_energy = cursed_energy;
+    c.CursedEnergy().cursed_energy = cursed_energy;
+    c.CursedEnergy().regeneration_amount = regen_amount;
+    c.CursedEnergy().efficiency = ce_efficiency;
+    c.Output().max_output_potential = max_output;
+    c.Output().output_cooldown_amount = output_regen;
+    c.Jujutsu().domain = domain;
+    c.Jujutsu().technique = technique;
+    c.Traits().passive_healing = true;
 
     return c;
 }
-std::unique_ptr<CurseUser> Create::Gojo() {
-    auto c = std::make_unique<CurseUser>();
 
-    const EntityInfo id {"Gojo", "\x1b[38;5;39m", "Strongest sorcerer of today"};
+CurseUser Create::Gojo() {
+    CurseUser c{};
+
+    const EntityInfo id {"Satoru Gojo", "\x1b[38;5;39m", "Strongest sorcerer of today"};
 
     constexpr double health     = 1000.0;
     constexpr double strength   = 185.0;
@@ -74,7 +74,7 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
-    constexpr double cursed_energy = 5000.0;
+    constexpr double cursed_energy = 6000.0;
     constexpr double regen_amount = 175.0;
     constexpr double max_output = 175.0;
     constexpr double output_regen = 45.0;
@@ -84,20 +84,58 @@ std::unique_ptr<CurseUser> Create::Gojo() {
     const Domain domain{Create::UnlimitedVoid()};
     const Neutralizer neutralizer{Create::SimpleDomain()};
 
-    c->Identity() = id;
-    c->Style() = style;
-    c->State() = stats;
-    c->CursedEnergy().max_cursed_energy = cursed_energy;
-    c->CursedEnergy().cursed_energy = cursed_energy;
-    c->CursedEnergy().regeneration_amount = regen_amount;
-    c->CursedEnergy().efficiency = ce_efficiency;
-    c->Output().max_output_potential = max_output;
-    c->Output().output_cooldown_amount = output_regen;
-    c->Jujutsu().domain = domain;
-    c->Jujutsu().neutralizer = neutralizer;
-    c->Jujutsu().technique = technique;
-    c->Traits().six_eyes = true;
-    c->RCT().can_use_rct = true;
+    c.Identity() = id;
+    c.Style() = style;
+    c.State() = stats;
+    c.CursedEnergy().max_cursed_energy = cursed_energy;
+    c.CursedEnergy().cursed_energy = cursed_energy;
+    c.CursedEnergy().regeneration_amount = regen_amount;
+    c.CursedEnergy().efficiency = ce_efficiency;
+    c.Output().max_output_potential = max_output;
+    c.Output().output_cooldown_amount = output_regen;
+    c.Jujutsu().domain = domain;
+    c.Jujutsu().neutralizer = neutralizer;
+    c.Jujutsu().technique = technique;
+    c.Traits().six_eyes = true;
+    c.RCT().can_use_rct = true;
+
+    return c;
+}
+CurseUser Create::Sukuna() {
+    CurseUser c{};
+
+    const EntityInfo id {"Ryomen Sukuna", "\x1b[38;5;9m", "Strongest sorcerer in history"};
+
+    constexpr double health     = 1200.0;
+    constexpr double strength   = 115.0;
+    constexpr double durability = 185.0;
+
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
+
+    constexpr double cursed_energy = 10000.0;
+    constexpr double regen_amount = 200.0;
+    constexpr double max_output = 80.0;
+    constexpr double output_regen = 20.0;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Absolute;
+
+    const Technique technique{};
+    const Domain domain{Create::MalevolentShrine()};
+    const Neutralizer neutralizer{};
+
+    c.Identity() = id;
+    c.Style() = style;
+    c.State() = stats;
+    c.CursedEnergy().max_cursed_energy = cursed_energy;
+    c.CursedEnergy().cursed_energy = cursed_energy;
+    c.CursedEnergy().regeneration_amount = regen_amount;
+    c.CursedEnergy().efficiency = ce_efficiency;
+    c.Output().max_output_potential = max_output;
+    c.Output().output_cooldown_amount = output_regen;
+    c.Jujutsu().domain = domain;
+    c.Jujutsu().neutralizer = neutralizer;
+    c.Jujutsu().technique = technique;
+    c.RCT().can_use_rct = true;
 
     return c;
 }

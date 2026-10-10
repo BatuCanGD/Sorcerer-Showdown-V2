@@ -254,7 +254,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
     std::vector<SorceryType> sp;
     int k{0};
     auto add_p([&](std::string_view sv, SorceryType s){
-        std::println("{} - {} |", ++k, sv);
+        std::println("{} - {}", ++k, sv);
         sp.push_back(s);
     });
     if (c.RCT().can_use_rct){
@@ -347,7 +347,7 @@ void UserControl::ForBindingVows(CurseUser& c){
         std::println("You must sacrifice at least 1%");
         return;
     } else if (dp > 99.9 || (dp > 0.99 && dp < 1.0)){
-        std::println("You cannot just sacrifice 100% or more");
+        std::println("You cannot just sacrifice more than 99%");
         return;
     }
     const double sdp = (dp >= 1.0 && dp <= 99.9) ? dp * 0.01 : dp;

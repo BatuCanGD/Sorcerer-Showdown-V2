@@ -30,8 +30,9 @@ const std::map<std::string, int> SetupSystem::SetList(const Battlefield &bf){
 
 const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList() {
     std::vector<std::unique_ptr<Character>> list;
-    list.push_back(Create::Gojo());
-    list.push_back(Create::Mahito());
+    list.push_back(std::make_unique<CurseUser>(Create::Gojo()));
+    list.push_back(std::make_unique<CurseUser>(Create::Sukuna()));
+    list.push_back(std::make_unique<CurseUser>(Create::Mahito()));
     return list;
 }
 
@@ -52,7 +53,7 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 
 void SetupSystem::LogSetupOptions() {
     std::println("1 - Add Character         | 11 - Add multiple characters         | 111 - Choose Character\n"
-                 "2 - Remove Character      | 22 - Remove last character          |  222 - Choose from battlefield\n"
+                 "2 - Remove Character      | 22 - Remove last character           | 222 - Choose from battlefield\n"
                  "3 - Clear Battlefield     | 33 - Additional Character Info\n"
                  "0 - Start Game");
 }
@@ -100,7 +101,7 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool p_choosing){
     size_t x{0};
     const auto list = SetupSystem::GetCharacterList();
     for (const auto& z : list) {
-        std::println("{}:{}", ++x, GetInfo::Name(z->Identity()));
+        std::println("{}:{}", ++x, GetInfo::Styalized(z->Identity()));
     }
     x = get_input<size_t>() - 1;
     if (x >= list.size()) {
