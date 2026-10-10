@@ -51,6 +51,10 @@ double SorcerySystem::ApplySixEyes(const double amount){
     return amount * 0.2;
 }
 
+bool SorcerySystem::CEMoreThanMx(CurseUser &c, double p){
+    return c.CursedEnergy().cursed_energy > c.CursedEnergy().max_cursed_energy * p;
+}
+
 void SorcerySystem::ApplyBurnOut(CurseUser &c){
     c.Output().status = CurseUserOutput::Status::BurntOut;
     c.Output().normalize_tick = 0;

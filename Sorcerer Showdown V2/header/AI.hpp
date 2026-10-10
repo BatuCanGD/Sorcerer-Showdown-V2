@@ -1,8 +1,8 @@
 #pragma once
-#include <vector>
 #include <cstdint>
 
 class Character;
+class CurseUser;
 class Technique;
 
 struct CursedTool;
@@ -40,9 +40,15 @@ namespace AI {
     CursedTool GetWeapon(CharInv& inv, WeaponPlacement which, WeaponChoice which_type);
     void MoveWeapon(CharInv& inv, CursedTool wp, WeaponPlacement where);
     void SwitchWeapons(CharInv& inv, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc);
+    bool HasWeapon(CharInv& c,WeaponChoice wc);
+
+    void RM_UseShikigami(CurseUser& c, const ResourceUsage& rs);
+    void RM_UseReinforcement(CurseUser& c, const ResourceUsage& rs);
+    void RM_UseRCT(CurseUser& c, const ResourceUsage& rs);
+    void RM_UseTools(Character& c, const Character& cc);
 
     void DoFighting(Character& user, Character* target, const BattleIQ& iq);
-    void DoResourceManagement(Character& user, const Battlefield& bf, const ResourceUsage& ru);
+    void DoResourceManagement(Character& user, const Character& tr ,const Battlefield& bf, const ResourceUsage& ru);
 
     void Fight(Character& user, Battlefield& bf);
 };

@@ -1,5 +1,7 @@
 #include "../header/AI.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
+#include "../header/Systems/Mechanics/CursedToolSystem.hpp"
+#include "../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../header/Utilities/Random.hpp"
 #include "../header/Battlefield.hpp"
 
@@ -74,42 +76,116 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
     }
     return;
 }
-void AI::DoResourceManagement(Character& user, const Battlefield& bf ,const ResourceUsage& ru) { // possible shikigami, reinforcement and rct use
-    [[maybe_unused]] Technique* tech{nullptr};
-    if (const auto* c = user.CanUseSorcery()){
-        if (auto t = c->Jujutsu().technique){
-            tech = &*t;
-        }
+void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
+    auto* c = user.CanUseSorcery();
+
+    AI::RM_UseTools(user, tr);
+    if (c){
+        AI::RM_UseReinforcement(*c, ru);
+        AI::RM_UseShikigami(*c, ru);
+        AI::RM_UseRCT(*c, ru);
     }
+}
 
-    switch(ru){
-        case ResourceUsage::AllOut: {
-
-            break;
-        }
-        case ResourceUsage::Conservative: {
-
+void AI::RM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
+    if (c.Jujutsu().shikigami.empty()) return;
+    SummonType type{};
+    switch(rs){
+        case ResourceUsage::AllOut: {     
+            if (SorcerySystem::CEMoreThanMx(c, 0.45)){
+                type = SummonType::Active;  
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.15)){
+                type = SummonType::Support;
+            }else{
+                type = SummonType::Shadow;
+            }
             break;
         }
         case ResourceUsage::Mixed: {
-
+            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.30, 0.60))){
+                type = SummonType::Active;  
+            }else if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.05, 0.30))){
+                type = SummonType::Support;
+            }else{
+                type = SummonType::Shadow;
+            }
             break;
         }
-        default:
-            throw std::out_of_range("Unexpected Resource Usage");
+        case ResourceUsage::Conservative: {
+            if (SorcerySystem::CEMoreThanMx(c, 0.65)){
+                type = SummonType::Active;  
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.40)){
+                type = SummonType::Support;
+            }else{
+                type = SummonType::Shadow;
+            }
+            break;
+        }
     }
-    return;
+    for(auto& s : c.Jujutsu().shikigami){
+        s.summon_type = type;
+    }
 }
+void AI::RM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
+    double val{0.0};
+    switch(rs){
+        case ResourceUsage::AllOut:
 
+            break;
+        case ResourceUsage::Mixed:
 
+            break;
+        case ResourceUsage::Conservative:
+
+            break;
+    }
+    c.CursedEnergy().reinforcement_amount = val;
+}
+void AI::RM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
+    if (!c.RCT().can_use_rct){
+        return;
+    }
+    double val{0.0};
+    switch(rs){
+        case ResourceUsage::AllOut:
+
+            break;
+        case ResourceUsage::Mixed:
+
+            break;
+        case ResourceUsage::Conservative:
+
+            break;
+    }
+    c.RCT().rct_output = val;
+}
+void AI::RM_UseTools(Character &c, const Character & tr) {
+    auto& eq = c.Equipment();
+    if ((!eq.current_tool && !eq.stored_tool && (!eq.has_access_to_inventory || eq.inventory.empty()))){
+        return;
+    }
+    if (const auto& cr = tr.CanUseSorcery()){
+        if (const auto& t = cr->Jujutsu().technique) {
+            if (t->HasBarrier()){
+                if (CursedToolSystem::DoesBypassTech(*eq.current_tool)) {
+                    return;
+                }
+                if (CursedToolSystem::DoesBypassTech(*eq.stored_tool)) {
+
+                }
+                
+            }
+        }
+    }
+}
 
 
 void AI::Fight(Character &user, Battlefield &bf) {
     const auto& style{user.Style()};
 
     try {
-        DoResourceManagement(user, bf, style.resource_usage);
         Character* target = AI::GetTarget(user, style.targeting_type, bf);
+        DoResourceManagement(user, *target, bf, style.resource_usage);
         DoFighting(user, target, style);
     }catch(const std::out_of_range& oor) {
         std::println(stderr, "Range error: {}", oor.what());
@@ -184,7 +260,27 @@ CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_
     }
     throw std::runtime_error("No Weapon able to be chosen");
 }
+bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
+    switch(wc){
+        case AI::WeaponChoice::EffectInducing:
 
+            break;
+        case AI::WeaponChoice::TechniqueBypassing: {
+            if (CursedToolSystem::DoesBypassTech(*c.current_tool) || CursedToolSystem::DoesBypassTech(*c.stored_tool)) {
+                return true;
+            }
+            if (c.has_access_to_inventory){
+                for (const auto& cc : c.inventory){
+                    if (CursedToolSystem::DoesBypassTech(cc)) return true;
+                }
+            }
+            break;
+        }
+        default: 
+            return true;
+    }
+    return false;
+}
 void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
     const bool& has_inv = c.has_access_to_inventory;
     auto& inv = c.inventory;
