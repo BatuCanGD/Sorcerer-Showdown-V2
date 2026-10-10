@@ -266,7 +266,7 @@ bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
 
             break;
         case AI::WeaponChoice::TechniqueBypassing: {
-            if (CursedToolSystem::DoesBypassTech(*c.current_tool) || CursedToolSystem::DoesBypassTech(*c.stored_tool)) {
+            if ((c.current_tool && CursedToolSystem::DoesBypassTech(*c.current_tool)) || (c.stored_tool && CursedToolSystem::DoesBypassTech(*c.stored_tool))) {
                 return true;
             }
             if (c.has_access_to_inventory){
