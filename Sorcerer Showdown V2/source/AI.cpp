@@ -376,7 +376,7 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
                 }else {
                     stor.emplace(std::move(temp));
                 }
-            }else{
+            }else if (!remove_wp){
                 cur.emplace(std::move(wp));
             }
             break;
@@ -384,7 +384,7 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
         case AI::WeaponPlacement::Offhand: {
             if (stor){
                 CursedTool temp = std::move(*stor);
-                if (remove_wp) cur.reset();
+                if (remove_wp) stor.reset();
                 else stor.emplace(std::move(wp));
                 
                 if (has_inv){
@@ -392,7 +392,7 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
                 }else{
                     cur.emplace(std::move(temp));
                 }
-            }else{
+            }else if (!remove_wp){
                 stor.emplace(std::move(wp));
             }
             break;
