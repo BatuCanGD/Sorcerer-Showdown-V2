@@ -60,7 +60,7 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
                 
             }
             
-            //SwitchWeapons(user.Equipment(), (user.Equipment().has_access_to_inventory && !user.Equipment().inventory.empty()) ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
+            
             break;
         }
         case FightingStyle::Defensive: {
@@ -77,10 +77,8 @@ void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { //
     return;
 }
 void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
-    auto* c = user.CanUseSorcery();
-
     AI::RM_UseTools(user, tr);
-    if (c){
+    if (auto* c = user.CanUseSorcery()){
         AI::RM_UseReinforcement(*c, ru);
         AI::RM_UseShikigami(*c, ru);
         AI::RM_UseRCT(*c, ru);
@@ -214,6 +212,7 @@ void AI::RM_UseTools(Character &c, const Character & tr) {
 }
 
 void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
+    const bool& has_inv = eq.has_access_to_inventory;    
     if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
         auto is_the_one = [wc](const CursedTool* ct)->bool{
             return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && CursedToolSystem::DoesBypassTech(*ct)));
@@ -228,7 +227,7 @@ void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
             AI::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand);
             return;
         }
-        if (eq.has_access_to_inventory){
+        if (has_inv){
             for (const auto& r : eq.inventory){
                 if (is_the_one(&r)){
                     AI::SwitchWeapons(eq, WeaponPlacement::Inventory, WeaponPlacement::Hand, wc);
@@ -236,12 +235,14 @@ void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
                 }
             }
         }
-    }else{
-        if (wc == WeaponChoice::HighestDamage){
-            AI::SwitchWeapons(eq, (eq.has_access_to_inventory && !eq.inventory.empty()) ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
+    }else if (wc == WeaponChoice::HighestDamage) {
+        if (!has_inv){
+            AI::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
         }else{
-
+            AI::SwitchWeapons(eq, !eq.inventory.empty() ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
         }
+    }else{
+        AI::SwitchWeapons(eq, WeaponPlacement::Hand, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand , WeaponChoice::None); 
     }
 }
 
