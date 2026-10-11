@@ -35,11 +35,12 @@ namespace AI {
     Character* GetTarget(const Character& user, const TargetingType& tp, const Battlefield& bf);
     
     enum class WeaponPlacement : std::uint8_t { Hand, Offhand, Inventory };
-    enum class WeaponChoice : std::uint8_t { None, HighestDamage, EffectInducing, TechniqueBypassing };
+    enum class WeaponChoice : std::uint8_t { None, Random, HighestDamage, EffectInducing, TechniqueBypassing };
     CursedTool GetFromInv(CharInv& inv, WeaponChoice wc);
     CursedTool GetWeapon(CharInv& inv, WeaponPlacement which, WeaponChoice which_type);
-    void MoveWeapon(CharInv& inv, CursedTool wp, WeaponPlacement where);
-    void SwitchWeapons(CharInv& inv, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc);
+    void MoveWeapon(CharInv& inv, CursedTool wp, WeaponPlacement where, WeaponChoice wc);
+    void SwitchWeapons(CharInv& inv, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc = WeaponChoice::None);
+    void SwitchTo(CharInv& c, WeaponChoice wc);
     bool HasWeapon(CharInv& c,WeaponChoice wc);
 
     void RM_UseShikigami(CurseUser& c, const ResourceUsage& rs);

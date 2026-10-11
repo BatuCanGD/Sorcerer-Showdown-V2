@@ -10,6 +10,7 @@
 
 #include <print>
 #include <string>
+#include <variant>
 #include <vector>
 #include <format>
 
@@ -74,21 +75,35 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
     }
 }
 
-void Log::Attack(const AttackStruct ats, const Character& c1, const Character& c2) {
-    if (ats.damage == -1.0) {
-        std::println("You cannot attack yourself");
-        return;
+void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const Character& c2) {
+    std::string str{};
+    if (std::holds_alternative<AttackStruct>(vr)){
+        const auto& ats = std::get<AttackStruct>(vr);
+        if (ats.damage == -1.0) {
+            std::println("You cannot attack yourself");
+            return;
+        }
+        const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), ats.damage, GetInfo::Name(c2.Identity()));
+        if (ats.is_critical){
+            str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
+        }
+        if (ats.is_blackflash){
+            str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
+        }
+        str.append(info);
+    }else if (std::holds_alternative<ToolStruct>(vr)){
+        const auto& cts = std::get<ToolStruct>(vr);
+        if (cts.dealt_damage == -1.0) {
+            std::println("You cannot attack yourself");
+            return;
+        }
+        const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c2.Identity()));
+        if (cts.used_tool->given_effect){
+            str.append(std::format("{0} contracted the {1} effect!", GetInfo::Name(c2.Identity()), GetInfo::Name(cts.used_tool->given_effect->id)));
+        }
+        str.append(info);
     }
-    const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), ats.damage, GetInfo::Name(c2.Identity()));
-    std::string word{};
-    if (ats.is_critical){
-        word.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
-    }
-    if (ats.is_blackflash){
-        word.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
-    }
-    word.append(info);
-    std::println("{}", word);
+    std::println("{0}", str);
 }
 
 void Log::Damage(const DamageStruct dms, const Character &attacked){

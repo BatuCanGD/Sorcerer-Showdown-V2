@@ -5,6 +5,7 @@ class Character;
 class CurseUser;
 struct Battlefield;
 struct StatusEffect;
+struct CursedTool;
 struct TechStruct;
 struct TechAbility;
 
@@ -15,9 +16,8 @@ struct AttackStruct final {
 };
 
 struct ToolStruct final {
-    double damage;
-    bool did_hit;
-    const StatusEffect* applied_effect;
+    const CursedTool* used_tool;
+    double dealt_damage;
 };
 
 struct DamageStruct final {

@@ -41,7 +41,10 @@ DamageStruct Character::Damage(double amount, globalums::DamageType type){
     this->state.health -= ds.damage;
     return ds;
 }
-AttackStruct Character::Attack(Character& cc){
+std::variant<AttackStruct, ToolStruct> Character::Attack(Character& cc){
+    if (this->Equipment().current_tool){
+        return CombatSystem::ResolveCursedTool(*this, cc);
+    }
     return CombatSystem::ResolveAttacking(*this, cc);
 }
 

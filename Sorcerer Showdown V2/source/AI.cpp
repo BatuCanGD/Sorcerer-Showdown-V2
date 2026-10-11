@@ -130,13 +130,31 @@ void AI::RM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
-
+            if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.40){
+                val = 135.0;
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * 0.33){
+                val = 90.0;
+            }else if (c.State().health < c.State().max_health * 0.25){
+                val = 60.0;
+            }
             break;
         case ResourceUsage::Mixed:
-
+            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.25, 0.75)) && c.State().health < c.State().max_health * get_random<double>(0.60, 0.90)){
+                val = get_random<double>(70.0, 150.0);
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * get_random<double>(0.30, 0.60)){
+                val = get_random<double>(65.0, 100.0);
+            }else if (c.State().health < c.State().max_health * get_random<double>(0.01, 0.30)){
+                val = get_random<double>(20.0, 80.0);
+            }
             break;
         case ResourceUsage::Conservative:
-
+            if (SorcerySystem::CEMoreThanMx(c, 0.60) && c.State().health < c.State().max_health * 0.55){
+                val = 90.0;
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.35){
+                val = 50.0;
+            }else if (c.State().health < c.State().max_health * 0.30){
+                val = 35.0;
+            }
             break;
     }
     c.CursedEnergy().reinforcement_amount = val;
@@ -148,13 +166,31 @@ void AI::RM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
-
+            if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.40){
+                val = 115.0;
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * 0.33){
+                val = 85.0;
+            }else if (c.State().health < c.State().max_health * 0.25){
+                val = 65.0;
+            }
             break;
         case ResourceUsage::Mixed:
-
+            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.25, 0.75)) && c.State().health < c.State().max_health * get_random<double>(0.60, 0.90)){
+                val = get_random<double>(50.0, 150.0);
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * get_random<double>(0.30, 0.60)){
+                val = get_random<double>(35.0, 80.0);
+            }else if (c.State().health < c.State().max_health * get_random<double>(0.01, 0.30)){
+                val = get_random<double>(10.0, 50.0);
+            }
             break;
         case ResourceUsage::Conservative:
-
+            if (SorcerySystem::CEMoreThanMx(c, 0.60) && c.State().health < c.State().max_health * 0.55){
+                val = 100.0;
+            }else if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.35){
+                val = 55.0;
+            }else if (c.State().health < c.State().max_health * 0.30){
+                val = 50.0;
+            }
             break;
     }
     c.RCT().rct_output = val;
@@ -167,14 +203,44 @@ void AI::RM_UseTools(Character &c, const Character & tr) {
     if (const auto& cr = tr.CanUseSorcery()){
         if (const auto& t = cr->Jujutsu().technique) {
             if (t->HasBarrier()){
-                if (CursedToolSystem::DoesBypassTech(*eq.current_tool)) {
+                AI::SwitchTo(eq, WeaponChoice::TechniqueBypassing);
+                return;
+            }
+        }
+    }
+    if (tr.State().health > c.State().health || tr.State().health > tr.State().max_health * 0.7){
+        SwitchTo(eq, WeaponChoice::HighestDamage);
+    }
+}
+
+void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
+    if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
+        auto is_the_one = [wc](const CursedTool* ct)->bool{
+            return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && CursedToolSystem::DoesBypassTech(*ct)));
+        };
+        if (is_the_one(&*eq.current_tool)){
+            return;
+        }else if (wc == WeaponChoice::None && eq.current_tool){
+            AI::SwitchWeapons(eq, WeaponPlacement::Hand, eq.has_access_to_inventory ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
+            return;
+        }
+        if (is_the_one(&*eq.stored_tool)) {
+            AI::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand);
+            return;
+        }
+        if (eq.has_access_to_inventory){
+            for (const auto& r : eq.inventory){
+                if (is_the_one(&r)){
+                    AI::SwitchWeapons(eq, WeaponPlacement::Inventory, WeaponPlacement::Hand, wc);
                     return;
                 }
-                if (CursedToolSystem::DoesBypassTech(*eq.stored_tool)) {
-
-                }
-                
             }
+        }
+    }else{
+        if (wc == WeaponChoice::HighestDamage){
+            AI::SwitchWeapons(eq, (eq.has_access_to_inventory && !eq.inventory.empty()) ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
+        }else{
+
         }
     }
 }
@@ -226,7 +292,7 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
                 }
             }
             break;
-        case WeaponChoice::None:
+        case WeaponChoice::Random:
             chosen = get_random<size_t>(0, inv.size() - 1);
             break;
         default:
@@ -238,6 +304,9 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
 }
 
 CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_type) {
+    if (which_type == WeaponChoice::None){
+        return {};
+    }
     switch(which){
         case AI::WeaponPlacement::Hand:
             if (eq.current_tool) {
@@ -263,7 +332,14 @@ CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_
 bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
     switch(wc){
         case AI::WeaponChoice::EffectInducing:
-
+            if ((c.current_tool && c.current_tool->given_effect) || (c.stored_tool && c.stored_tool->given_effect)){
+                return true;
+            }
+            if (c.has_access_to_inventory){
+                for (const auto& cc : c.inventory){
+                    if (cc.given_effect) return true;
+                }
+            }
             break;
         case AI::WeaponChoice::TechniqueBypassing: {
             if ((c.current_tool && CursedToolSystem::DoesBypassTech(*c.current_tool)) || (c.stored_tool && CursedToolSystem::DoesBypassTech(*c.stored_tool))) {
@@ -281,7 +357,8 @@ bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
     }
     return false;
 }
-void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
+void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoice wc) {
+    const bool remove_wp = wc == WeaponChoice::None;
     const bool& has_inv = c.has_access_to_inventory;
     auto& inv = c.inventory;
     auto& cur = c.current_tool;
@@ -290,12 +367,13 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
     switch(where){
         case AI::WeaponPlacement::Hand: {
             if (cur){
-                auto temp = std::move(cur);
-                cur.emplace(std::move(wp));
+                CursedTool temp = std::move(*cur);
+                if (remove_wp) cur.reset();
+                else cur.emplace(std::move(wp));
                 if (has_inv){
-                    inv.push_back(std::move(*temp));
+                    inv.push_back(std::move(temp));
                 }else {
-                    stor.emplace(std::move(*temp));
+                    stor.emplace(std::move(temp));
                 }
             }else{
                 cur.emplace(std::move(wp));
@@ -304,12 +382,14 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
         }
         case AI::WeaponPlacement::Offhand: {
             if (stor){
-                auto temp = std::move(stor);
-                stor.emplace(std::move(wp));
+                CursedTool temp = std::move(*stor);
+                if (remove_wp) cur.reset();
+                else stor.emplace(std::move(wp));
+                
                 if (has_inv){
-                    inv.push_back(std::move(*temp));
+                    inv.push_back(std::move(temp));
                 }else{
-                    cur.emplace(std::move(*temp));
+                    cur.emplace(std::move(temp));
                 }
             }else{
                 stor.emplace(std::move(wp));
@@ -317,6 +397,9 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
             break;
         }
         case AI::WeaponPlacement::Inventory:
+            if (remove_wp){
+                return;
+            }
             if (has_inv){
                 inv.push_back(std::move(wp));
             }else{
@@ -327,5 +410,5 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where) {
 }
 
 void AI::SwitchWeapons(CharInv& eq, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc) {
-    AI::MoveWeapon(eq, AI::GetWeapon(eq, which, wc), where);
+    AI::MoveWeapon(eq, AI::GetWeapon(eq, which, wc), where, wc);
 }

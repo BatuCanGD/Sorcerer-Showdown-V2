@@ -347,7 +347,7 @@ void UserControl::ForBindingVows(CurseUser& c){
         std::println("You must sacrifice at least 1%");
         return;
     } else if (dp > 99.9 || (dp > 0.99 && dp < 1.0)){
-        std::println("You cannot just sacrifice more than 99%");
+        std::println("You cannot sacrifice more than 99%");
         return;
     }
     const double sdp = (dp >= 1.0 && dp <= 99.9) ? dp * 0.01 : dp;

@@ -7,11 +7,13 @@
 #include "../Info.hpp"
 
 #include <optional>
+#include <variant>
 #include <memory>
 #include <vector>
 
 class CurseUser;
 struct AttackStruct;
+struct ToolStruct;
 struct DamageStruct;
 
 struct BattleIQ final {
@@ -58,7 +60,7 @@ public:
     CharInv& Equipment() noexcept;
 
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
-    AttackStruct Attack(Character& attacked);
+    std::variant<AttackStruct, ToolStruct> Attack(Character& attacked);
 
     [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
     virtual CurseUser* CanUseSorcery() noexcept;

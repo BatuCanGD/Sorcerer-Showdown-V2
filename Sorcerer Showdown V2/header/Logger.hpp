@@ -3,6 +3,7 @@
 #include "Systems/Mechanics/DomainSystem.hpp"
 
 #include <vector>
+#include <variant>
 
 enum class ClashWinner : std::uint8_t;
 enum class DomainWinCon : std::uint8_t;
@@ -14,6 +15,7 @@ class Technique;
 struct Battlefield;
 struct SurehitStruct;
 struct StatusEffect;
+struct ToolStruct;
 struct AttackStruct;
 struct DamageStruct;
 
@@ -26,7 +28,7 @@ namespace Log {
     void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name, const LogDetailType info_type = LogDetailType::Basic);
 
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);
-    void Attack(const AttackStruct ats, const Character& c1, const Character& c2);
+    void Attack(const std::variant<AttackStruct, ToolStruct> ats, const Character& c1, const Character& c2);
     void TechniqueAttack(const TechniqueStruct tc);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const DomainClashStruct ds);

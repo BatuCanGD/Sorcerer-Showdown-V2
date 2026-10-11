@@ -26,7 +26,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
 }
 
 void ResourceHandler::TickOutput(CurseUser &crs){
-    crs.Output().current_output = std::max(crs.Output().current_output - crs.Output().output_cooldown_amount, 0.0);
+    crs.Output().current_output = std::max(crs.Output().current_output - crs.Output().output_cooldown_amount * SorcerySystem::OutputStatusMultiplier(crs.Output().status), 0.0);
 }
 void ResourceHandler::TickTraits(CurseUser &crs){
     if (crs.Traits().passive_healing){
