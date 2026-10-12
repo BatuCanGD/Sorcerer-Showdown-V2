@@ -16,7 +16,7 @@ struct JujutsuSystem final {
 };
 
 struct CurseUserAmplification final {
-    bool is_usable{false};
+    bool can_use_amp{false};
     bool is_active{false};
 };
 
