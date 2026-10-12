@@ -1,4 +1,6 @@
 #include "../header/AI.hpp"
+#include "../header/Logger.hpp"
+#include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
 #include "../header/Systems/Mechanics/CursedToolSystem.hpp"
 #include "../header/Systems/Mechanics/SorcerySystem.hpp"
@@ -49,43 +51,28 @@ Character* AI::GetTarget(const Character& user, const TargetingType& tp, const B
     return nullptr;
 }
 
-void AI::DoFighting(Character& user, Character* target, const BattleIQ& fs) { // possible technique/domain use
+void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, const BattleIQ& iq) { // possible technique/domain use
     if (!target){
         throw std::runtime_error("No target exists");
     }
-    switch(fs.fighting_style){
-        case FightingStyle::Aggressive: {
-            if ([[maybe_unused]]const auto& c = user.CanUseSorcery()){
-                [[maybe_unused]]const bool use_tech = fs.resource_usage != ResourceUsage::Conservative && c->Output().status != CurseUserOutput::Status::BurntOut && !(c->Output().current_output * 1.25 > c->Output().max_output_potential);
-                
-            }
-            
-            
-            break;
-        }
-        case FightingStyle::Defensive: {
-
-            break;
-        }
-        case FightingStyle::Mixed: {
-
-            break;
-        }
-        default:
-            throw std::out_of_range("Unexpected Fighting Style");
+    if (auto* c = user.CanUseSorcery()){
+        AI::DF_UseDomain(*c, bf);
+        if (AI::DF_UseTechnique(*c, *target, iq)) return;
     }
-    return;
+    const auto l = user.Attack(*target);
+    Log::Attack(l, user, *target);
 }
 void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
-    AI::RM_UseTools(user, tr);
+    AI::DRM_UseTools(user, tr);
     if (auto* c = user.CanUseSorcery()){
-        AI::RM_UseReinforcement(*c, ru);
-        AI::RM_UseShikigami(*c, ru);
-        AI::RM_UseRCT(*c, ru);
+        AI::DRM_UseReinforcement(*c, ru);
+        AI::DRM_UseShikigami(*c, ru);
+        AI::DRM_UseBindingVow(*c, tr, bf, ru);
+        AI::DRM_UseRCT(*c, ru);
     }
 }
 
-void AI::RM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
+void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
     if (c.Jujutsu().shikigami.empty()) return;
     SummonType type{};
     switch(rs){
@@ -124,7 +111,7 @@ void AI::RM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
         s.summon_type = type;
     }
 }
-void AI::RM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
+void AI::DRM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
@@ -157,7 +144,7 @@ void AI::RM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
     }
     c.CursedEnergy().reinforcement_amount = val;
 }
-void AI::RM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
+void AI::DRM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     if (!c.RCT().can_use_rct){
         return;
     }
@@ -193,7 +180,7 @@ void AI::RM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     }
     c.RCT().rct_output = val;
 }
-void AI::RM_UseTools(Character &c, const Character & tr) {
+void AI::DRM_UseTools(Character &c, const Character & tr) {
     auto& eq = c.Equipment();
     if ((!eq.current_tool && !eq.stored_tool && (!eq.has_access_to_inventory || eq.inventory.empty()))){
         return;
@@ -253,7 +240,7 @@ void AI::Fight(Character &user, Battlefield &bf) {
     try {
         Character* target = AI::GetTarget(user, style.targeting_type, bf);
         DoResourceManagement(user, *target, bf, style.resource_usage);
-        DoFighting(user, target, style);
+        DoFighting(user, target, bf, style);
     }catch(const std::out_of_range& oor) {
         std::println(stderr, "Range error: {}", oor.what());
     }catch(const std::runtime_error& re){
@@ -294,6 +281,7 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
             }
             break;
         case WeaponChoice::Random:
+        case WeaponChoice::None:
             chosen = get_random<size_t>(0, inv.size() - 1);
             break;
         default:
@@ -305,7 +293,7 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
 }
 
 CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_type) {
-    if (which_type == WeaponChoice::None){
+    if (which_type == WeaponChoice::Unequip){
         return {};
     }
     switch(which){

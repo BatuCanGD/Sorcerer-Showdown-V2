@@ -35,7 +35,7 @@ namespace AI {
     Character* GetTarget(const Character& user, const TargetingType& tp, const Battlefield& bf);
     
     enum class WeaponPlacement : std::uint8_t { Hand, Offhand, Inventory };
-    enum class WeaponChoice : std::uint8_t { None, Random, HighestDamage, EffectInducing, TechniqueBypassing };
+    enum class WeaponChoice : std::uint8_t { Unequip, None, Random, HighestDamage, EffectInducing, TechniqueBypassing };
     CursedTool GetFromInv(CharInv& inv, WeaponChoice wc);
     CursedTool GetWeapon(CharInv& inv, WeaponPlacement which, WeaponChoice which_type);
     void MoveWeapon(CharInv& inv, CursedTool wp, WeaponPlacement where, WeaponChoice wc);
@@ -43,12 +43,16 @@ namespace AI {
     void SwitchTo(CharInv& c, WeaponChoice wc);
     bool HasWeapon(CharInv& c,WeaponChoice wc);
 
-    void RM_UseShikigami(CurseUser& c, const ResourceUsage& rs);
-    void RM_UseReinforcement(CurseUser& c, const ResourceUsage& rs);
-    void RM_UseRCT(CurseUser& c, const ResourceUsage& rs);
-    void RM_UseTools(Character& c, const Character& cc);
+    void DF_UseDomain(CurseUser& c, const Battlefield& bf);
+    bool DF_UseTechnique(CurseUser& c, Character& target, const BattleIQ& bq);
 
-    void DoFighting(Character& user, Character* target, const BattleIQ& iq);
+    void DRM_UseShikigami(CurseUser& c, const ResourceUsage& rs);
+    void DRM_UseBindingVow(CurseUser& c, const Character& tr, const Battlefield& bf, const ResourceUsage& iq);
+    void DRM_UseReinforcement(CurseUser& c, const ResourceUsage& rs);
+    void DRM_UseRCT(CurseUser& c, const ResourceUsage& rs);
+    void DRM_UseTools(Character& c, const Character& cc);
+
+    void DoFighting(Character& user, Character* target, const Battlefield& bf, const BattleIQ& iq);
     void DoResourceManagement(Character& user, const Character& tr ,const Battlefield& bf, const ResourceUsage& ru);
 
     void Fight(Character& user, Battlefield& bf);
