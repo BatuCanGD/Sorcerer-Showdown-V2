@@ -72,6 +72,12 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
     }
 }
 
+void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf) {
+
+}
+bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &bq) {
+    return false;
+}
 void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
     if (c.Jujutsu().shikigami.empty()) return;
     SummonType type{};
@@ -179,6 +185,9 @@ void AI::DRM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
             break;
     }
     c.RCT().rct_output = val;
+}
+void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
+
 }
 void AI::DRM_UseTools(Character &c, const Character & tr) {
     auto& eq = c.Equipment();

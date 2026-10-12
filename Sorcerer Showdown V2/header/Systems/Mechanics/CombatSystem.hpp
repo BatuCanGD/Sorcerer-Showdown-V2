@@ -28,6 +28,9 @@ struct DamageStruct final {
 
 struct TechniqueStruct final {
     const TechAbility* used_ability;
+    const Character* user;
+    const Character* target;
+    double damage;
     bool enough_output;
     bool enough_ce;
 };

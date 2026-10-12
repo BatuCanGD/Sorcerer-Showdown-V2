@@ -73,13 +73,13 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 
     if (!(enough_output && enough_ce)) {
-        return{&chosen_ct,enough_output, enough_ce};
+        return{&chosen_ct, &attacker, &attacked, 0.0 ,enough_output, enough_ce};
     }
 
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
-    attacked.Damage(chosen_ct.damage * SorcerySystem::OutputStatusMultiplier(attacker.Output().status), chosen_ct.damage_type);
-    return {&chosen_ct , enough_output, enough_ce};
+    const auto d = attacked.Damage(chosen_ct.damage * SorcerySystem::OutputStatusMultiplier(attacker.Output().status), chosen_ct.damage_type);
+    return {&chosen_ct , &attacker, &attacked, d.damage, enough_output, enough_ce};
 }
 
 void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
