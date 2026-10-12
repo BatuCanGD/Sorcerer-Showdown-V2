@@ -65,7 +65,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
     }
     const auto rs = attacked.Damage(attack_damage, attack_type);
     const bool is_critical = rs.damage >= 100.0;
-    return {rs.damage, is_critical, is_blackflash};
+    return {rs.damage, rs.attack_blocked ,is_critical, is_blackflash};
 }
 
 TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAbility& chosen_ct, Character& attacked){

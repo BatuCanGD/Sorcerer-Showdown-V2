@@ -11,6 +11,7 @@ struct TechAbility;
 
 struct AttackStruct final {
     double damage;
+    bool blocked;
     bool is_critical;
     bool is_blackflash;
 };

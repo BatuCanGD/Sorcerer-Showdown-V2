@@ -83,12 +83,17 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             std::println("You cannot attack yourself");
             return;
         }
-        const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), ats.damage, GetInfo::Name(c2.Identity()));
-        if (ats.is_critical){
-            str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
-        }
-        if (ats.is_blackflash){
-            str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
+        std::string info = std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(c2.Identity()));
+        if (ats.blocked){
+            info.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(c2.Identity())));
+        }else{
+            info.append(std::format("{} took {:.1f} damage!", GetInfo::Name(c2.Identity()), ats.damage));
+            if (ats.is_critical){
+                str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
+            }
+            if (ats.is_blackflash){
+                str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
+            }
         }
         str.append(info);
     }else if (std::holds_alternative<ToolStruct>(vr)){
