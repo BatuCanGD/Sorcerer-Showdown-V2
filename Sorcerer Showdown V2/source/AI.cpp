@@ -74,8 +74,17 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
 
 void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf) {
 
+
+
+    
+
 }
 bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &bq) {
+
+
+
+
+
     return false;
 }
 void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
@@ -215,7 +224,7 @@ void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
         };
         if (is_the_one(&*eq.current_tool)){
             return;
-        }else if (wc == WeaponChoice::None && eq.current_tool){
+        }else if (wc == WeaponChoice::Unequip && eq.current_tool){
             AI::SwitchWeapons(eq, WeaponPlacement::Hand, eq.has_access_to_inventory ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
             return;
         }
@@ -259,15 +268,15 @@ void AI::Fight(Character &user, Battlefield &bf) {
 
 CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
     auto& inv = eq.inventory;
-    if (inv.empty()) {
-        throw std::runtime_error("No inventory items to choose");
+    if (inv.empty() || wc == WeaponChoice::None) {
+        return {};
     }
 
-    size_t chosen = inv.size();
+    size_t chosen = inv.size() - 1;
     switch (wc) {
         case WeaponChoice::EffectInducing:
             for (size_t i = 0; i < inv.size(); ++i) {
-                if (chosen == inv.size() || inv[i].given_effect) {
+                if (inv[i].given_effect) {
                     chosen = i;
                     break;
                 }
@@ -276,21 +285,20 @@ CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
         case WeaponChoice::HighestDamage:
             chosen = 0;
             for (size_t i = 1; i < inv.size(); ++i) {
-                if (chosen == inv.size() || inv[i].damage > inv[chosen].damage) {
+                if (inv[i].damage > inv[chosen].damage) {
                     chosen = i;
                 }
             }
             break;
         case WeaponChoice::TechniqueBypassing:
             for (size_t i = 0; i < inv.size(); ++i) {
-                if (chosen == inv.size() || inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
+                if (inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
                     chosen = i;
                     break;
                 }
             }
             break;
         case WeaponChoice::Random:
-        case WeaponChoice::None:
             chosen = get_random<size_t>(0, inv.size() - 1);
             break;
         default:
@@ -356,7 +364,7 @@ bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
     return false;
 }
 void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoice wc) {
-    const bool remove_wp = wc == WeaponChoice::None;
+    const bool unequip = wc == WeaponChoice::Unequip;
     const bool& has_inv = c.has_access_to_inventory;
     auto& inv = c.inventory;
     auto& cur = c.current_tool;
@@ -366,14 +374,14 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
         case AI::WeaponPlacement::Hand: {
             if (cur){
                 CursedTool temp = std::move(*cur);
-                if (remove_wp) cur.reset();
+                if (unequip) cur.reset();
                 else cur.emplace(std::move(wp));
                 if (has_inv){
                     inv.push_back(std::move(temp));
                 }else {
                     stor.emplace(std::move(temp));
                 }
-            }else if (!remove_wp){
+            }else if (!unequip){
                 cur.emplace(std::move(wp));
             }
             break;
@@ -381,7 +389,7 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
         case AI::WeaponPlacement::Offhand: {
             if (stor){
                 CursedTool temp = std::move(*stor);
-                if (remove_wp) stor.reset();
+                if (unequip) stor.reset();
                 else stor.emplace(std::move(wp));
                 
                 if (has_inv){
@@ -389,13 +397,13 @@ void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoi
                 }else{
                     cur.emplace(std::move(temp));
                 }
-            }else if (!remove_wp){
+            }else if (!unequip){
                 stor.emplace(std::move(wp));
             }
             break;
         }
         case AI::WeaponPlacement::Inventory:
-            if (remove_wp){
+            if (unequip){
                 return;
             }
             if (has_inv){
