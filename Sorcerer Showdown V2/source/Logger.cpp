@@ -64,11 +64,9 @@ void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
 }
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
-    if (!tc.enough_ce){
-        std::println("{} tried to use {} but it couldn't be actived due to insufficient Cursed Energy", GetInfo::Name(tc.user->Identity() ),GetInfo::Name(tc.used_ability->id));
-    }
-    if (!tc.enough_output){
-        std::println("{} tried to use {} but it couldn't be performed due to insufficient Output", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id));
+    if (!tc.enough_ce || !tc.enough_output){
+        std::println("{} tried to use {} but it couldn't be actived due to insufficient {}", GetInfo::Name(tc.user->Identity() ),GetInfo::Name(tc.used_ability->id), tc.enough_output ? "Cursed Energy" : "Output");
+        return;
     }
     if (tc.used_ability){
         std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(tc.target->Identity()), tc.damage);
