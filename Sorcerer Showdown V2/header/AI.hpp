@@ -43,7 +43,7 @@ namespace AI {
     void SwitchTo(CharInv& c, WeaponChoice wc);
     bool HasWeapon(CharInv& c,WeaponChoice wc);
 
-    void DF_UseDomain(CurseUser& c, const Battlefield& bf);
+    void DF_UseDomain(CurseUser& c, const Battlefield& bf, const FightingStyle& fs);
     bool DF_UseTechnique(CurseUser& c, Character& target, const BattleIQ& bq);
 
     void DRM_UseShikigami(CurseUser& c, const ResourceUsage& rs);

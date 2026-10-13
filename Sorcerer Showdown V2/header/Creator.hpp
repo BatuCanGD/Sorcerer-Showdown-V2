@@ -1,4 +1,6 @@
 #pragma once
+#include <nlohmann/json.hpp>
+#include <memory>
 class Character;
 class CurseUser;
 class Technique;
@@ -9,7 +11,12 @@ struct Domain;
 struct Neutralizer;
 struct StatusEffect;
 
+inline nlohmann::json CheckAndGetObject(const nlohmann::json& j, std::string_view name){
+    return (j.contains(name) && j.at(name).is_object()) ? j.at(name) : j;
+}
+
 namespace Create {
+    [[nodiscard]] std::unique_ptr<Character> CustomCharacter(const nlohmann::json& data);
     // characters
     [[nodiscard]] Character TranfiguredHuman();
     [[nodiscard]] CurseUser Mahito();

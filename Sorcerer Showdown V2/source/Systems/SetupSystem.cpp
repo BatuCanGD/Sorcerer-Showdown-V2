@@ -6,6 +6,7 @@
 #include "../../header/Logger.hpp"
 
 #include <print>
+#include <fstream>
 #include <map>
 
 SkipType SetupSystem::GetPlayerSkipType() noexcept {
@@ -27,62 +28,98 @@ const std::map<std::string, int> SetupSystem::SetList(const Battlefield &bf){
     }
     return list;
 }
+std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
+    std::println(stderr, "Looking for characters.json in: {}", std::filesystem::current_path().string());
+    std::ifstream file("characters.json");
 
-const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList() {
+    if (!file.is_open()) {
+        std::println(stderr, "Could not find characters.json!");
+        hold_input();
+        return {};
+    }
+    nlohmann::json data;
+    try {
+        file >> data;
+    }
+    catch (const nlohmann::json::parse_error& e) {
+        std::println(stderr, "JSON Parse Error: {}", e.what());
+        hold_input();
+        return {};
+    }
+
+    if (data.contains("characters") && data["characters"].is_array()) {
+        std::vector<std::unique_ptr<Character>> list;
+        for (const auto& d : data["characters"]) {
+            list.push_back(Create::CustomCharacter(d));
+        }
+        return list;
+    }
+    return {};
+}
+
+const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
     std::vector<std::unique_ptr<Character>> list;
     list.push_back(std::make_unique<CurseUser>(Create::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Sukuna()));
     list.push_back(std::make_unique<CurseUser>(Create::Mahito()));
+    if (get_custom){
+        for (auto& c : SetupSystem::GetCustomCharacters()) { 
+            list.push_back(std::move(c)); 
+        }
+    }   
     return list;
 }
 
 Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
-    bool looping{true};
-    while(looping){
+    bool load_json{false};
+    while(true){
         std::println("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
+        std::println("{}", load_json ? "[Custom Characters Enabled]" : "");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             std::println("{}x {}", num, name);
         }
         SetupSystem::LogSetupOptions();
-        looping = SetupSystem::SetupOptions(bf, c);
+        if (!SetupSystem::SetupOptions(bf, c, load_json)) break;
     }
     return c;
 }
 
-
 void SetupSystem::LogSetupOptions() {
     std::println("1 - Add Character         | 11 - Add multiple characters         | 111 - Choose Character\n"
                  "2 - Remove Character      | 22 - Remove last character           | 222 - Choose from battlefield\n"
-                 "3 - Clear Battlefield     | 33 - Additional Character Info\n"
+                 "3 - Clear Battlefield     | 33 - Additional Character Info       | 333 - Load Custom Characters\n"
                  "0 - Start Game");
 }
 
-bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c) {
+bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c, bool& load_json) {
     switch(get_input<int>()){
         case 1:
-            SetupSystem::AddCharacter(bf, c);
+            SetupSystem::AddCharacter(bf, c, false, load_json);
             break;
         case 11:
-            SetupSystem::AddCharacters(bf);
+            SetupSystem::AddCharacters(bf, load_json);
             break;
         case 111:
-            SetupSystem::AddCharacter(bf, c, true);
+            SetupSystem::AddCharacter(bf, c, true, load_json);
             break;
         case 2:
-            SetupSystem::RemoveCharacter(bf, c);
+            SetupSystem::RemoveCharacter(bf, c, load_json);
             break;
         case 22:
             SetupSystem::RemoveLast(bf, c);
             break;
         case 222:
-            SetupSystem::RemoveCharacter(bf, c, true);
+            SetupSystem::RemoveCharacter(bf, c, load_json);
             break;
         case 3:
             SetupSystem::ClearBattlefield(bf, c);
             break;
         case 33:
             SetupSystem::ViewCharacterInfo(bf);
+            break;
+        case 333:
+            load_json = !load_json;
             break;
         case 0:
             if (bf.battlefield.size() < 2){
@@ -97,9 +134,9 @@ bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c) {
     return true;
 }
 
-void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool p_choosing){
+void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool choosing, bool load_json){
     size_t x{0};
-    const auto list = SetupSystem::GetCharacterList();
+    const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list) {
         std::println("{}:{}", ++x, GetInfo::Styalized(z->Identity()));
     }
@@ -108,13 +145,13 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool p_choosing){
         return;
     }
     bf.battlefield.push_back(list[x]->Clone());
-    if (p_choosing) {
+    if (choosing) {
         c = bf.battlefield.back().get();
     }
 }
-void SetupSystem::AddCharacters(Battlefield& bf){
+void SetupSystem::AddCharacters(Battlefield& bf, bool load_json){
     size_t g{0};
-    const auto list = SetupSystem::GetCharacterList();
+    const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list){
         std::println("{}:{}", ++g, GetInfo::Name(z->Identity()));
     }

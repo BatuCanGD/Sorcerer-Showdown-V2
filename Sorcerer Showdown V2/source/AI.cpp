@@ -56,7 +56,7 @@ void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, c
         throw std::runtime_error("No target exists");
     }
     if (auto* c = user.CanUseSorcery()){
-        AI::DF_UseDomain(*c, bf);
+        AI::DF_UseDomain(*c, bf, iq.fighting_style);
         if (AI::DF_UseTechnique(*c, *target, iq)) return;
     }
     const auto l = user.Attack(*target);
@@ -72,14 +72,39 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
     }
 }
 
-void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf) {
+void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& fs) {
+    size_t domain_users{0};
+    for (const auto& cc : bf.battlefield){
+        if (const auto* cr = cc->CanUseSorcery()) {
+            if (cr->Jujutsu().domain && cr->Jujutsu().domain->is_active) domain_users++;
+        }
+    }
+    const double domain_cost = c.Jujutsu().domain ? SorcerySystem::ApplySpendingMultiplier(c.Jujutsu().domain->cost, c) : 0.0;
+    const bool can_use_domain = c.Jujutsu().domain && c.Output().status != CurseUserOutput::Status::BurntOut && c.CursedEnergy().cursed_energy >= domain_cost;
+    const bool should_use_domain = can_use_domain && domain_users > 1;
+    const bool needs_neutralizer = c.Jujutsu().neutralizer && domain_users > 1 && (c.Output().status == CurseUserOutput::Status::BurntOut || c.CursedEnergy().cursed_energy < domain_cost);
 
+    switch(fs){
+        case FightingStyle::Aggressive: {
+
+
+            break;
+        }
+        case FightingStyle::Defensive: {
+        
+            break;
+        }
+        case FightingStyle::Mixed: {
+
+            break;
+        }
+    }
 
 
     
 
 }
-bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &bq) {
+bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
 
 
 

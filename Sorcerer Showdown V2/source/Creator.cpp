@@ -7,6 +7,17 @@
 #include "../header/Enums.hpp"
 
 #include <format>
+#include <string>
+#include <memory>
+
+std::unique_ptr<Character> Create::CustomCharacter(const nlohmann::json &data) {
+    const std::string c_type = data.at("type").get<std::string>();
+    std::unique_ptr<Character> c{};
+
+    return c;
+}
+
+
 // Base Characters
 Character Create::TranfiguredHuman() {
     Character c{};

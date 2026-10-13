@@ -19,16 +19,17 @@ namespace SetupSystem {
 
     Character* SetupLoop(Battlefield& bf);
     void LogSetupOptions();
-    bool SetupOptions(Battlefield& bf, Character*& c);
+    bool SetupOptions(Battlefield& bf, Character*& c, bool& load_json);
     void BattlefieldSetup(Battlefield& bf);
 
-    void AddCharacter(Battlefield& bf, Character*& c, bool p_choose = false);
-    void AddCharacters(Battlefield& bf);
-    void RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose = false);
+    void AddCharacter(Battlefield& bf, Character*& c, bool choosing, bool load_json);
+    void AddCharacters(Battlefield& bf, bool load_json);
+    void RemoveCharacter(Battlefield& bf, Character*& c, bool choosing); // used for choosing character aswell
     void RemoveLast(Battlefield& bf, Character*& c);
     void ClearBattlefield(Battlefield& bf, Character*& c);
     void ViewCharacterInfo(Battlefield& bf);
 
-    const std::vector<std::unique_ptr<Character>> GetCharacterList();
+    std::vector<std::unique_ptr<Character>> GetCustomCharacters();
+    const std::vector<std::unique_ptr<Character>> GetCharacterList(bool get_custom);
     const std::map<std::string, int> SetList(const Battlefield& bf);
 }
