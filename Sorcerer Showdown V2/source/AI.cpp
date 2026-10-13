@@ -81,7 +81,7 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
     }
     const double domain_cost = c.Jujutsu().domain ? SorcerySystem::ApplySpendingMultiplier(c.Jujutsu().domain->cost, c) : 0.0;
     const bool can_use_domain = c.Jujutsu().domain && c.Output().status != CurseUserOutput::Status::BurntOut && c.CursedEnergy().cursed_energy >= domain_cost;
-    const bool should_use_domain = can_use_domain && domain_users > 1;
+    const bool should_use_domain = can_use_domain && domain_users == 1;
     const bool needs_neutralizer = c.Jujutsu().neutralizer && domain_users > 1 && (c.Output().status == CurseUserOutput::Status::BurntOut || c.CursedEnergy().cursed_energy < domain_cost);
 
     switch(fs){
