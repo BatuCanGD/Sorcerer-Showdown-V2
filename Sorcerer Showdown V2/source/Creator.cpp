@@ -171,7 +171,11 @@ Technique Create::Limitless() {
     const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
     const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
     const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 725d9f9 (added more tests and added more clarification to comments)
     c.Abilities().push_back(blue);
     c.Abilities().push_back(red);
     c.Abilities().push_back(purple);
