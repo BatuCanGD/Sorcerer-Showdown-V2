@@ -16,38 +16,8 @@ inline nlohmann::json CheckAndGetObject(const nlohmann::json& j, std::string_vie
 }
 
 namespace Create {
-<<<<<<< HEAD
-    [[nodiscard]] std::unique_ptr<Character> CustomCharacter(const nlohmann::json& data);
-    // characters
-    [[nodiscard]] Character TranfiguredHuman();
-    [[nodiscard]] CurseUser Mahito();
-    [[nodiscard]] CurseUser Gojo();
-    [[nodiscard]] CurseUser Sukuna();
-
-    // techniques
-    [[nodiscard]] Technique Limitless();
-    [[nodiscard]] Technique IdleTransfiguration();
-
-    // domains
-    [[nodiscard]] Domain UnlimitedVoid();
-    [[nodiscard]] Domain MalevolentShrine();
-    [[nodiscard]] Domain SelfEmbodimentOfPerfection();
-
-    // neutralizers
-    [[nodiscard]] Neutralizer SimpleDomain();
-    [[nodiscard]] Neutralizer FallingBlossomEmotion();
-
-    // shikigami
-    [[nodiscard]] Shikigami Mahoraga();
-    [[nodiscard]] Shikigami Agito();
-
-    // cursed tools
-    [[nodiscard]] CursedTool InvertedSpearOfHeaven();
-
-    // effects
-    [[nodiscard]] StatusEffect BleedEffect();
-=======
     namespace Char {
+        [[nodiscard]] std::unique_ptr<Character> Custom(const nlohmann::json& j);
         [[nodiscard]] Character TranfiguredHuman();
         [[nodiscard]] Character Toji();
         [[nodiscard]] Character Maki();
@@ -82,5 +52,4 @@ namespace Create {
     namespace Effect {
         [[nodiscard]] StatusEffect BleedEffect();
     }
->>>>>>> 10d4fd9 (updated create namespace and removed enum from neutralizer)
 }

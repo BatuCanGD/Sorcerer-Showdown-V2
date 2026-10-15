@@ -50,7 +50,7 @@ std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
     if (data.contains("characters") && data["characters"].is_array()) {
         std::vector<std::unique_ptr<Character>> list;
         for (const auto& d : data["characters"]) {
-            list.push_back(Create::CustomCharacter(d));
+            list.push_back(Create::Char::Custom(d));
         }
         return list;
     }
@@ -59,22 +59,11 @@ std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
 
 const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
     std::vector<std::unique_ptr<Character>> list;
-<<<<<<< HEAD
-    list.push_back(std::make_unique<CurseUser>(Create::Gojo()));
-    list.push_back(std::make_unique<CurseUser>(Create::Sukuna()));
-    list.push_back(std::make_unique<CurseUser>(Create::Mahito()));
-    if (get_custom){
-        for (auto& c : SetupSystem::GetCustomCharacters()) { 
-            list.push_back(std::move(c)); 
-        }
-    }   
-=======
     list.push_back(std::make_unique<Character>(Create::Char::Toji()));
     list.push_back(std::make_unique<Character>(Create::Char::Maki()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
->>>>>>> 10d4fd9 (updated create namespace and removed enum from neutralizer)
     return list;
 }
 
