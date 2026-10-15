@@ -64,6 +64,11 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool
     list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
+    if (get_custom){
+        for (auto& c : SetupSystem::GetCustomCharacters()) {
+            list.push_back(std::move(c));
+        }
+    }   
     return list;
 }
 
