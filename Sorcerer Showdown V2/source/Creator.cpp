@@ -19,7 +19,7 @@ std::unique_ptr<Character> Create::CustomCharacter(const nlohmann::json &data) {
 
 
 // Base Characters
-Character Create::TranfiguredHuman() {
+Character Create::Char::TranfiguredHuman() {
     Character c{};
 
     const EntityInfo id = {"Transfigured Human", "\x1b[38;5;22m", "A human, but with its body extremely disfigured"};
@@ -35,8 +35,50 @@ Character Create::TranfiguredHuman() {
 
     return c;
 }
+Character Create::Char::Toji() {
+    Character c{};
+
+    const EntityInfo id = {"Toji Fushiguro", "", "A Physically Gifted human with no cursed energy"};
+
+    constexpr double health      = 500.0;
+    constexpr double strength    = 225.0;
+    constexpr double durability  = 245.0;
+
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
+
+    c.Identity() = id;
+    c.State() = stats;
+    c.Style() = style;
+    c.Equipment().has_access_to_inventory = true;
+    c.Equipment().inventory.push_back(Create::Tool::InvertedSpearOfHeaven());
+    c.Equipment().inventory.push_back(Create::Tool::SplitSoulKatana());
+
+    return c;
+}
+Character Create::Char::Maki() {
+    Character c{};
+
+    const EntityInfo id = {"Maki Zenin", "", "A Heavenly Restricted human similar to Toji Fushiguro"}
+;
+    constexpr double health      = 750.0;
+    constexpr double strength    = 265.0;
+    constexpr double durability  = 175.0;
+
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Mixed,  .resource_usage = ResourceUsage::AllOut};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
+
+    c.Identity() = id;
+    c.State() = stats;
+    c.Style() = style;
+    c.Equipment().has_access_to_inventory = true;
+    c.Equipment().inventory.push_back(Create::Tool::PlayfulCloud());
+    c.Equipment().inventory.push_back(Create::Tool::SplitSoulKatana());
+
+    return c;
+}
 // Curse Users
-CurseUser Create::Mahito() {
+CurseUser Create::Char::Mahito() {
     CurseUser c{};
 
     const EntityInfo id {"Mahito", "\x1b[38;5;129m", "Cursed Spirit with the ability to Reshape souls"};
@@ -54,8 +96,8 @@ CurseUser Create::Mahito() {
     constexpr double max_output = 70.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
 
-    const Technique technique{Create::IdleTransfiguration()};
-    const Domain domain{Create::SelfEmbodimentOfPerfection()};
+    const Technique technique{Create::Tech::IdleTransfiguration()};
+    const Domain domain{Create::Dmn::SelfEmbodimentOfPerfection()};
 
     c.Identity() = id;
     c.Style() = style;
@@ -73,13 +115,13 @@ CurseUser Create::Mahito() {
     return c;
 }
 
-CurseUser Create::Gojo() {
+CurseUser Create::Char::Gojo() {
     CurseUser c{};
 
     const EntityInfo id {"Satoru Gojo", "\x1b[38;5;39m", "Strongest sorcerer of today"};
 
     constexpr double health     = 1000.0;
-    constexpr double strength   = 185.0;
+    constexpr double strength   = 200.0;
     constexpr double durability = 300.0;
 
     const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::AllOut};
@@ -91,9 +133,9 @@ CurseUser Create::Gojo() {
     constexpr double output_regen = 45.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
 
-    const Technique technique{Create::Limitless()};
-    const Domain domain{Create::UnlimitedVoid()};
-    const Neutralizer neutralizer{Create::SimpleDomain()};
+    const Technique technique{Create::Tech::Limitless()};
+    const Domain domain{Create::Dmn::UnlimitedVoid()};
+    const Neutralizer neutralizer{Create::Nlr::SimpleDomain()};
 
     c.Identity() = id;
     c.Style() = style;
@@ -112,7 +154,7 @@ CurseUser Create::Gojo() {
 
     return c;
 }
-CurseUser Create::Sukuna() {
+CurseUser Create::Char::Sukuna() {
     CurseUser c{};
 
     const EntityInfo id {"Ryomen Sukuna", "\x1b[38;5;9m", "Strongest sorcerer in history"};
@@ -130,9 +172,9 @@ CurseUser Create::Sukuna() {
     constexpr double output_regen = 20.0;
     constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Absolute;
 
-    const Technique technique{};
-    const Domain domain{Create::MalevolentShrine()};
-    const Neutralizer neutralizer{};
+    const Technique technique{Create::Tech::Shrine()};
+    const Domain domain{Create::Dmn::MalevolentShrine()};
+    const Neutralizer neutralizer{Create::Nlr::HollowWickerBasket()};
 
     c.Identity() = id;
     c.Style() = style;
@@ -153,7 +195,7 @@ CurseUser Create::Sukuna() {
 
 // techniques
 
-Technique Create::Limitless() {
+Technique Create::Tech::Limitless() {
     Technique c{};
 
     const EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
@@ -181,8 +223,33 @@ Technique Create::Limitless() {
 
     return c;
 }
+Technique Create::Tech::Shrine() {
+    Technique c{};
 
-Technique Create::IdleTransfiguration() {
+    const EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
+
+    c.Identity() = id;
+
+    const EntityInfo dismantle_id = {"Dismantle", "\x1b[38;5;209m", "A powerful slicing ability" };
+    const EntityInfo cleave_id = {"Cleave", "\x1b[38;5;214m", "An ability that requires touch, that cuts through anyones durability, with enough output" };
+    const EntityInfo spiderweb_id = {"Spiderweb", "\x1b[38;5;9m", "Cleave used in a way that disorients other opponents"};
+
+    constexpr double dismantle_damage = 25.0, dismantle_cost = 20.0, dismantle_output = 5.0;
+    constexpr double cleave_damage = 250.0, cleave_cost = 1000.0, cleave_output = 175.0;
+    constexpr double spiderweb_damage = 25.0, spiderweb_cost = 500.0, spiderweb_output = 100.0;
+
+    const TechAbility dismantle = {dismantle_id, dismantle_damage, dismantle_cost, dismantle_output, globalums::DamageType::Normal};
+    const TechAbility cleave = {cleave_id, cleave_damage, cleave_cost, cleave_output, globalums::DamageType::BypassRein};
+    const TechAbility spiderweb = {spiderweb_id, spiderweb_damage, spiderweb_cost, spiderweb_output, globalums::DamageType::Normal};
+
+    c.Abilities().push_back(dismantle);
+    c.Abilities().push_back(cleave);
+    c.Abilities().push_back(spiderweb);
+
+    return c;
+}
+
+Technique Create::Tech::IdleTransfiguration() {
     Technique c{};
 
     const EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
@@ -202,7 +269,7 @@ Technique Create::IdleTransfiguration() {
 
 // domains
 
-Domain Create::UnlimitedVoid() {
+Domain Create::Dmn::UnlimitedVoid() {
     Domain c{};
     c.identity = {"Unlimited Void", "\x1b[34m", "A domain that floods the targets mind with endless information, paralyzing them"};
     c.damage_type = globalums::DamageType::BypassAll;
@@ -218,7 +285,7 @@ Domain Create::UnlimitedVoid() {
     return c;
 }
 
-Domain Create::MalevolentShrine() {
+Domain Create::Dmn::MalevolentShrine() {
     Domain c{};
     c.identity = {"Malevolent Shrine", "\x1b[31m", "A domain that relentlessly cuts anything within its range"};
     c.damage_type = globalums::DamageType::BypassTech;
@@ -234,7 +301,7 @@ Domain Create::MalevolentShrine() {
     return c;
 }
 
-Domain Create::SelfEmbodimentOfPerfection() {
+Domain Create::Dmn::SelfEmbodimentOfPerfection() {
     Domain c{};
     c.identity = {"Self Embodiment of Perfection", "\x1b[35m", "A domain that allows the manipulation of any entities soul inside the domain without requiring technique activation"};
     c.damage_type = globalums::DamageType::BypassAll;
@@ -250,18 +317,27 @@ Domain Create::SelfEmbodimentOfPerfection() {
 
 // neutralizers
 
-Neutralizer Create::SimpleDomain() {
+Neutralizer Create::Nlr::SimpleDomain() {
     Neutralizer c{};
     c.identity = {"Simple Domain", "\x1b[33m", "A barrier technique that creates a small zone to neutralize cursed techniques"};
     c.neutralizer_type = NeutralizerType::FullyProtected;
     c.cost = 100.0;
-    c.turn_type = NeutralizerTurnType::SelfSustained;
     c.max_health = 200.0;
     c.health = c.max_health;
     c.durability = 200.0;
     return c;
 }
-Neutralizer Create::FallingBlossomEmotion() {
+Neutralizer Create::Nlr::HollowWickerBasket() {
+    Neutralizer c{};
+    c.identity = {"Hollow Wicker Basket", "\x1b[33m", "A barrier technique older than simple domain that requires continuous hand signs"};
+    c.neutralizer_type = NeutralizerType::FullyProtected;
+    c.cost = 300.0;
+    c.max_health = 300.0;
+    c.health = c.max_health;
+    c.durability = 75.0;
+    return c;
+}
+Neutralizer Create::Nlr::FallingBlossomEmotion() {
     Neutralizer c{};
     c.identity = {"Falling Blossom Emotion", "\x1b[32m", "An anti-domain technique that automatically counters incoming attacks using cursed energy"};
     c.cost = 50.0;
@@ -269,30 +345,48 @@ Neutralizer Create::FallingBlossomEmotion() {
     c.health = c.max_health;
     c.durability = 50.0;
     c.neutralizer_type = NeutralizerType::ReducedDamage;
-    c.turn_type = NeutralizerTurnType::UserSustained;
     return c;
 }
 
 // cursed tools
 
-CursedTool Create::InvertedSpearOfHeaven() {
+CursedTool Create::Tool::InvertedSpearOfHeaven() {
     CursedTool c{};
-
     const EntityInfo id = {"Inverted Spear Of Heaven", "", "A Cursed Tool that negates Techniques"};
-
-    constexpr double damage = 100.0;
-
+    constexpr double damage = 75.0;
+    const auto at_type = globalums::DamageType::BypassTech;
     c.identity = id;
     c.damage = damage;
-    c.damage_type = globalums::DamageType::BypassTech;
-    c.given_effect = Create::BleedEffect();
-
+    c.damage_type = at_type;
+    c.given_effect = Create::Effect::BleedEffect();
+    return c;
+}
+CursedTool Create::Tool::SplitSoulKatana() {
+    CursedTool c{};
+    const EntityInfo id = {"Split Soul Katana", "", "A Cursed Tool that negates Durability and cuts the soul"};
+    constexpr double damage = 80.0;
+    const auto at_type = globalums::DamageType::BypassRein;
+    c.identity = id;
+    c.damage = damage;
+    c.damage_type = at_type;
+    c.given_effect = Create::Effect::BleedEffect();
+    return c;
+}
+CursedTool Create::Tool::PlayfulCloud() {
+    CursedTool c{};
+    const EntityInfo id = {"Playful Cloud", "", "A Cursed Tool that's strength increases based on the bearers strength"};
+    constexpr double damage = 70.0;
+    const auto at_type = globalums::DamageType::Normal;
+    c.identity = id;
+    c.damage = damage;
+    c.damage_type = at_type;
+    c.given_effect = Create::Effect::BleedEffect();
     return c;
 }
 
 // status effects
 
-StatusEffect Create::BleedEffect() {
+StatusEffect Create::Effect::BleedEffect() {
     StatusEffect c{};
 
     constexpr double severity_amount = 25.0;

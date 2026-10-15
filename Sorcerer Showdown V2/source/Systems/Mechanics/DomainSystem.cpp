@@ -90,7 +90,9 @@ SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){
 }
 
 bool DomainSystem::HandleDamage(Domain& c, const double damage, CurseUser* crs) {
-    if (!c.is_active) return true;
+    if (!c.is_active) {
+        throw std::runtime_error("Inactive domains cannot be damaged");
+    }
     c.health -= damage / c.durability;
     if (c.health <= 0.0){
         DomainSystem::ResetDomain(c, crs);

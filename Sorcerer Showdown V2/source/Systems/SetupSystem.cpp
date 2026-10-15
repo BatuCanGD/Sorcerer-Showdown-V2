@@ -59,6 +59,7 @@ std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
 
 const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
     std::vector<std::unique_ptr<Character>> list;
+<<<<<<< HEAD
     list.push_back(std::make_unique<CurseUser>(Create::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Sukuna()));
     list.push_back(std::make_unique<CurseUser>(Create::Mahito()));
@@ -67,6 +68,13 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool
             list.push_back(std::move(c)); 
         }
     }   
+=======
+    list.push_back(std::make_unique<Character>(Create::Char::Toji()));
+    list.push_back(std::make_unique<Character>(Create::Char::Maki()));
+    list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
+    list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
+    list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
+>>>>>>> 10d4fd9 (updated create namespace and removed enum from neutralizer)
     return list;
 }
 
