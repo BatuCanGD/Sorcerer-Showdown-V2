@@ -203,23 +203,23 @@ Technique Create::Tech::Limitless() {
     const EntityInfo red_id = {"Red", "\x1b[38;5;9m", "The power to repel"};
     const EntityInfo purple_id = {"Purple", "\x1b[38;5;129m", "Blue and Red combined, destroys anything in its path"};
     
-    c.Identity() = id;
+    c.identity = id;
 
     constexpr auto at_type = globalums::DamageType::Normal;
     constexpr double blue_damage    = 125.0, blue_cost      = 335.0, blue_output    = 55.0;
     constexpr double red_damage     = 175.0, red_cost       = 650.0, red_output     = 120.0;
     constexpr double purple_damage  = 300.0, purple_cost    = 1250.0,purple_output  = 200.0;
 
-    const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    at_type}; 
-    const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     at_type}; 
-    const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  at_type};
+    const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    0, at_type}; 
+    const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     0, at_type}; 
+    const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  0, at_type};
 
-    c.Abilities().push_back(blue);
-    c.Abilities().push_back(red);
-    c.Abilities().push_back(purple);
+    c.abilities.push_back(blue);
+    c.abilities.push_back(red);
+    c.abilities.push_back(purple);
 
-    c.Barrier().can_use_barrier = true;
-    c.Barrier().is_active = true;
+    c.barrier.can_use_barrier = true;
+    c.barrier.is_active = true;
 
     return c;
 }
@@ -228,7 +228,7 @@ Technique Create::Tech::Shrine() {
 
     const EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
 
-    c.Identity() = id;
+    c.identity = id;
 
     const EntityInfo dismantle_id = {"Dismantle", "\x1b[38;5;209m", "A powerful slicing ability" };
     const EntityInfo cleave_id = {"Cleave", "\x1b[38;5;214m", "An ability that requires touch, that cuts through anyones durability, with enough output" };
@@ -238,13 +238,13 @@ Technique Create::Tech::Shrine() {
     constexpr double cleave_damage = 250.0, cleave_cost = 1000.0, cleave_output = 175.0;
     constexpr double spiderweb_damage = 25.0, spiderweb_cost = 500.0, spiderweb_output = 100.0;
 
-    const TechAbility dismantle = {dismantle_id, dismantle_damage, dismantle_cost, dismantle_output, globalums::DamageType::Normal};
-    const TechAbility cleave = {cleave_id, cleave_damage, cleave_cost, cleave_output, globalums::DamageType::BypassRein};
-    const TechAbility spiderweb = {spiderweb_id, spiderweb_damage, spiderweb_cost, spiderweb_output, globalums::DamageType::Normal};
+    const TechAbility dismantle = {dismantle_id, dismantle_damage, dismantle_cost, dismantle_output,0,  globalums::DamageType::Normal};
+    const TechAbility cleave = {cleave_id, cleave_damage, cleave_cost, cleave_output, 0, globalums::DamageType::BypassRein};
+    const TechAbility spiderweb = {spiderweb_id, spiderweb_damage, spiderweb_cost, spiderweb_output,0,  globalums::DamageType::Normal};
 
-    c.Abilities().push_back(dismantle);
-    c.Abilities().push_back(cleave);
-    c.Abilities().push_back(spiderweb);
+    c.abilities.push_back(dismantle);
+    c.abilities.push_back(cleave);
+    c.abilities.push_back(spiderweb);
 
     return c;
 }
@@ -255,14 +255,14 @@ Technique Create::Tech::IdleTransfiguration() {
     const EntityInfo id = {"Idle Transfiguration", "\x1b[38;5;129m", "A Technique that grants the user the manipulation of the shape of souls"};
     const EntityInfo tfig_id {"Transfiguration", "\x1b[38;5;238m", "Attacks the users soul directly"};
     
-    c.Identity() = id;
+    c.identity = id;
 
     constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
-    const TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output,at_type};
+    const TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output, 0, at_type};
     
-    c.Abilities().push_back(transfiguration);
+    c.abilities.push_back(transfiguration);
     
     return c;
 }

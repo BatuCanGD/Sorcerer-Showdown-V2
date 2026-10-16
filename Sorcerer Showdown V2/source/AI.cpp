@@ -3,6 +3,7 @@
 #include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
 #include "../header/Systems/Mechanics/CursedToolSystem.hpp"
+#include "../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../header/Utilities/Random.hpp"
 #include "../header/Battlefield.hpp"
@@ -79,38 +80,136 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
             if (cr->Jujutsu().domain && cr->Jujutsu().domain->is_active) domain_users++;
         }
     }
-    const double domain_cost = c.Jujutsu().domain ? SorcerySystem::ApplySpendingMultiplier(c.Jujutsu().domain->cost, c) : 0.0;
-    const bool can_use_domain = c.Jujutsu().domain && c.Output().status != CurseUserOutput::Status::BurntOut && c.CursedEnergy().cursed_energy >= domain_cost;
-    const bool should_use_domain = can_use_domain && domain_users == 1;
-    const bool needs_neutralizer = c.Jujutsu().neutralizer && domain_users > 1 && (c.Output().status == CurseUserOutput::Status::BurntOut || c.CursedEnergy().cursed_energy < domain_cost);
+    auto& domain = c.Jujutsu().domain;
+    auto& neutral = c.Jujutsu().neutralizer;
 
     switch(fs){
         case FightingStyle::Aggressive: {
-
-
+            if (domain && !domain->is_active && domain_users <= 1) {
+                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
+                    domain->is_active = true;
+                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
+                    neutral->is_active = true;
+                }
+            }
             break;
         }
         case FightingStyle::Defensive: {
-        
+            if (domain && !domain->is_active && domain_users == 1) {
+                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
+                    domain->is_active = true;
+                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
+                    neutral->is_active = true;
+                }
+            }
             break;
         }
         case FightingStyle::Mixed: {
-
+            if (domain && !domain->is_active && domain_users <= 1) {
+                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
+                    domain->is_active = true;
+                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
+                    neutral->is_active = true;
+                }
+            }
             break;
         }
     }
-
-
-    
-
 }
+
 bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
+    auto& tech = c.Jujutsu().technique;
+    if (!tech){
+        return false;
+    }
+    /*
+    switch(iq.fighting_style){
+        case FightingStyle::Aggressive:{
 
+            while(get_random<int>(0, 100) >= 75) {
+                TechniqueSystem::ChantAbility()
+            }
+            switch(iq.resource_usage){
+                case ResourceUsage::AllOut:
+                    if (){
 
+                        return true;
+                    }
+                case ResourceUsage::Conservative:
+                    if (){
 
+                        return true;
+                    }
+                case ResourceUsage::Mixed:
+                    if (){
 
+                        return true;
+                    }
+            }
+        }
+        case FightingStyle::Defensive:{
 
+            switch(iq.resource_usage){
+                case ResourceUsage::AllOut:
+                    if (){
+
+                        return true;
+                    }
+                case ResourceUsage::Conservative:
+                    if (){
+
+                        return true;
+                    }
+                case ResourceUsage::Mixed:
+                    if (){
+
+                        return true;
+                    }
+            }
+        }
+        case FightingStyle::Mixed:{
+
+            switch(iq.resource_usage){
+                case ResourceUsage::AllOut:
+                    if (){
+
+                        return true;
+                    }
+                case ResourceUsage::Conservative:
+                    if (){
+
+                        return true;
+                    }
+                case ResourceUsage::Mixed:
+                    if (){
+
+                        return true;
+                    }
+            }
+        }
+        default:
+            throw std::runtime_error("Unexpected Fighting Style Type");
+    }
+    */
     return false;
+}
+void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
+    switch(iq){
+        case ResourceUsage::AllOut:
+
+            break;
+        case ResourceUsage::Conservative:
+
+            break;
+        case ResourceUsage::Mixed:
+
+            break;
+        default:
+            throw std::runtime_error("Unexpected Resource Usage Type");
+    }
+
+
+
 }
 void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
     if (c.Jujutsu().shikigami.empty()) return;
@@ -220,9 +319,6 @@ void AI::DRM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     }
     c.RCT().rct_output = val;
 }
-void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
-
-}
 void AI::DRM_UseTools(Character &c, const Character & tr) {
     auto& eq = c.Equipment();
     if ((!eq.current_tool && !eq.stored_tool && (!eq.has_access_to_inventory || eq.inventory.empty()))){
@@ -230,7 +326,7 @@ void AI::DRM_UseTools(Character &c, const Character & tr) {
     }
     if (const auto& cr = tr.CanUseSorcery()){
         if (const auto& t = cr->Jujutsu().technique) {
-            if (t->HasBarrier()){
+            if (TechniqueSystem::HasBarrier(*t)){
                 AI::SwitchTo(eq, WeaponChoice::TechniqueBypassing);
                 return;
             }

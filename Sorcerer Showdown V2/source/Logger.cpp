@@ -23,7 +23,7 @@ void Log::CharacterPresentation(const Character &c){
         std::println("Cursed Energy-[\x1b[36m{:.1f}/{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, crs->CursedEnergy().max_cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
         std::print("Status: [{}] ", Stringet::OutputStatusStr(crs->Output().status));
         if (const auto& tech = crs->Jujutsu().technique){
-            std::print("Technique: [{}] ", GetInfo::Name(tech->Identity()));
+            std::print("Technique: [{}] ", GetInfo::Name(tech->identity));
         }
         if (const auto& domain = crs->Jujutsu().domain){
             std::print("Domain: [{}][{}] ", GetInfo::Name(domain->identity), domain->is_active ? "Active":"Inactive");
@@ -37,12 +37,12 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
     const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
 
     if (log_name){
-        std::println("TECHNIQUE: [{}]", GetInfo::Name(ct.Identity()));
+        std::println("TECHNIQUE: [{}]", GetInfo::Name(ct.identity));
     }
     if (log_abilities){
         std::println("ABILITIES");
         size_t i = 0;
-        for (const auto& c : ct.Abilities()){
+        for (const auto& c : ct.abilities){
             std::println("{}:[{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
                 ++i, GetInfo::Name(c.id), c.damage, c.output, c.cost);
         }

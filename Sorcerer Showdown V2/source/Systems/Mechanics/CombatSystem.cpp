@@ -13,7 +13,7 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
     const auto& crs = c.CanUseSorcery();
     if (crs){
         if (const auto& tech = crs->Jujutsu().technique){
-            if (tech->HasBarrier() && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
+            if (TechniqueSystem::HasBarrier(*tech) && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
                 return {.attack_blocked = true};
             }
         }
@@ -78,8 +78,13 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
 
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
-    const auto d = attacked.Damage(chosen_ct.damage * SorcerySystem::OutputStatusMultiplier(attacker.Output().status), chosen_ct.damage_type);
-    return {&chosen_ct , &attacker, &attacked, d.damage, enough_output, enough_ce};
+
+    const double chant_output = chosen_ct.chant_amount > 0 ? 1.0 + chosen_ct.chant_amount / 2.0 : 1.0;
+    const double technique_output = SorcerySystem::OutputStatusMultiplier(attacker.Output().status);
+    const double damage = (chosen_ct.damage * chant_output) * technique_output;
+    const auto result = attacked.Damage(damage, chosen_ct.damage_type);
+
+    return {&chosen_ct , &attacker, &attacked, result.damage, enough_output, enough_ce};
 }
 
 void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {

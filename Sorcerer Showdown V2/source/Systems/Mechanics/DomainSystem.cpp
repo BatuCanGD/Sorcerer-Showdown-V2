@@ -31,9 +31,9 @@ bool DomainSystem::CalculateActualHit(const Domain& domain, const Character& c) 
     return true;
 }
 
-DomainClashStruct DomainSystem::ClashDomains(CurseUser& frs, CurseUser& scd) {
-    auto& first  = frs.Jujutsu().domain;
-    auto& second = scd.Jujutsu().domain;
+DomainClashStruct DomainSystem::ClashDomains(CurseUser& f, CurseUser& s) {
+    auto& first  = f.Jujutsu().domain;
+    auto& second = s.Jujutsu().domain;
     if (!(first->is_active && second->is_active)) {
         throw std::invalid_argument("Both domains must be active for the clash"); 
     }
@@ -45,10 +45,10 @@ DomainClashStruct DomainSystem::ClashDomains(CurseUser& frs, CurseUser& scd) {
     if (!is_equal_ref){
         if (first->refinement > second->refinement){
             winner = ClashWinner::First;
-            DomainSystem::ResetDomain(*second, &scd);
+            DomainSystem::ResetDomain(*second, &s);
         }else{
             winner = ClashWinner::Second;
-            DomainSystem::ResetDomain(*first, &frs);
+            DomainSystem::ResetDomain(*first, &f);
         }
         return {&*first, &*second, 0.0, 0.0, winner, DomainWinCon::Refinement};
     }
@@ -62,8 +62,8 @@ DomainClashStruct DomainSystem::ClashDomains(CurseUser& frs, CurseUser& scd) {
         second_damage *= 2.5;
     }
 
-    const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage, &frs);
-    const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage, &scd);
+    const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage, &f);
+    const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage, &s);
 
     if (f_destroyed || s_destroyed) {
         if (f_destroyed && s_destroyed){
