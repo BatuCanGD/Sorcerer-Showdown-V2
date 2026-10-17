@@ -78,7 +78,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility&
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
 
-    const auto result = attacked.Damage(TechniqueSystem::GetFinalDamage(chosen_ct, attacker), chosen_ct.damage_type);
+    const auto result = attacked.Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     chosen_ct.chant_amount = 0;
     return {&chosen_ct , &attacker, &attacked, result.damage, enough_output, enough_ce};
 }

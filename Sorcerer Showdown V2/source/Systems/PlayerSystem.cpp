@@ -269,7 +269,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 
 void UserControl::ForRCT(CurseUser& c){
     double& rct = c.RCT().rct_output;
-    std::println("Total RCT output: {0:.1f} | Cost: {1:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
+    std::println("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
     std::println("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
     std::print("Enter Output Amount: ");
@@ -283,7 +283,7 @@ void UserControl::ForRCT(CurseUser& c){
 }
 void UserControl::ForReinforcement(CurseUser& c){
     double& rf = c.CursedEnergy().reinforcement_amount;
-    std::println("Total Reinforcement Usage: {0:.1f} | Cost: {0:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
+    std::println("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
     std::println("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
     std::print("Enter Reinforcement Amount: ");

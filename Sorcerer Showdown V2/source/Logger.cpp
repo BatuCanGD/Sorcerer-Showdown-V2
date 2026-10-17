@@ -101,7 +101,7 @@ void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
         case 9: std::println("Paramita!"); break;
         case 10: std::println("Repulsion!"); break;
     }
-    std::println("{}'s damage output increases to: {:.1f}", GetInfo::Name(tc.id), TechniqueSystem::GetFinalDamage(tc, cu));
+    std::println("{}'s damage output increases to: {:.1f}", GetInfo::Name(tc.id), TechniqueSystem::CalculateDamage(tc, cu));
 }
 void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const Character& c2) {
     std::string str{};
