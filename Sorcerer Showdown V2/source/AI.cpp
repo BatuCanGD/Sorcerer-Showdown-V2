@@ -3,6 +3,8 @@
 #include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/CharacterType/CurseUser.hpp"
 #include "../header/Systems/Mechanics/CursedToolSystem.hpp"
+#include "../header/Systems/GenericSystems.hpp"
+#include "../header/Systems/Mechanics/VowSystem.hpp"
 #include "../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../header/Utilities/Random.hpp"
@@ -58,7 +60,7 @@ void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, c
     }
     if (auto* c = user.CanUseSorcery()){
         AI::DF_UseDomain(*c, bf, iq.fighting_style);
-        if (AI::DF_UseTechnique(*c, *target, iq)) return;
+        AI::DF_UseTechnique(*c, *target, iq);
     }
     const auto l = user.Attack(*target);
     Log::Attack(l, user, *target);
@@ -80,36 +82,76 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
             if (cr->Jujutsu().domain && cr->Jujutsu().domain->is_active) domain_users++;
         }
     }
+
     auto& domain = c.Jujutsu().domain;
     auto& neutral = c.Jujutsu().neutralizer;
 
     switch(fs){
         case FightingStyle::Aggressive: {
-            if (domain && !domain->is_active && domain_users <= 1) {
-                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
-                    domain->is_active = true;
-                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
-                    neutral->is_active = true;
+            if (domain) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c);
+                if (!domain->is_active && enough_ce){
+                    if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
+                        domain->is_active = true;
+                    }
+                }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 15){
+                    domain->is_active = false;
+                }
+            }
+            if (neutral) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
+                if (enough_ce){
+                    if ((domain && !domain->is_active) || domain_users == 1) {
+                        neutral->is_active = true;
+                    }
+                }else if (neutral->is_active) {
+                    neutral->is_active = false;
                 }
             }
             break;
         }
         case FightingStyle::Defensive: {
-            if (domain && !domain->is_active && domain_users == 1) {
-                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
-                    domain->is_active = true;
-                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
-                    neutral->is_active = true;
+            if (domain) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c);
+                if (!domain->is_active && enough_ce){
+                    if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
+                        domain->is_active = true;
+                    }
+                }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 3){
+                    domain->is_active = false;
+                }
+            }
+            if (neutral) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
+                if (enough_ce){
+                    if ((domain && !domain->is_active) || domain_users == 1) {
+                        neutral->is_active = true;
+                    }
+                }else if (neutral->is_active) {
+                    neutral->is_active = false;
                 }
             }
             break;
         }
         case FightingStyle::Mixed: {
-            if (domain && !domain->is_active && domain_users <= 1) {
-                if (c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c)){
-                    domain->is_active = true;
-                }else if (neutral && !neutral->is_active && c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c)) {
-                    neutral->is_active = true;
+            if (domain) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, c);
+                if (enough_ce){
+                    if (!domain->is_active && (domain_users == 1  || get_random<std::uint8_t>(1, 50) >= 25)) {
+                        domain->is_active = true;
+                    }
+                }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 9){
+                    domain->is_active = false;
+                }
+            }
+            if (neutral) {
+                const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
+                if (enough_ce){
+                    if ((domain && !domain->is_active) || domain_users == 1) {
+                        neutral->is_active = true;
+                    }
+                }else if (neutral->is_active) {
+                    neutral->is_active = false;
                 }
             }
             break;
@@ -117,108 +159,67 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
     }
 }
 
-bool AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
+void AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
     auto& tech = c.Jujutsu().technique;
     if (!tech){
-        return false;
+        return;
     }
-    /*
+    auto* ab = TechniqueSystem::GetAbility(*tech, static_cast<TechniqueSystem::AbilityType>(get_random<std::uint8_t>(0, 3)));
+    const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, c);
+    
+    if (!enough_ce){
+        return;
+    }
+
+    int c_amount{};
     switch(iq.fighting_style){
         case FightingStyle::Aggressive:{
-
-            while(get_random<int>(0, 100) >= 75) {
-                TechniqueSystem::ChantAbility()
-            }
-            switch(iq.resource_usage){
-                case ResourceUsage::AllOut:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Conservative:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Mixed:
-                    if (){
-
-                        return true;
-                    }
-            }
+            c_amount = 33;
+            break;
         }
         case FightingStyle::Defensive:{
-
-            switch(iq.resource_usage){
-                case ResourceUsage::AllOut:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Conservative:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Mixed:
-                    if (){
-
-                        return true;
-                    }
-            }
+            c_amount = 67;
+            break;
         }
         case FightingStyle::Mixed:{
-
-            switch(iq.resource_usage){
-                case ResourceUsage::AllOut:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Conservative:
-                    if (){
-
-                        return true;
-                    }
-                case ResourceUsage::Mixed:
-                    if (){
-
-                        return true;
-                    }
-            }
+            c_amount = get_random<int>(1, 100);
+            break;
         }
-        default:
-            throw std::runtime_error("Unexpected Fighting Style Type");
     }
-    */
-    return false;
+    while(get_random<int>(1, 100) >= c_amount && ab->chant_amount < 5) {
+        TechniqueSystem::ChantAbility(*ab, c);
+    }
+
+    Log::TechniqueAttack(CombatSystem::ResolveTechnique(c, *ab, target));
 }
 void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
+    auto& vows = c.Jujutsu().binding_vows;
+    size_t size{0};
     switch(iq){
         case ResourceUsage::AllOut:
-
+            size = 3;
             break;
         case ResourceUsage::Conservative:
-
+            size = 1;
             break;
         case ResourceUsage::Mixed:
-
+            size = 2;
             break;
         default:
-            throw std::runtime_error("Unexpected Resource Usage Type");
+            size = 0;
     }
-
-
-
+    if (vows.size() < size){
+        vows.push_back(VowSystem::CreateVow(c, c.Style()));
+    }
 }
 void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
     if (c.Jujutsu().shikigami.empty()) return;
     SummonType type{};
     switch(rs){
         case ResourceUsage::AllOut: {     
-            if (SorcerySystem::CEMoreThanMx(c, 0.45)){
+            if (SorcerySystem::CEMoreThanMax(c, 0.45)){
                 type = SummonType::Active;  
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.15)){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.15)){
                 type = SummonType::Support;
             }else{
                 type = SummonType::Shadow;
@@ -226,9 +227,9 @@ void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
             break;
         }
         case ResourceUsage::Mixed: {
-            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.30, 0.60))){
+            if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.30, 0.60))){
                 type = SummonType::Active;  
-            }else if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.05, 0.30))){
+            }else if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.05, 0.30))){
                 type = SummonType::Support;
             }else{
                 type = SummonType::Shadow;
@@ -236,9 +237,9 @@ void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
             break;
         }
         case ResourceUsage::Conservative: {
-            if (SorcerySystem::CEMoreThanMx(c, 0.65)){
+            if (SorcerySystem::CEMoreThanMax(c, 0.65)){
                 type = SummonType::Active;  
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.40)){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.40)){
                 type = SummonType::Support;
             }else{
                 type = SummonType::Shadow;
@@ -254,29 +255,29 @@ void AI::DRM_UseReinforcement(CurseUser &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
-            if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.40){
+            if (SorcerySystem::CEMoreThanMax(c, 0.40) && !GenericSystems::HPMoreThanMax(c, 0.40)){
                 val = 135.0;
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * 0.33){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.20) && !GenericSystems::HPMoreThanMax(c, 0.33)){
                 val = 90.0;
-            }else if (c.State().health < c.State().max_health * 0.25){
+            }else if (!GenericSystems::HPMoreThanMax(c, 0.25)){
                 val = 60.0;
             }
             break;
         case ResourceUsage::Mixed:
-            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.25, 0.75)) && c.State().health < c.State().max_health * get_random<double>(0.60, 0.90)){
+            if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.25, 0.75)) && c.State().health < c.State().max_health * get_random<double>(0.60, 0.90)){
                 val = get_random<double>(70.0, 150.0);
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * get_random<double>(0.30, 0.60)){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.20) && c.State().health < c.State().max_health * get_random<double>(0.30, 0.60)){
                 val = get_random<double>(65.0, 100.0);
             }else if (c.State().health < c.State().max_health * get_random<double>(0.01, 0.30)){
                 val = get_random<double>(20.0, 80.0);
             }
             break;
         case ResourceUsage::Conservative:
-            if (SorcerySystem::CEMoreThanMx(c, 0.60) && c.State().health < c.State().max_health * 0.55){
+            if (SorcerySystem::CEMoreThanMax(c, 0.60) && !GenericSystems::HPMoreThanMax(c, 0.55)){
                 val = 90.0;
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.35){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.40) && !GenericSystems::HPMoreThanMax(c, 0.35)){
                 val = 50.0;
-            }else if (c.State().health < c.State().max_health * 0.30){
+            }else if (!GenericSystems::HPMoreThanMax(c, 0.30)){
                 val = 35.0;
             }
             break;
@@ -290,29 +291,29 @@ void AI::DRM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
-            if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.40){
+            if (SorcerySystem::CEMoreThanMax(c, 0.40) && !GenericSystems::HPMoreThanMax(c, 0.40)){
                 val = 115.0;
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * 0.33){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.20) && !GenericSystems::HPMoreThanMax(c, 0.33)){
                 val = 85.0;
-            }else if (c.State().health < c.State().max_health * 0.25){
+            }else if (!GenericSystems::HPMoreThanMax(c, 0.25)){
                 val = 65.0;
             }
             break;
         case ResourceUsage::Mixed:
-            if (SorcerySystem::CEMoreThanMx(c, get_random<double>(0.25, 0.75)) && c.State().health < c.State().max_health * get_random<double>(0.60, 0.90)){
+            if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.25, 0.75)) && !GenericSystems::HPMoreThanMax(c, get_random<double>(0.60, 0.90))){
                 val = get_random<double>(50.0, 150.0);
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.20) && c.State().health < c.State().max_health * get_random<double>(0.30, 0.60)){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.20) && !GenericSystems::HPMoreThanMax(c, get_random<double>(0.30, 0.60))){
                 val = get_random<double>(35.0, 80.0);
-            }else if (c.State().health < c.State().max_health * get_random<double>(0.01, 0.30)){
+            }else if (!GenericSystems::HPMoreThanMax(c, get_random<double>(0.01, 0.30))){
                 val = get_random<double>(10.0, 50.0);
             }
             break;
         case ResourceUsage::Conservative:
-            if (SorcerySystem::CEMoreThanMx(c, 0.60) && c.State().health < c.State().max_health * 0.55){
+            if (SorcerySystem::CEMoreThanMax(c, 0.60) && !GenericSystems::HPMoreThanMax(c, 0.55)){
                 val = 100.0;
-            }else if (SorcerySystem::CEMoreThanMx(c, 0.40) && c.State().health < c.State().max_health * 0.35){
+            }else if (SorcerySystem::CEMoreThanMax(c, 0.40) && !GenericSystems::HPMoreThanMax(c, 0.35)){
                 val = 55.0;
-            }else if (c.State().health < c.State().max_health * 0.30){
+            }else if (!GenericSystems::HPMoreThanMax(c, 0.30)){
                 val = 50.0;
             }
             break;
@@ -327,51 +328,15 @@ void AI::DRM_UseTools(Character &c, const Character & tr) {
     if (const auto& cr = tr.CanUseSorcery()){
         if (const auto& t = cr->Jujutsu().technique) {
             if (TechniqueSystem::HasBarrier(*t)){
-                AI::SwitchTo(eq, WeaponChoice::TechniqueBypassing);
+                CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
                 return;
             }
         }
     }
-    if (tr.State().health > c.State().health || tr.State().health > tr.State().max_health * 0.7){
-        SwitchTo(eq, WeaponChoice::HighestDamage);
+    if (tr.State().health > c.State().health || GenericSystems::HPMoreThanMax(c, 0.70)){
+        SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
     }
 }
-
-void AI::SwitchTo(CharInv &eq, WeaponChoice wc) {
-    const bool& has_inv = eq.has_access_to_inventory;    
-    if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
-        auto is_the_one = [wc](const CursedTool* ct)->bool{
-            return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && CursedToolSystem::DoesBypassTech(*ct)));
-        };
-        if (is_the_one(&*eq.current_tool)){
-            return;
-        }else if (wc == WeaponChoice::Unequip && eq.current_tool){
-            AI::SwitchWeapons(eq, WeaponPlacement::Hand, eq.has_access_to_inventory ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
-            return;
-        }
-        if (is_the_one(&*eq.stored_tool)) {
-            AI::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand);
-            return;
-        }
-        if (has_inv){
-            for (const auto& r : eq.inventory){
-                if (is_the_one(&r)){
-                    AI::SwitchWeapons(eq, WeaponPlacement::Inventory, WeaponPlacement::Hand, wc);
-                    return;
-                }
-            }
-        }
-    }else if (wc == WeaponChoice::HighestDamage) {
-        if (!has_inv){
-            AI::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
-        }else{
-            AI::SwitchWeapons(eq, !eq.inventory.empty() ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
-        }
-    }else{
-        AI::SwitchWeapons(eq, WeaponPlacement::Hand, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand , WeaponChoice::None); 
-    }
-}
-
 
 void AI::Fight(Character &user, Battlefield &bf) {
     const auto& style{user.Style()};
@@ -385,157 +350,4 @@ void AI::Fight(Character &user, Battlefield &bf) {
     }catch(const std::runtime_error& re){
         std::println(stderr, "Runtime error: {}", re.what());
     }
-}
-
-CursedTool AI::GetFromInv(CharInv& eq, WeaponChoice wc) {
-    auto& inv = eq.inventory;
-    if (inv.empty() || wc == WeaponChoice::None) {
-        return {};
-    }
-
-    size_t chosen = inv.size() - 1;
-    switch (wc) {
-        case WeaponChoice::EffectInducing:
-            for (size_t i = 0; i < inv.size(); ++i) {
-                if (inv[i].given_effect) {
-                    chosen = i;
-                    break;
-                }
-            }
-            break;
-        case WeaponChoice::HighestDamage:
-            chosen = 0;
-            for (size_t i = 1; i < inv.size(); ++i) {
-                if (inv[i].damage > inv[chosen].damage) {
-                    chosen = i;
-                }
-            }
-            break;
-        case WeaponChoice::TechniqueBypassing:
-            for (size_t i = 0; i < inv.size(); ++i) {
-                if (inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
-                    chosen = i;
-                    break;
-                }
-            }
-            break;
-        case WeaponChoice::Random:
-            chosen = get_random<size_t>(0, inv.size() - 1);
-            break;
-        default:
-            throw std::runtime_error("Invalid weapon choice");
-    }
-    CursedTool selected = std::move(inv[chosen]);
-    inv.erase(inv.begin() + chosen);
-    return selected;
-}
-
-CursedTool AI::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_type) {
-    if (which_type == WeaponChoice::Unequip){
-        return {};
-    }
-    switch(which){
-        case AI::WeaponPlacement::Hand:
-            if (eq.current_tool) {
-                CursedTool selected = std::move(*eq.current_tool);
-                eq.current_tool.reset();
-                return selected;
-            }
-            break;
-        case AI::WeaponPlacement::Offhand:
-            if (eq.stored_tool){
-                CursedTool selected = std::move(*eq.stored_tool);
-                eq.stored_tool.reset();
-                return selected;
-            }
-            break;
-        case AI::WeaponPlacement::Inventory:
-            return AI::GetFromInv(eq, which_type);
-        default:
-            break;
-    }
-    throw std::runtime_error("No Weapon able to be chosen");
-}
-bool AI::HasWeapon(CharInv &c, WeaponChoice wc){
-    switch(wc){
-        case AI::WeaponChoice::EffectInducing:
-            if ((c.current_tool && c.current_tool->given_effect) || (c.stored_tool && c.stored_tool->given_effect)){
-                return true;
-            }
-            if (c.has_access_to_inventory){
-                for (const auto& cc : c.inventory){
-                    if (cc.given_effect) return true;
-                }
-            }
-            break;
-        case AI::WeaponChoice::TechniqueBypassing: {
-            if ((c.current_tool && CursedToolSystem::DoesBypassTech(*c.current_tool)) || (c.stored_tool && CursedToolSystem::DoesBypassTech(*c.stored_tool))) {
-                return true;
-            }
-            if (c.has_access_to_inventory){
-                for (const auto& cc : c.inventory){
-                    if (CursedToolSystem::DoesBypassTech(cc)) return true;
-                }
-            }
-            break;
-        }
-        default: 
-            return true;
-    }
-    return false;
-}
-void AI::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoice wc) {
-    const bool unequip = wc == WeaponChoice::Unequip;
-    const bool& has_inv = c.has_access_to_inventory;
-    auto& inv = c.inventory;
-    auto& cur = c.current_tool;
-    auto& stor = c.stored_tool;
-
-    switch(where){
-        case AI::WeaponPlacement::Hand: {
-            if (cur){
-                CursedTool temp = std::move(*cur);
-                if (unequip) cur.reset();
-                else cur.emplace(std::move(wp));
-                if (has_inv){
-                    inv.push_back(std::move(temp));
-                }else {
-                    stor.emplace(std::move(temp));
-                }
-            }else if (!unequip){
-                cur.emplace(std::move(wp));
-            }
-            break;
-        }
-        case AI::WeaponPlacement::Offhand: {
-            if (stor){
-                CursedTool temp = std::move(*stor);
-                if (unequip) stor.reset();
-                else stor.emplace(std::move(wp));
-                
-                if (has_inv){
-                    inv.push_back(std::move(temp));
-                }else{
-                    cur.emplace(std::move(temp));
-                }
-            }else if (!unequip){
-                stor.emplace(std::move(wp));
-            }
-            break;
-        }
-        case AI::WeaponPlacement::Inventory:
-            if (unequip){
-                return;
-            }
-            if (has_inv){
-                inv.push_back(std::move(wp));
-            }else{
-                throw std::runtime_error("Cannot put weapon in inventory without access to inventory");
-            }
-            break;
-    }
-}
-
-void AI::SwitchWeapons(CharInv& eq, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc) {
-    AI::MoveWeapon(eq, AI::GetWeapon(eq, which, wc), where, wc);
 }

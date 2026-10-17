@@ -10,6 +10,6 @@ namespace SorcerySystem {
     double ApplyRCTCost(const double amount);
     double ApplyReinforcementCost(const double amount);
 
-    bool CEMoreThanMx(CurseUser& c, double p);
+    bool CEMoreThanMax(CurseUser& c, double p);
     void ApplyBurnOut(CurseUser& c);
 }

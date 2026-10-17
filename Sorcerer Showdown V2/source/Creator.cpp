@@ -268,7 +268,7 @@ Domain Create::Dmn::UnlimitedVoid() {
     c.cost = 2500.0;
     c.max_health = 500.0;
     c.health = c.max_health;
-    c.damage = 225.0;
+    c.damage = 300.0;
     c.durability = 3.5;
     c.range = 125;
     return c;
@@ -284,7 +284,7 @@ Domain Create::Dmn::MalevolentShrine() {
     c.cost = 1250.0;
     c.max_health = 600.0;
     c.health = c.max_health;
-    c.damage = 225.0;
+    c.damage = 300.0;
     c.durability = 5.5;
     c.range = 200;
     return c;

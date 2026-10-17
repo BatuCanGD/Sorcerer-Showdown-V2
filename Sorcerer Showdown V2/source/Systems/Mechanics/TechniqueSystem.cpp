@@ -5,6 +5,7 @@
 #include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Sorcery/Technique.hpp"
 #include "../../../header/Utilities/Random.hpp"
+#include <algorithm>
 
 std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {
     const double op = chosen_ct.output * SorcerySystem::EfficiencyMultiplier(user.CursedEnergy().efficiency);
@@ -73,6 +74,6 @@ bool TechniqueSystem::HasBarrier(const Technique &tech){
 }
 
 void TechniqueSystem::ChantAbility(TechAbility &tech, const CurseUser& cu){
-    tech.chant_amount++;
+    tech.chant_amount = std::min(tech.chant_amount + 1, 5u);
     Log::TechniqueChant(cu, tech);
 }

@@ -16,6 +16,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
             VowSystem::ApplyVows(*crs);
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);
+            ResourceHandler::TickChant(*crs);
             ResourceHandler::TickRCT(*crs);
             ResourceHandler::TickTraits(*crs);
             ResourceHandler::TickOutputStatus(*crs);
@@ -39,6 +40,12 @@ void ResourceHandler::TickCursedEnergy(CurseUser& crs){
 void ResourceHandler::TickShikigami(CurseUser& crs){
     for (auto& c : crs.Jujutsu().shikigami){
         ShikigamiSystem::TickShikigami(c, crs);
+    }
+}
+void ResourceHandler::TickChant(CurseUser &crs){
+    if (!crs.Jujutsu().technique) return;
+    for (auto& c : crs.Jujutsu().technique->abilities) {
+        if (c.chant_amount > 0) c.chant_amount--;
     }
 }
 void ResourceHandler::TickRCT(CurseUser& crs) {

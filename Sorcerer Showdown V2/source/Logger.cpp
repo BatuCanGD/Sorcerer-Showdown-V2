@@ -84,20 +84,24 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
         return;
     }
     if (tc.used_ability){
-        std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(tc.target->Identity()), tc.damage);
+        if (tc.blocked) {
+            std::println("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.target->Identity()), GetInfo::Name(tc.used_ability->id));
+        }else {
+            std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(tc.target->Identity()), tc.damage);
+        }
     }
 }
 void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
     switch(get_random<int>(0, 10)){
         case 0: std::println("Phase!"); break;
-        case 1: std::println("Twilight!"); break;
+        case 1: std::println("Twin Meteors!"); break;
         case 2: std::println("Eyes of Wisdom!"); break;
-        case 3: std::println("Nine Ropes!"); break;
+        case 3: std::println("Scales of the dragon!"); break;
         case 4: std::println("Polarized Light!"); break;
         case 5: std::println("Crow and Declaration!"); break;
         case 6: std::println("Between front and back!"); break;
-        case 7: std::println("Scales of the dragon!"); break;
-        case 8: std::println("Twin Meteors!"); break;
+        case 7: std::println("Nine Ropes!"); break;
+        case 8: std::println("Twilight!"); break;
         case 9: std::println("Paramita!"); break;
         case 10: std::println("Repulsion!"); break;
     }
@@ -159,7 +163,7 @@ void Log::Clash(const DomainClashStruct ds) {
     if (ds.winner == ClashWinner::Both) {
         std::print("Both domains have collapsed due to ");
     }else{
-        std::print("{} has collapsed due to ", ds.winner == ClashWinner::First ? GetInfo::Name(ds.second->identity) : GetInfo::Name(ds.first->identity));
+        std::print("{} has collapsed due to ", ds.winner == ClashWinner::First ? GetInfo::Name(ds.first->identity) : GetInfo::Name(ds.second->identity));
     }
 
     switch(ds.win_condition){
@@ -193,7 +197,7 @@ void Log::Death(const Battlefield& bf){
         }
 
         msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2:.1f}\x1b[0m)", color, severity, hp));
-        msg.append(std::format(" {} has been defeated\n", GetInfo::Name(c->Identity())));
+        msg.append(std::format(" {} has been defeated", GetInfo::Name(c->Identity())));
         death_messages.push_back(msg);
     }
     if (death_messages.empty()){
@@ -202,5 +206,8 @@ void Log::Death(const Battlefield& bf){
     }
     for (const auto& m : death_messages) {
         std::println("{}", m);
+    }
+    if (death_messages.size() == bf.battlefield.size()) {
+        std::println("Everyone has been defeated!");
     }
 }

@@ -80,7 +80,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility&
 
     const auto result = attacked.Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     if (chosen_ct.chant_amount > 0) chosen_ct.chant_amount = 0;
-    return {&chosen_ct , &attacker, &attacked, result.damage, enough_output, enough_ce};
+    return {&chosen_ct , &attacker, &attacked, result.damage, result.attack_blocked, enough_output, enough_ce};
 }
 
 void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {

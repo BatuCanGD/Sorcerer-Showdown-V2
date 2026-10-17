@@ -51,8 +51,8 @@ double SorcerySystem::ApplySixEyes(const double amount){
     return amount * 0.05;
 }
 
-bool SorcerySystem::CEMoreThanMx(CurseUser &c, double p){
-    return c.CursedEnergy().cursed_energy > c.CursedEnergy().max_cursed_energy * p;
+bool SorcerySystem::CEMoreThanMax(CurseUser &c, double p){
+    return c.CursedEnergy().cursed_energy >= c.CursedEnergy().max_cursed_energy * p;
 }
 
 void SorcerySystem::ApplyBurnOut(CurseUser &c){

@@ -32,14 +32,15 @@ struct TechniqueStruct final {
     const Character* user;
     const Character* target;
     double damage;
+    bool blocked;
     bool enough_output;
     bool enough_ce;
 };
 
-struct CombatSystem final  {
-    static DamageStruct ResolveDamage(const Character& c, globalums::DamageType type, double amount);
-    static AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
-    static ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
-    static TechniqueStruct ResolveTechnique(CurseUser& attacker, TechAbility& tc, Character& attacked);
-    static void ResolveDomain(CurseUser& attacker, Battlefield& bf);
+namespace CombatSystem {
+    DamageStruct ResolveDamage(const Character& c, globalums::DamageType type, double amount);
+    AttackStruct ResolveAttacking(Character& attacker, Character& attacked);
+    ToolStruct ResolveCursedTool(Character& attacker, Character& attacked);
+    TechniqueStruct ResolveTechnique(CurseUser& attacker, TechAbility& tc, Character& attacked);
+    void ResolveDomain(CurseUser& attacker, Battlefield& bf);
 };
