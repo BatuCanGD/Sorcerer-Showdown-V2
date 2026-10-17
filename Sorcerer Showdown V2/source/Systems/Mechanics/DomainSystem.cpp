@@ -65,6 +65,9 @@ DomainClashStruct DomainSystem::ClashDomains(CurseUser& f, CurseUser& s) {
     const bool f_destroyed = DomainSystem::HandleDamage(*first, second_damage, &f);
     const bool s_destroyed = DomainSystem::HandleDamage(*second, first_damage, &s);
 
+    first_damage /= second->durability;
+    second_damage /= first->durability;
+
     if (f_destroyed || s_destroyed) {
         if (f_destroyed && s_destroyed){
             winner = ClashWinner::Both;

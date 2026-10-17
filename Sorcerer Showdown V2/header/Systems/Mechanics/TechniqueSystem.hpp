@@ -13,5 +13,5 @@ namespace TechniqueSystem  {
     bool HasBarrier(const Technique& tech);
     TechAbility* GetAbility(Technique& tech, AbilityType type);
     TechAbility& ChooseAbility(Technique& tech);
-    void ChantAbility(TechAbility& tech);
+    void ChantAbility(TechAbility& tech, const CurseUser& cu);
 };

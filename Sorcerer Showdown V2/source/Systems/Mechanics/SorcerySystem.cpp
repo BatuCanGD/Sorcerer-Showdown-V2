@@ -36,19 +36,19 @@ double SorcerySystem::ApplyRCTCost(const double amount) {
     if (amount <= 0.0) {
         return 0.0;
     }
-    return amount * (0.70 * std::exp(amount / 100.0));
+    return amount * (0.60 * std::exp(amount / 70.0));
 }
 double SorcerySystem::ApplyReinforcementCost(const double amount) {
     if (amount <= 0.0) {
         return 0.0;
     }
-    return amount * (0.80 * std::exp(amount / 150.0));
+    return amount * (0.80 * std::exp(amount / 110.0));
 }
 double SorcerySystem::ApplySixEyes(const double amount){
     if (amount <= 0.0){
         return 0.0;
     }
-    return amount * 0.2;
+    return amount * 0.05;
 }
 
 bool SorcerySystem::CEMoreThanMx(CurseUser &c, double p){

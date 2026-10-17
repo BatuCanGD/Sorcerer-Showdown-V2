@@ -37,7 +37,7 @@ namespace UserControl {
     void ForReinforcement(CurseUser& c);
     void ForBindingVows(CurseUser& c);
 
-    bool DoTechnique(CurseUser* c, Character& cd);
+    bool DoTechnique(CurseUser* c, Battlefield& bf);
     bool DoDomain(CurseUser* c);
 
     bool DoShikigami(CurseUser* c);

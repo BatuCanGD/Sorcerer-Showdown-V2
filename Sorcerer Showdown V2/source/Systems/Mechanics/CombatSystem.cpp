@@ -68,7 +68,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
     return {rs.damage, rs.attack_blocked ,is_critical, is_blackflash};
 }
 
-TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAbility& chosen_ct, Character& attacked){
+TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility& chosen_ct, Character& attacked){
     const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
 
@@ -83,7 +83,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, const TechAb
     const double technique_output = SorcerySystem::OutputStatusMultiplier(attacker.Output().status);
     const double damage = (chosen_ct.damage * chant_output) * technique_output;
     const auto result = attacked.Damage(damage, chosen_ct.damage_type);
-
+    chosen_ct.chant_amount = 0;
     return {&chosen_ct , &attacker, &attacked, result.damage, enough_output, enough_ce};
 }
 

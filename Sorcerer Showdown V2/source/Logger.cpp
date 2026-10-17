@@ -6,6 +6,8 @@
 #include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../header/Systems/Mechanics/EffectSystem.hpp"
+#include "../header/Systems/Mechanics/SorcerySystem.hpp"
+#include "../header/Utilities/Random.hpp"
 #include "../header/Systems/Stringet.hpp"
 
 #include <print>
@@ -14,7 +16,20 @@
 #include <vector>
 #include <format>
 
-
+void Log::Error(std::string_view s, ErrorType type){
+    if (!s.empty()){
+        std::println(stderr, "{}", s);
+        return;
+    }
+    switch(type){
+        case Log::ErrorType::Amount:
+            std::println(stderr, "Invalid Amount!");
+            break;
+        case Log::ErrorType::Choice:
+            std::println(stderr, "Invalid Choice!");
+            break;
+    }
+}
 void Log::CharacterPresentation(const Character &c){
     std::println("[{}]{}", GetInfo::Name(c.Identity()), c.State().is_stunned ? "[Stunned]" : "");
     std::println("Health-[\x1b[31m{:.1f}/{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().max_health, c.State().durability, c.State().strength);
@@ -72,7 +87,22 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
         std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(tc.target->Identity()), tc.damage);
     }
 }
-
+void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
+    switch(get_random<int>(0, 10)){
+        case 0: std::println("Phase!"); break;
+        case 1: std::println("Twilight!"); break;
+        case 2: std::println("Eyes of Wisdom!"); break;
+        case 3: std::println("Nine Ropes!"); break;
+        case 4: std::println("Polarized Light!"); break;
+        case 5: std::println("Crow and Declaration!"); break;
+        case 6: std::println("Between front and back!"); break;
+        case 7: std::println("Scales of the dragon!"); break;
+        case 8: std::println("Twin Meteors!"); break;
+        case 9: std::println("Paramita!"); break;
+        case 10: std::println("Repulsion!"); break;
+    }
+    std::println("{}'s damage output increases to: {}", GetInfo::Name(tc.id), tc.damage * (1.0 + (tc.chant_amount / 2.0) * SorcerySystem::OutputStatusMultiplier(cu.Output().status)));
+}
 void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const Character& c2) {
     std::string str{};
     if (std::holds_alternative<AttackStruct>(vr)){

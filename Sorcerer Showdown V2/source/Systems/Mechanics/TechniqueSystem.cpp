@@ -44,7 +44,7 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
         case TechniqueSystem::AbilityType::LeastOutput: {
             TechAbility* t{nullptr};
             for (auto& c : tech.abilities) {
-                if (!t || c.output > t->output) t = &c;
+                if (!t || c.output < t->output) t = &c;
             }
             return t;
         }
@@ -56,14 +56,19 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
 
 TechAbility& TechniqueSystem::ChooseAbility(Technique& tech) {
     Log::TechniqueInfo(tech, Log::CTLogType::Both, Log::LogDetailType::Detailed);
-    return tech.abilities[get_input<size_t>() - 1];
+    size_t i = get_input<size_t>() - 1;
+    while(i == 0 || i >= tech.abilities.size()) {
+        Log::Error();
+        i = get_input<size_t>() - 1;
+    }
+    return tech.abilities[i];
 }
 
 bool TechniqueSystem::HasBarrier(const Technique &tech){
     return tech.barrier.can_use_barrier && tech.barrier.is_active;
 }
 
-void TechniqueSystem::ChantAbility(TechAbility &tech){
-    tech.chant_amount++; 
-    // plan to have a Log:: here that spits out fire one liners
+void TechniqueSystem::ChantAbility(TechAbility &tech, const CurseUser& cu){
+    tech.chant_amount++;
+    Log::TechniqueChant(cu, tech);
 }

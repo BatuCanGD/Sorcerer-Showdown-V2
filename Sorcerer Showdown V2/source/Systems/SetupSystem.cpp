@@ -59,11 +59,11 @@ std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
 
 const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
     std::vector<std::unique_ptr<Character>> list;
-    list.push_back(std::make_unique<Character>(Create::Char::Toji()));
-    list.push_back(std::make_unique<Character>(Create::Char::Maki()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
+    list.push_back(std::make_unique<Character>(Create::Char::Toji()));
+    list.push_back(std::make_unique<Character>(Create::Char::Maki()));
     if (get_custom){
         for (auto& c : SetupSystem::GetCustomCharacters()) {
             list.push_back(std::move(c));
@@ -106,13 +106,13 @@ bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c, bool& load_json) 
             SetupSystem::AddCharacter(bf, c, true, load_json);
             break;
         case 2:
-            SetupSystem::RemoveCharacter(bf, c, load_json);
+            SetupSystem::RemoveCharacter(bf, c, false);
             break;
         case 22:
             SetupSystem::RemoveLast(bf, c);
             break;
         case 222:
-            SetupSystem::RemoveCharacter(bf, c, load_json);
+            SetupSystem::RemoveCharacter(bf, c, true);
             break;
         case 3:
             SetupSystem::ClearBattlefield(bf, c);
@@ -130,7 +130,7 @@ bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c, bool& load_json) 
             }
             return false;
         default:
-            std::println("Invalid Input");
+            Log::Error();
             break;
     }
     return true;

@@ -280,7 +280,7 @@ Domain Create::Dmn::UnlimitedVoid() {
     c.max_health = 500.0;
     c.health = c.max_health;
     c.damage = 225.0;
-    c.durability = 7.5;
+    c.durability = 3.5;
     c.range = 125;
     return c;
 }
@@ -295,8 +295,8 @@ Domain Create::Dmn::MalevolentShrine() {
     c.cost = 1250.0;
     c.max_health = 600.0;
     c.health = c.max_health;
-    c.damage = 165.0;
-    c.durability = 20.0;
+    c.damage = 225.0;
+    c.durability = 5.5;
     c.range = 200;
     return c;
 }
@@ -310,6 +310,7 @@ Domain Create::Dmn::SelfEmbodimentOfPerfection() {
     c.refinement = Refinement::Overwhelming;
     c.surehit_type = SurehitType::Normal;
     c.max_health = 400.0;
+    c.durability = 2.25;
     c.health = c.max_health;
     c.range = 85;
     return c;
