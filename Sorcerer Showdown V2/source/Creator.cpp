@@ -5,18 +5,7 @@
 #include "../header/General/CursedTool.hpp"
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
-
 #include <format>
-#include <string>
-#include <memory>
-
-std::unique_ptr<Character> Create::Char::Custom(const nlohmann::json &data) {
-    const std::string c_type = data.at("type").get<std::string>();
-    std::unique_ptr<Character> c{};
-
-    return c;
-}
-
 
 // Base Characters
 Character Create::Char::TranfiguredHuman() {

@@ -8,8 +8,8 @@
 
 class Character;
 class CurseUser;
-class Technique;
 
+struct Technique;
 struct Battlefield;
 struct SurehitStruct;
 struct StatusEffect;

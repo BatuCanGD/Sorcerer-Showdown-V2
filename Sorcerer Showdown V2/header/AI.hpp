@@ -3,8 +3,8 @@
 
 class Character;
 class CurseUser;
-class Technique;
 
+struct Technique;
 struct CursedTool;
 struct CharInv;
 struct BattleIQ;

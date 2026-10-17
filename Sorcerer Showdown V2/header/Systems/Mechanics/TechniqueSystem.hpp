@@ -2,7 +2,7 @@
 #include <utility>
 #include <cstdint>
 struct TechAbility;
-class Technique;
+struct Technique;
 class Character;
 class CurseUser;
 

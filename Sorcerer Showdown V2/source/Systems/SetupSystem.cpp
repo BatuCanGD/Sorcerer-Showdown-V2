@@ -6,7 +6,6 @@
 #include "../../header/Logger.hpp"
 
 #include <print>
-#include <fstream>
 #include <map>
 
 SkipType SetupSystem::GetPlayerSkipType() noexcept {
@@ -28,34 +27,6 @@ const std::map<std::string, int> SetupSystem::SetList(const Battlefield &bf){
     }
     return list;
 }
-std::vector<std::unique_ptr<Character>> SetupSystem::GetCustomCharacters() {
-    std::println(stderr, "Looking for characters.json in: {}", std::filesystem::current_path().string());
-    std::ifstream file("characters.json");
-
-    if (!file.is_open()) {
-        std::println(stderr, "Could not find characters.json!");
-        hold_input();
-        return {};
-    }
-    nlohmann::json data;
-    try {
-        file >> data;
-    }
-    catch (const nlohmann::json::parse_error& e) {
-        std::println(stderr, "JSON Parse Error: {}", e.what());
-        hold_input();
-        return {};
-    }
-
-    if (data.contains("characters") && data["characters"].is_array()) {
-        std::vector<std::unique_ptr<Character>> list;
-        for (const auto& d : data["characters"]) {
-            list.push_back(Create::Char::Custom(d));
-        }
-        return list;
-    }
-    return {};
-}
 
 const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
     std::vector<std::unique_ptr<Character>> list;
@@ -64,11 +35,6 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
     list.push_back(std::make_unique<Character>(Create::Char::Toji()));
     list.push_back(std::make_unique<Character>(Create::Char::Maki()));
-    if (get_custom){
-        for (auto& c : SetupSystem::GetCustomCharacters()) {
-            list.push_back(std::move(c));
-        }
-    }   
     return list;
 }
 

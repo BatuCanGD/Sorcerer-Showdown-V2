@@ -16,6 +16,7 @@ enum class Action : std::uint8_t {
     Domain,
     Shikigami,
     Inventory,
+    Effects,
     Sorcery // RCT, Reinforcement, Binding Vows
 };
 
@@ -26,21 +27,21 @@ namespace UserControl {
 
     Character* GetUserTarget(Battlefield& bf);
 
-    bool DoAttack(Character& c, Character& cd);
-    bool DoInventoryManagement(Character& c);
-
+    void DoAttack(Character& c, Character& cd);
+    void DoInventoryManagement(Character& c);
+    void DoEffects(const Character& c);
 
     enum class SorceryType : std::uint8_t { RCT, Reinforcement, BindingVows };
-    bool DoSorcery(CurseUser* c);
+    void DoSorcery(CurseUser* c);
     const std::vector<SorceryType> GetSorceryChoices(const CurseUser& c);
     void ForRCT(CurseUser& c);
     void ForReinforcement(CurseUser& c);
     void ForBindingVows(CurseUser& c);
 
-    bool DoTechnique(CurseUser* c, Battlefield& bf);
-    bool DoDomain(CurseUser* c);
+    void DoTechnique(CurseUser* c, Battlefield& bf);
+    void DoDomain(CurseUser* c);
 
-    bool DoShikigami(CurseUser* c);
+    void DoShikigami(CurseUser* c);
     Shikigami* ChooseShikigami(std::vector<Shikigami>& sh);
     void UseShikigami(Shikigami& c);
 

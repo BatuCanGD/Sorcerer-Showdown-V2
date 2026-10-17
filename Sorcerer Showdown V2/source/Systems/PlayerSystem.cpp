@@ -62,26 +62,30 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
         if (UserControl::GetConfirmation()){
             switch(choices.first[idx]){
                 case Action::Attack:
-                    if (UserControl::DoAttack(c, *UserControl::GetUserTarget(bf))) turn_count--;
+                    UserControl::DoAttack(c, *UserControl::GetUserTarget(bf));
                     break;
                 case Action::Inventory:
-                    if (UserControl::DoInventoryManagement(c)) turn_count--;
+                    UserControl::DoInventoryManagement(c);
                     break;
                 case Action::Technique:
-                    if (UserControl::DoTechnique(crs, bf)) turn_count--;
+                    UserControl::DoTechnique(crs, bf);
                     break;
                 case Action::Domain:
-                    if (UserControl::DoDomain(crs)) turn_count--;
+                    UserControl::DoDomain(crs);
                     break;
                 case Action::Shikigami:
-                    if (UserControl::DoShikigami(crs)) turn_count--;
+                    UserControl::DoShikigami(crs);
                     break;
                 case Action::Sorcery:
-                    if (UserControl::DoSorcery(crs)) turn_count--;
+                    UserControl::DoSorcery(crs);
+                    break;
+                case Action::Effects:
+                    UserControl::DoEffects(c);
                     break;
                 default: 
                     break;
             }
+            turn_count--;
         }
 
     } while (turn_count > 0);
@@ -106,13 +110,18 @@ Character* UserControl::GetUserTarget(Battlefield& bf) {
     return bf.battlefield[x].get();
 }
 
-bool UserControl::DoAttack(Character& c, Character& cd) {
-    const auto result = c.Attack(cd);
-    Log::Attack(result, c, cd);
-    return true;
+void UserControl::DoEffects(const Character &cc){
+    for (const auto& c : cc.State().status_effects){
+        std::println("{}", GetInfo::Styalized(c.id));
+    }
 }
 
-bool UserControl::DoInventoryManagement(Character& c) {
+void UserControl::DoAttack(Character& c, Character& cd) {
+    const auto result = c.Attack(cd);
+    Log::Attack(result, c, cd);
+}
+
+void UserControl::DoInventoryManagement(Character& c) {
     auto& equip = c.Equipment();
     const bool has_inv = equip.has_access_to_inventory;
 
@@ -149,13 +158,13 @@ bool UserControl::DoInventoryManagement(Character& c) {
 
     if (wp.empty()) {
         std::println("You have no cursed tools"); 
-        return false;
+        return;
     }
 
     size_t input = get_input<size_t>() - 1;
     if (input >= wp.size()) {
         Log::Error();
-        return false;
+        return;
     }
 
     const Candidate chosen = wp[input];
@@ -182,7 +191,7 @@ bool UserControl::DoInventoryManagement(Character& c) {
         case 1: {
             if (chosen.origin == Origin::MainHand) {
                 std::println("You cannot move an item in your hand");
-                return false;
+                return;
             }
             CursedTool incoming = extract_chosen();
             if (equip.current_tool) {
@@ -199,7 +208,7 @@ bool UserControl::DoInventoryManagement(Character& c) {
         case 2: {
             if (chosen.origin == Origin::OffHand) {
                 std::println("You cannot move an item in your hand");
-                return false;
+                return;
             }
             CursedTool incoming = extract_chosen();
             if (equip.stored_tool) {
@@ -215,26 +224,26 @@ bool UserControl::DoInventoryManagement(Character& c) {
         }
         case 3: {
             if (!has_inv || chosen.origin == Origin::Inventory) {
-                return false;
+                return;
             }
             equip.inventory.push_back(extract_chosen());
             break;
         }
-        default: return false;
+        default:
+            break;
     }
-    return true;
 }
 
-bool UserControl::DoSorcery(CurseUser* c) {
+void UserControl::DoSorcery(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
-        return false;
+        return;
     }
     const auto& sp = UserControl::GetSorceryChoices(*c);
     size_t ch = get_input<size_t>() - 1;
 
     if (ch >= sp.size()) {
-        return false;
+        return;
     }
 
     switch(sp[ch]){
@@ -248,7 +257,6 @@ bool UserControl::DoSorcery(CurseUser* c) {
             UserControl::ForBindingVows(*c);
             break;
     }
-    return true;
 }
 
 const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const CurseUser& c) {
@@ -357,15 +365,14 @@ void UserControl::ForBindingVows(CurseUser& c){
     c.Jujutsu().binding_vows.push_back(bv);
 }
 
-
-bool UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
+void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
     if (c == nullptr){
         std::println("You are not a curse user!");
-        return false;
+        return;
     }
     if (!c->Jujutsu().technique.has_value()) {
         std::println("You do not have a technique");
-        return false;
+        return;
     }
     auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
     std::println("1 - Use Ability | 2 - Chant");
@@ -376,20 +383,18 @@ bool UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
     }else{
         TechniqueSystem::ChantAbility(ability, *c);
     }
-
-    return true;
 }
-bool UserControl::DoDomain(CurseUser* c) {
+void UserControl::DoDomain(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
-        return false;
+        return;
     } 
     auto& domain = c->Jujutsu().domain;
     auto& neutralizer = c->Jujutsu().neutralizer;
 
     if (!domain && !neutralizer) {
         std::println("You do not have a domain or anything that can neutralize it");
-        return false;
+        return;
     }
     enum class dmn : std::uint8_t { Domain, Neutralizer };
     std::vector<dmn> dm;
@@ -409,7 +414,7 @@ bool UserControl::DoDomain(CurseUser* c) {
 
     size_t pl = get_input<size_t>() - 1;
     if (pl >= dm.size()){
-        return false;
+        return;
     }
     switch(dm[pl]){
         case dmn::Domain: {
@@ -420,8 +425,6 @@ bool UserControl::DoDomain(CurseUser* c) {
                 domain->is_active = true;
             }else if (pch == 2){
                 domain->is_active = false;
-            }else {
-                return false;
             }
             break;
         }
@@ -433,31 +436,26 @@ bool UserControl::DoDomain(CurseUser* c) {
                 neutralizer->is_active = true;
             }else if (pch == 2){
                 neutralizer->is_active = false;
-            }else {
-                return false;
             }
             break;
         }
     }
-
-    return true;
 }
 
 //
 // Shikigami player Functions
 //
 
-bool UserControl::DoShikigami(CurseUser* c) {
+void UserControl::DoShikigami(CurseUser* c) {
     if (c == nullptr){
         std::println("You are not a curse user!");
-        return false;
+        return;
     }
     if (c->Jujutsu().shikigami.empty()) {
         std::println("You do not have any shikigami");
-        return false;
+        return;
     }
     UserControl::UseShikigami(*UserControl::ChooseShikigami(c->Jujutsu().shikigami));
-    return true;
 }
 
 Shikigami* UserControl::ChooseShikigami(std::vector<Shikigami>& sh) {

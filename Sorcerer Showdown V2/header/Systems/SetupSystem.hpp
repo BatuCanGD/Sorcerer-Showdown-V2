@@ -29,7 +29,6 @@ namespace SetupSystem {
     void ClearBattlefield(Battlefield& bf, Character*& c);
     void ViewCharacterInfo(Battlefield& bf);
 
-    std::vector<std::unique_ptr<Character>> GetCustomCharacters();
     const std::vector<std::unique_ptr<Character>> GetCharacterList(bool get_custom);
     const std::map<std::string, int> SetList(const Battlefield& bf);
 }
