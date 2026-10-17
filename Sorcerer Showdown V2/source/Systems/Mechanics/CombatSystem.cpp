@@ -63,7 +63,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &atta
         }
     }
     const auto rs = attacked.Damage(attack_damage, attack_type);
-    const bool is_critical = rs.damage >= 100.0;
+    const bool is_critical = rs.damage >= attacked.State().max_health * 0.25;
     return {rs.damage, rs.attack_blocked ,is_critical, is_blackflash};
 }
 
