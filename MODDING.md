@@ -4,7 +4,7 @@ Welcome to MODDING.md for Sorcerer-Showdown-V2, This will be a lengthy guide on 
 
 ---
 
-## Current Project Structure (Extra Details)
+## Current Project Structure
 
 ### Root Files
 
@@ -77,7 +77,7 @@ Includes header files related to CurseUser class Characters
 | `Domain.hpp` | includes the Domain struct plus its enums |
 | `Neutralizer.hpp` | includes the Neutralizer struct plus its enums |
 | `Shikigami.hpp` | includes the Shikigami struct plus its enums |
-| `Technique.hpp` | includes the Technique class alongside with its TechAbility struct |
+| `Technique.hpp` | includes the Technique struct alongside with its TechAbility struct |
 
 ---
 
@@ -89,3 +89,39 @@ Includes the classes the game iterates on
 |------|-------------|
 | `Character.hpp` | includes: Stats, Cursed Tools and inventory and the BattleIQ struct that contains enums included in AI.hpp for the AI specifically |
 | `CurseUser.hpp` | includes: Cursed Energy Systems, RCT systems, Jujutsu (Technique, domain, etc..) Systems, Cursed Energy Output Systems and a Trait System |
+
+
+# Adding Characters Guide
+
+In this part of the documentation, there will be details on how you will be able to add new custom characters and on how to customize them.
+
+### C++ Route
+
+This game uses factories to create and configure characters, cursed tools, effects, etc...
+
+a small example on how to create a custom curse user character type would look like this:
+
+```` cpp
+// how the implementation should look like in the hpp file
+namespace Create {
+    namespace Char {
+        CurseUser MyChar(); // the character type and who it will create
+        // .....
+    }
+    // ....
+}
+
+// how the implementation should look like in the cpp file
+CurseUser Create::MyChar() {
+    CurseUser c{};
+    c.State().max_health = 500.0;
+    c.State().health = 500.0;
+    c.Jujutsu().technique = Create::Tech::Limitless();
+    return c; 
+}
+
+````
+sets the characters health to 500.0 and gives the character the limitless technique \
+you dont have to follow this example strictly, you can add any value of your choice
+
+### JSON Route (Coming Soon)

@@ -334,7 +334,7 @@ void AI::DRM_UseTools(Character &c, const Character & tr) {
         }
     }
     if (tr.State().health > c.State().health || GenericSystems::HPMoreThanMax(c, 0.70)){
-        SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+        CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
     }
 }
 

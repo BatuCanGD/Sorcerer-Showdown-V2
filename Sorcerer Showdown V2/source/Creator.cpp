@@ -52,7 +52,7 @@ Character Create::Char::Maki() {
 ;
     constexpr double health      = 750.0;
     constexpr double strength    = 265.0;
-    constexpr double durability  = 175.0;
+    constexpr double durability  = 155.0;
 
     const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Mixed,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
