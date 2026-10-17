@@ -54,6 +54,10 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
     throw std::runtime_error("couldnt find any fitting technique ability");
 }
 
+double TechniqueSystem::GetFinalDamage(const TechAbility& tc, const CurseUser& c) {
+    return tc.damage * (tc.chant_amount > 0 ? 1.0 + tc.chant_amount / 2.0 : 1.0) * SorcerySystem::OutputStatusMultiplier(c.Output().status);
+}
+
 TechAbility& TechniqueSystem::ChooseAbility(Technique& tech) {
     Log::TechniqueInfo(tech, Log::CTLogType::Both, Log::LogDetailType::Detailed);
     size_t i = get_input<size_t>() - 1;

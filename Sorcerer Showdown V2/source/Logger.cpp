@@ -6,7 +6,7 @@
 #include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../header/Systems/Mechanics/EffectSystem.hpp"
-#include "../header/Systems/Mechanics/SorcerySystem.hpp"
+#include "../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../header/Utilities/Random.hpp"
 #include "../header/Systems/Stringet.hpp"
 
@@ -101,7 +101,7 @@ void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
         case 9: std::println("Paramita!"); break;
         case 10: std::println("Repulsion!"); break;
     }
-    std::println("{}'s damage output increases to: {}", GetInfo::Name(tc.id), tc.damage * (1.0 + (tc.chant_amount / 2.0) * SorcerySystem::OutputStatusMultiplier(cu.Output().status)));
+    std::println("{}'s damage output increases to: {:.1f}", GetInfo::Name(tc.id), TechniqueSystem::GetFinalDamage(tc, cu));
 }
 void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const Character& c2) {
     std::string str{};

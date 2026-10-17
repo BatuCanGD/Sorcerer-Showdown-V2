@@ -2,7 +2,6 @@
 #include "../../../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../../header/Systems/Mechanics/NeutralizerSystem.hpp"
-#include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Utilities/Random.hpp"
@@ -79,10 +78,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility&
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
 
-    const double chant_output = chosen_ct.chant_amount > 0 ? 1.0 + chosen_ct.chant_amount / 2.0 : 1.0;
-    const double technique_output = SorcerySystem::OutputStatusMultiplier(attacker.Output().status);
-    const double damage = (chosen_ct.damage * chant_output) * technique_output;
-    const auto result = attacked.Damage(damage, chosen_ct.damage_type);
+    const auto result = attacked.Damage(TechniqueSystem::GetFinalDamage(chosen_ct, attacker), chosen_ct.damage_type);
     chosen_ct.chant_amount = 0;
     return {&chosen_ct , &attacker, &attacked, result.damage, enough_output, enough_ce};
 }
