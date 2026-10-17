@@ -3,7 +3,7 @@
   <img src="https://img.shields.io/badge/FILES-57-yellow?style=for-the-badge" />
 </p>
 
-# Sorcerer Showdown V2 (Unfinished)
+# Sorcerer Showdown V2
 
 **This is a project that i have been thinking about for a long time, i have been wanting to really rework the systems and remove clutter that the old project carries, and improve the project long term with my current C++ knowledge.**
 
