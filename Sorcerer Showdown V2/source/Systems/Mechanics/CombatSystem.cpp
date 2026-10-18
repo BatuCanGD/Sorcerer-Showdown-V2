@@ -27,12 +27,20 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
 }
 
 ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attacked){
+    if (&attacker == &attacked) {
+        return {nullptr, -1.0};
+    }
     const auto& current_tool = attacker.Equipment().current_tool;
     const double& damage = current_tool->damage;
     const auto& effect = current_tool->given_effect;
     const auto msg = attacked.Damage(damage, current_tool->damage_type);
     const bool& blocked = msg.attack_blocked;
-    if (!blocked && effect) attacked.State().status_effects.push_back(*effect);
+    if (!blocked && effect)  {
+        for (const auto& at : attacked.State().status_effects){
+            if (at.id.name == effect->id.name) return {&*current_tool, msg.damage };
+        }
+        attacked.State().status_effects.push_back(*effect);
+    }
     return {&*current_tool,msg.damage};
 }
 

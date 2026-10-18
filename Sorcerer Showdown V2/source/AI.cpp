@@ -62,8 +62,7 @@ void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, c
         AI::DF_UseDomain(*c, bf, iq.fighting_style);
         AI::DF_UseTechnique(*c, *target, iq);
     }
-    const auto l = user.Attack(*target);
-    Log::Attack(l, user, *target);
+    Log::Attack(user.Attack(*target), user, *target);
 }
 void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
     AI::DRM_UseTools(user, tr);
@@ -101,7 +100,7 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
             if (neutral) {
                 const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
                 if (enough_ce){
-                    if ((domain && !domain->is_active) || domain_users == 1) {
+                    if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
                     }
                 }else if (neutral->is_active) {
@@ -124,7 +123,7 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
             if (neutral) {
                 const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
                 if (enough_ce){
-                    if ((domain && !domain->is_active) || domain_users == 1) {
+                    if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
                     }
                 }else if (neutral->is_active) {
@@ -147,7 +146,7 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
             if (neutral) {
                 const bool enough_ce = c.CursedEnergy().cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, c);
                 if (enough_ce){
-                    if ((domain && !domain->is_active) || domain_users == 1) {
+                    if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
                     }
                 }else if (neutral->is_active) {

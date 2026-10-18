@@ -27,7 +27,7 @@ Character Create::Char::TranfiguredHuman() {
 Character Create::Char::Toji() {
     Character c{};
 
-    const EntityInfo id = {"Toji Fushiguro", "", "A Physically Gifted human with no cursed energy"};
+    const EntityInfo id = {"Toji Fushiguro", "\x1b[38;5;25m", "A Physically Gifted human with no cursed energy"};
 
     constexpr double health      = 500.0;
     constexpr double strength    = 225.0;
@@ -48,7 +48,7 @@ Character Create::Char::Toji() {
 Character Create::Char::Maki() {
     Character c{};
 
-    const EntityInfo id = {"Maki Zenin", "", "A Heavenly Restricted human similar to Toji Fushiguro"}
+    const EntityInfo id = {"Maki Zenin", "\x1b[38;5;64m", "A Heavenly Restricted human similar to Toji Fushiguro"}
 ;
     constexpr double health      = 750.0;
     constexpr double strength    = 265.0;
@@ -342,7 +342,7 @@ Neutralizer Create::Nlr::FallingBlossomEmotion() {
 
 CursedTool Create::Tool::InvertedSpearOfHeaven() {
     CursedTool c{};
-    const EntityInfo id = {"Inverted Spear Of Heaven", "", "A Cursed Tool that negates Techniques"};
+    const EntityInfo id = {"Inverted Spear Of Heaven", "\x1b[38;5;179m", "A Cursed Tool that negates Techniques"};
     constexpr double damage = 75.0;
     const auto at_type = globalums::DamageType::BypassTech;
     c.identity = id;
@@ -353,7 +353,7 @@ CursedTool Create::Tool::InvertedSpearOfHeaven() {
 }
 CursedTool Create::Tool::SplitSoulKatana() {
     CursedTool c{};
-    const EntityInfo id = {"Split Soul Katana", "", "A Cursed Tool that negates Durability and cuts the soul"};
+    const EntityInfo id = {"Split Soul Katana", "\x1b[38;5;4m", "A Cursed Tool that negates Durability and cuts the soul"};
     constexpr double damage = 80.0;
     const auto at_type = globalums::DamageType::BypassRein;
     c.identity = id;
@@ -364,7 +364,7 @@ CursedTool Create::Tool::SplitSoulKatana() {
 }
 CursedTool Create::Tool::PlayfulCloud() {
     CursedTool c{};
-    const EntityInfo id = {"Playful Cloud", "", "A Cursed Tool that's strength increases based on the bearers strength"};
+    const EntityInfo id = {"Playful Cloud", "\x1b[38;5;9m", "A Cursed Tool that's strength increases based on the bearers strength"};
     constexpr double damage = 70.0;
     const auto at_type = globalums::DamageType::Normal;
     c.identity = id;
@@ -382,7 +382,7 @@ StatusEffect Create::Effect::BleedEffect() {
     constexpr double severity_amount = 25.0;
     constexpr int effect_turn_amount = 3;
 
-    const EntityInfo id = { "Bleeding...", "\x1b[38;5;9", std::format("Drains {:.1f}HP per turn", severity_amount)};
+    const EntityInfo id = { "Bleeding...", "\x1b[38;5;9m", std::format("Drains {:.1f}HP per turn", severity_amount)};
 
     c.id = id;
     c.effect_amount = severity_amount;

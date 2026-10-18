@@ -19,6 +19,19 @@ struct Skippy final {
     bool skip_all{false};
 };
 
+bool announce_end(Battlefield& bf){
+    auto& b = bf.battlefield;
+    if (b.size() < 2){
+        if (b.size() != 0){
+            std::println("{} is the last fighter standing!", GetInfo::Name(b[0]->Identity()));
+        }else{
+            std::println("No one is left standing alive!");
+        }
+        return false;
+    }
+    return true;
+}
+
 bool endgame() {
     std::print("Continue Game?\n1 - Continue | 2 - Stop\n=> ");
     return get_input<int>() == 1;
@@ -54,7 +67,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
         hold_input();
     }
 
-    return bf.battlefield.size() > 1;
+    return announce_end(bf);
 }
 
 bool rungame()  {

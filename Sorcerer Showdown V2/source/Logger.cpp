@@ -33,7 +33,12 @@ void Log::Error(std::string_view s, ErrorType type){
 void Log::CharacterPresentation(const Character &c){
     std::println("[{}]{}", GetInfo::Name(c.Identity()), c.State().is_stunned ? "[Stunned]" : "");
     std::println("Health-[\x1b[31m{:.1f}/{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().max_health, c.State().durability, c.State().strength);
-    
+    if (const auto& t = c.Equipment().current_tool) {
+        std::print("Held Tool: [{}] ", GetInfo::Name(t->identity));  
+    }
+    if (const auto& t = c.Equipment().stored_tool){
+        std::print("Stored Tool: [{}] ", GetInfo::Name(t->identity));  
+    }
     if (const auto* crs = c.CanUseSorcery()){
         std::println("Cursed Energy-[\x1b[36m{:.1f}/{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, crs->CursedEnergy().max_cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
         std::print("Status: [{}] ", Stringet::OutputStatusStr(crs->Output().status));
@@ -74,7 +79,7 @@ void Log::DomainSurehit(const SurehitStruct st, const SurehitHit ht){
 
 void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
     for (const auto& s : v){
-        std::print("{} got affected by the {} effect and {} {:.1f} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+        std::println("{} got affected by the {} effect and {} {:.1f} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 
@@ -134,11 +139,7 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             std::println("You cannot attack yourself");
             return;
         }
-        const std::string info = std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c2.Identity()));
-        if (cts.used_tool->given_effect){
-            str.append(std::format("{0} contracted the {1} effect!", GetInfo::Name(c2.Identity()), GetInfo::Name(cts.used_tool->given_effect->id)));
-        }
-        str.append(info);
+        str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c2.Identity())));
     }
     std::println("{0}", str);
 }
