@@ -2,6 +2,7 @@
 #include "../../../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../../header/Systems/Mechanics/NeutralizerSystem.hpp"
+#include "../../../header/Systems/GenericSystems.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
 #include "../../../header/Utilities/Random.hpp"
@@ -12,7 +13,7 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
     const auto& crs = c.CanUseSorcery();
     if (crs){
         if (const auto& tech = crs->Jujutsu().technique){
-            if (TechniqueSystem::HasBarrier(*tech) && (type != globalums::DamageType::BypassTech && type != globalums::DamageType::BypassAll)){
+            if (TechniqueSystem::HasBarrier(*tech) && !GenericSystems::BypassesTech(type)){
                 return {.attack_blocked = true};
             }
         }
@@ -31,11 +32,9 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attac
         return {nullptr, -1.0};
     }
     const auto& current_tool = attacker.Equipment().current_tool;
-    const double& damage = current_tool->damage;
+    const auto msg = attacked.Damage(current_tool->damage, current_tool->damage_type);
     const auto& effect = current_tool->given_effect;
-    const auto msg = attacked.Damage(damage, current_tool->damage_type);
-    const bool& blocked = msg.attack_blocked;
-    if (!blocked && effect)  {
+    if (!msg.attack_blocked && effect)  {
         for (const auto& at : attacked.State().status_effects){
             if (at.id.name == effect->id.name) return {&*current_tool, msg.damage };
         }
