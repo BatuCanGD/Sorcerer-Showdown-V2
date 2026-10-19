@@ -56,14 +56,8 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 
 std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
     std::vector<SetupSystem::SetupOpt> opt;
-    std::uint8_t i{0};
-    auto add_opt = [&opt, &i](std::string_view v, SetupSystem::SetupOpt op){
-        if (++i < 3){
-            std::print("{}:{} | ", opt.size(), v);
-        }else{
-            std::println("{}:{}", opt.size(), v);
-            i = 0;
-        }
+    auto add_opt = [&opt](std::string_view v, SetupSystem::SetupOpt op){
+        std::println("{}:{}", opt.size(), v);
         opt.push_back(op);
     };
     add_opt("Start", SetupSystem::SetupOpt::Start);

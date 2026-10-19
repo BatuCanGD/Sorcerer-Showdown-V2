@@ -2,6 +2,12 @@
 #include "../../../header/CharacterType/CurseUser.hpp"
 
 #include <algorithm>
+#include <cmath>
+
+void ShikigamiSystem::Damage(double amount, Shikigami &s) {
+    amount = amount * (0.10 + 0.90 * std::exp(-s.stats.durability / 450.0));
+    s.stats.health -= amount;
+}
 
 void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& sv, const double mult){
     const double amount = sv.value * mult;

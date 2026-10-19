@@ -177,6 +177,8 @@ CurseUser Create::Char::Sukuna() {
     c.Jujutsu().domain = domain;
     c.Jujutsu().neutralizer = neutralizer;
     c.Jujutsu().technique = technique;
+    c.Jujutsu().shikigami.push_back(Create::Shk::Mahoraga());
+    c.Jujutsu().shikigami.push_back(Create::Shk::Agito());
     c.RCT().can_use_rct = true;
 
     return c;
@@ -389,6 +391,25 @@ StatusEffect Create::Effect::BleedEffect() {
     c.effect_type = EffectType::Decrease;
     c.effect_for_type = EffectForType::Health;
     c.turn_amount = effect_turn_amount;
+
+    return c;
+}
+
+// shikigami
+
+Shikigami Create::Shk::Mahoraga() {
+    Shikigami c{};
+    const EntityInfo id = { "Mahoraga", "", "Shikigami that can adapt to anything and everything"};
+
+    c.id = id;
+
+    return c;
+}
+Shikigami Create::Shk::Agito() {
+    Shikigami c{};
+    const EntityInfo id = { "Merged Beast Agito", "", ""};
+
+    c.id = id;
 
     return c;
 }

@@ -33,7 +33,7 @@ bool announce_end(Battlefield& bf){
 }
 
 bool endgame() {
-    std::print("Continue Game?\n1 - Continue | 2 - Stop\n=> ");
+    std::print("Continue Game?\n1 - Continue | 2 - End\n=> ");
     return get_input<int>() == 1;
 }
 

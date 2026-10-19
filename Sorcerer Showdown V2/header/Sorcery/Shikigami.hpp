@@ -31,6 +31,6 @@ struct Shikigami final {
     ShikigamiStats stats;
     SavedValue rollback;
     double cost{1.0};
-    SummonType summon_type{SummonType::Shadow};
+    SummonType summon_type{SummonType::Active};
     SupportType support_type{SupportType::Offense};
 };

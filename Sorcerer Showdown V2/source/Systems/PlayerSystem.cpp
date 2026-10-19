@@ -46,6 +46,9 @@ std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices
 }
 
 void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
+    if (c.State().is_stunned){
+        return;
+    }
     const auto choices = UserControl::GetChoices(c);
     auto* crs = c.CanUseSorcery();
     std::uint8_t turn_count = 3;
@@ -102,8 +105,8 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
     Character* chr = std::get<Character*>(targets.front());
     if (const auto& ch = std::get<Character*>(targets[0])){
         if (auto* crs = ch->CanUseSorcery()){
-            for (auto c : crs->Jujutsu().shikigami) {
-                if (c.summon_type == SummonType::Active){
+            for (auto& c : crs->Jujutsu().shikigami) {
+                if (c.summon_type == SummonType::Active && c.stats.health > 0.0){
                     targets.emplace_back(&c);
                 }
             }
@@ -113,23 +116,23 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
         return chr;
     }
 
-    std::uint8_t idx{};
+    size_t idx{};
     for (const auto& c : targets){
         if (std::holds_alternative<Shikigami*>(c)) {
             auto& sh = std::get<Shikigami*>(c);
-            std::println("{}:{} | {}", ++idx, GetInfo::Name(sh->id), sh->stats.health);
+            std::println("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(sh->id), sh->stats.health);
         }else{
             auto& ch = std::get<Character*>(c);
-            std::println("{}:{} | {}", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
+            std::println("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
         }
     }
     std::println("Choose your target");
-    size_t pc = get_input<size_t>();
-    if (pc > targets.size()) {
+    idx = get_input<size_t>();
+    if (idx > targets.size()) {
         Log::Error();
         return chr;
-    }else if (pc > 1){
-        return targets[--pc];
+    }else if (idx > 1){
+        return targets[--idx];
     }else{
         return chr;
     }
@@ -140,7 +143,7 @@ Character* UserControl::GetCharacterTarget(Battlefield& bf) {
     for (const auto& c : bf.battlefield){
         std::string str{};
         str.append(std::format("{}:{}", ++z, GetInfo::Name(c->Identity())));
-        str.append(" | {} ", c->State().health);
+        str.append(std::format(" | HP:[{:.1f}] ", c->State().health));
         if (const auto& cr = c->CanUseSorcery()){
             auto& j = cr->Jujutsu();
             if (!j.shikigami.empty()){

@@ -215,9 +215,11 @@ void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
     if (c.Jujutsu().shikigami.empty()) return;
     SummonType type{};
     switch(rs){
+        default:
         case ResourceUsage::AllOut: {     
             if (SorcerySystem::CEMoreThanMax(c, 0.45)){
                 type = SummonType::Active;  
+                
             }else if (SorcerySystem::CEMoreThanMax(c, 0.15)){
                 type = SummonType::Support;
             }else{
@@ -227,7 +229,7 @@ void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
         }
         case ResourceUsage::Mixed: {
             if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.30, 0.60))){
-                type = SummonType::Active;  
+                type = SummonType::Active;
             }else if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.05, 0.30))){
                 type = SummonType::Support;
             }else{
@@ -338,8 +340,10 @@ void AI::DRM_UseTools(Character &c, const Character & tr) {
 }
 
 void AI::Fight(Character &user, Battlefield &bf) {
+    if (user.State().is_stunned){
+        return;
+    }
     const auto& style{user.Style()};
-
     try {
         Character* target = AI::GetTarget(user, style.targeting_type, bf);
         DoResourceManagement(user, *target, bf, style.resource_usage);
