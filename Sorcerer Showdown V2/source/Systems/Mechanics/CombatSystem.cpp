@@ -8,6 +8,7 @@
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/Battlefield.hpp"
 #include "../../../header/Logger.hpp"
+#include <variant>
 
 DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageType type, double amount) {
     const auto& crs = c.CanUseSorcery();
@@ -27,67 +28,84 @@ DamageStruct CombatSystem::ResolveDamage(const Character &c, globalums::DamageTy
     return ds;
 }
 
-ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, Character &attacked){
-    if (&attacker == &attacked) {
-        return {nullptr, -1.0};
-    }
-    const auto& current_tool = attacker.Equipment().current_tool;
-    const auto msg = attacked.Damage(current_tool->damage, current_tool->damage_type);
-    const auto& effect = current_tool->given_effect;
-    if (!msg.attack_blocked && effect)  {
-        for (const auto& at : attacked.State().status_effects){
-            if (at.id.name == effect->id.name) return {&*current_tool, msg.damage };
+ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, std::variant<Character*, Shikigami*> attacked){
+    if (std::holds_alternative<Character*>(attacked)) {
+        auto& c = std::get<Character*>(attacked);
+        if (&attacker == c) {
+            return {nullptr, -1.0};
         }
-        attacked.State().status_effects.push_back(*effect);
+        const auto& current_tool = attacker.Equipment().current_tool;
+        const auto msg = c->Damage(current_tool->damage, current_tool->damage_type);
+        const auto& effect = current_tool->given_effect;
+        if (!msg.attack_blocked && effect)  {
+            for (const auto& at : c->State().status_effects){
+                if (at.id.name == effect->id.name) return {&*current_tool, msg.damage };
+            }
+            c->State().status_effects.push_back(*effect);
+        }
+        return {&*current_tool,msg.damage};
+    }else {
+        return {};
     }
-    return {&*current_tool,msg.damage};
 }
 
-AttackStruct CombatSystem::ResolveAttacking(Character &attacker, Character &attacked) {
-    if (&attacker == &attacked){
-        return {-1.0};
-    }
-    double attack_damage = attacker.State().strength;
-    auto attack_type = globalums::DamageType::Normal;
-    bool is_blackflash{false};
+AttackStruct CombatSystem::ResolveAttacking(Character &attacker, std::variant<Character*, Shikigami*> attacked) {
+    if (std::holds_alternative<Character*>(attacked)) {
+        auto& c = std::get<Character*>(attacked);
+        if (&attacker == c){
+            return {-1.0};
+        }
+        double attack_damage = attacker.State().strength;
+        auto attack_type = globalums::DamageType::Normal;
+        bool is_blackflash{false};
 
-    if (auto* crs = attacker.CanUseSorcery()) {
-        if (crs->Amplification().can_use_amp && crs->Amplification().is_active){
-            attack_type = globalums::DamageType::BypassTech;
-        }
-        if (get_random<std::uint8_t>(1, 100) <= crs->CursedEnergy().bf_chance){
-            attack_damage *= 2.5;
-            is_blackflash = true;
-            auto& op = crs->Output();
-            if (op.status == CurseUserOutput::Status::Boosted){
-                op.status = CurseUserOutput::Status::Max;
-            }else if (op.status == CurseUserOutput::Status::Regular || op.status == CurseUserOutput::Status::BurntOut){
-                op.status = CurseUserOutput::Status::Boosted;
+        if (auto* crs = attacker.CanUseSorcery()) {
+            if (crs->Amplification().can_use_amp && crs->Amplification().is_active){
+                attack_type = globalums::DamageType::BypassTech;
             }
-            if (op.normalize_tick > 0) {
-                op.normalize_tick--;
+            if (get_random<std::uint8_t>(1, 100) <= crs->CursedEnergy().bf_chance){
+                attack_damage *= 2.5;
+                is_blackflash = true;
+                auto& op = crs->Output();
+                if (op.status == CurseUserOutput::Status::Boosted){
+                    op.status = CurseUserOutput::Status::Max;
+                }else if (op.status == CurseUserOutput::Status::Regular || op.status == CurseUserOutput::Status::BurntOut){
+                    op.status = CurseUserOutput::Status::Boosted;
+                }
+                if (op.normalize_tick > 0) {
+                    op.normalize_tick--;
+                }
             }
         }
+        const auto rs = c->Damage(attack_damage, attack_type);
+        const bool is_critical = rs.damage >= c->State().max_health * 0.15;
+        return {rs.damage, rs.attack_blocked ,is_critical, is_blackflash};
+    }else{
+        
+        return {};
     }
-    const auto rs = attacked.Damage(attack_damage, attack_type);
-    const bool is_critical = rs.damage >= attacked.State().max_health * 0.15;
-    return {rs.damage, rs.attack_blocked ,is_critical, is_blackflash};
 }
 
-TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility& chosen_ct, Character& attacked){
-    const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
-    const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , attacked);
+TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility& chosen_ct, std::variant<Character*, Shikigami*> attacked){
+    if (std::holds_alternative<Character*>(attacked)) {
+        auto& c = std::get<Character*>(attacked);
+        const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
+        const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(attacker, chosen_ct , *c);
 
-    if (!(enough_output && enough_ce)) {
-        return{&chosen_ct, &attacker, &attacked, 0.0 ,enough_output, enough_ce};
+        if (!(enough_output && enough_ce)) {
+            return{&chosen_ct, &attacker, c, 0.0 ,enough_output, enough_ce};
+        }
+
+        attacker.CursedEnergy().cursed_energy -= ce;
+        attacker.Output().current_output += output;
+
+        const auto result = c->Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+        if (chosen_ct.chant_amount > 0) chosen_ct.chant_amount = 0;
+        return {&chosen_ct , &attacker, c, result.damage, result.attack_blocked, enough_output, enough_ce};
+    }else {
+
+        return {};
     }
-
-    attacker.CursedEnergy().cursed_energy -= ce;
-    attacker.Output().current_output += output;
-
-    const auto result = attacked.Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
-    if (chosen_ct.chant_amount > 0) chosen_ct.chant_amount = 0;
-    return {&chosen_ct , &attacker, &attacked, result.damage, result.attack_blocked, enough_output, enough_ce};
 }
 
 void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {

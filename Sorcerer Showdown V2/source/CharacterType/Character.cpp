@@ -43,9 +43,9 @@ DamageStruct Character::Damage(double amount, globalums::DamageType type){
 }
 std::variant<AttackStruct, ToolStruct> Character::Attack(Character& cc){
     if (this->Equipment().current_tool){
-        return CombatSystem::ResolveCursedTool(*this, cc);
+        return CombatSystem::ResolveCursedTool(*this, &cc);
     }
-    return CombatSystem::ResolveAttacking(*this, cc);
+    return CombatSystem::ResolveAttacking(*this, &cc);
 }
 
 const CurseUser* Character::CanUseSorcery() const noexcept {

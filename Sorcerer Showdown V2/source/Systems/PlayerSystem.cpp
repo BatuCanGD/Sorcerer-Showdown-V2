@@ -172,8 +172,11 @@ void UserControl::DoEffects(const Character &cc){
 }
 
 void UserControl::DoAttack(Character& c, std::variant<Character*, Shikigami*> cd) {
-    const auto result = c.Attack(cd);
-    Log::Attack(result, c, cd);
+    if (std::holds_alternative<Character*>(cd)) {
+        auto& cc = std::get<Character*>(cd);
+        const auto result = c.Attack(*cc);
+        Log::Attack(result, c, cc);
+    }
 }
 
 void UserControl::DoInventoryManagement(Character& c) {

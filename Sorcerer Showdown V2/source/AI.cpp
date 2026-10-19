@@ -62,7 +62,7 @@ void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, c
         AI::DF_UseDomain(*c, bf, iq.fighting_style);
         AI::DF_UseTechnique(*c, *target, iq);
     }
-    Log::Attack(user.Attack(*target), user, *target);
+    Log::Attack(user.Attack(*target), user, target);
 }
 void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
     AI::DRM_UseTools(user, tr);
@@ -189,7 +189,7 @@ void AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
         TechniqueSystem::ChantAbility(*ab, c);
     }
 
-    Log::TechniqueAttack(CombatSystem::ResolveTechnique(c, *ab, target));
+    Log::TechniqueAttack(CombatSystem::ResolveTechnique(c, *ab, &target));
 }
 void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
     auto& vows = c.Jujutsu().binding_vows;

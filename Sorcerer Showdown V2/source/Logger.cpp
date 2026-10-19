@@ -89,10 +89,13 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
         return;
     }
     if (tc.used_ability){
-        if (tc.blocked) {
-            std::println("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.target->Identity()), GetInfo::Name(tc.used_ability->id));
-        }else {
-            std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(tc.target->Identity()), tc.damage);
+        if (std::holds_alternative<Character*>(tc.target)) {
+            auto& c = std::get<Character*>(tc.target);
+            if (tc.blocked) {
+                std::println("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->Identity()), GetInfo::Name(c->Identity()), GetInfo::Name(tc.used_ability->id));
+            }else {
+                std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(c->Identity()), tc.damage);
+            }
         }
     }
 }
@@ -143,7 +146,9 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             return;
         }
         if (std::holds_alternative<Character*>(c2)) {
-        str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c2.Identity())));
+            auto& c = std::get<Character*>(c2);
+            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c->Identity())));
+        }
     }
     std::println("{0}", str);
 }
