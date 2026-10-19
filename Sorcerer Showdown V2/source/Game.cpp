@@ -66,7 +66,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
         std::println("end of round");
         hold_input();
     }
-
+    Log::Clear();
     return announce_end(bf);
 }
 

@@ -9,6 +9,7 @@
 class Character;
 class CurseUser;
 
+struct Shikigami;
 struct Technique;
 struct Battlefield;
 struct SurehitStruct;
@@ -27,11 +28,12 @@ namespace Log {
     void CharacterPresentation(const Character& c);
     void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name, const LogDetailType info_type = LogDetailType::Basic);
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);
-    void Attack(const std::variant<AttackStruct, ToolStruct> ats, const Character& c1, const Character& c2);
+    void Attack(const std::variant<AttackStruct, ToolStruct> ats, const Character& c1, const std::variant<Character*, Shikigami*> c2);
     void TechniqueAttack(const TechniqueStruct tc);
     void TechniqueChant(const CurseUser& cu, const TechAbility& tc);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const DomainClashStruct ds);
     void Effects(const std::vector<StatusEffect>&, const Character& p);
     void Death(const Battlefield& bf);
+    void Clear();
 }

@@ -28,7 +28,7 @@ struct ShikigamiStats final {
 
 struct Shikigami final {
     EntityInfo id;
-    ShikigamiStats hp;
+    ShikigamiStats stats;
     SavedValue rollback;
     double cost{1.0};
     SummonType summon_type{SummonType::Shadow};

@@ -47,54 +47,78 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             std::println("{}x {}", num, name);
         }
-        SetupSystem::LogSetupOptions();
-        if (!SetupSystem::SetupOptions(bf, c, load_json)) break;
+        const auto opts = SetupSystem::GetSetupOptions();
+        if (!SetupSystem::SetupOptions(opts, bf, c, load_json)) break;
     }
+    Log::Clear();
     return c;
 }
 
-void SetupSystem::LogSetupOptions() {
-    std::println("1 - Add Character         | 11 - Add multiple characters         | 111 - Choose Character\n"
-                 "2 - Remove Character      | 22 - Remove last character           | 222 - Choose from battlefield\n"
-                 "3 - Clear Battlefield     | 33 - Additional Character Info       | 333 - Load Custom Characters\n"
-                 "0 - Start Game");
+std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
+    std::vector<SetupSystem::SetupOpt> opt;
+    std::uint8_t i{0};
+    auto add_opt = [&opt, &i](std::string_view v, SetupSystem::SetupOpt op){
+        if (++i < 3){
+            std::print("{}:{} | ", opt.size(), v);
+        }else{
+            std::println("{}:{}", opt.size(), v);
+            i = 0;
+        }
+        opt.push_back(op);
+    };
+    add_opt("Start", SetupSystem::SetupOpt::Start);
+    add_opt("Add Character", SetupSystem::SetupOpt::AddChar);
+    add_opt("Add Multiple", SetupSystem::SetupOpt::AddMult);
+    add_opt("Remove Specific Character", SetupSystem::SetupOpt::RemoveSpecific);
+    add_opt("Remove Last Character", SetupSystem::SetupOpt::RemoveLast);
+    add_opt("Choose and Add Character", SetupSystem::SetupOpt::Choose);
+    add_opt("Choose from Battlefield", SetupSystem::SetupOpt::ChooseBf);
+    add_opt("Clear Battlefield", SetupSystem::SetupOpt::Clear);
+    add_opt("View Character Information", SetupSystem::SetupOpt::CharInfo);
+    add_opt("Load JSON", SetupSystem::SetupOpt::Json);
+    return opt;
 }
 
-bool SetupSystem::SetupOptions(Battlefield& bf, Character*& c, bool& load_json) {
-    switch(get_input<int>()){
-        case 1:
-            SetupSystem::AddCharacter(bf, c, false, load_json);
-            break;
-        case 11:
-            SetupSystem::AddCharacters(bf, load_json);
-            break;
-        case 111:
-            SetupSystem::AddCharacter(bf, c, true, load_json);
-            break;
-        case 2:
-            SetupSystem::RemoveCharacter(bf, c, false);
-            break;
-        case 22:
-            SetupSystem::RemoveLast(bf, c);
-            break;
-        case 222:
-            SetupSystem::RemoveCharacter(bf, c, true);
-            break;
-        case 3:
-            SetupSystem::ClearBattlefield(bf, c);
-            break;
-        case 33:
-            SetupSystem::ViewCharacterInfo(bf);
-            break;
-        case 333:
-            load_json = !load_json;
-            break;
-        case 0:
+bool SetupSystem::SetupOptions(const std::vector<SetupOpt>& opts, Battlefield& bf, Character*& c, bool& load_json) {
+    const size_t op = get_input<size_t>();
+    if (op >= opts.size()) {
+        Log::Error();
+        return true;
+    }
+    switch(opts[op]){
+        case SetupSystem::SetupOpt::Start:
             if (bf.battlefield.size() < 2){
                 std::println("Not enough fighters");
-                return true;
+                break;
             }
             return false;
+        case SetupSystem::SetupOpt::AddChar:
+            SetupSystem::AddCharacter(bf, c, false, load_json);
+            break;
+        case SetupSystem::SetupOpt::AddMult:
+            SetupSystem::AddCharacters(bf, load_json);
+            break;
+        case SetupSystem::SetupOpt::Choose:
+            SetupSystem::AddCharacter(bf, c, true, load_json);
+            break;
+        case SetupSystem::SetupOpt::RemoveSpecific:
+            SetupSystem::RemoveCharacter(bf, c, false);
+            break;
+        case SetupSystem::SetupOpt::RemoveLast:
+            SetupSystem::RemoveLast(bf, c);
+            break;
+        case SetupSystem::SetupOpt::ChooseBf:
+            SetupSystem::RemoveCharacter(bf, c, true);
+            break;
+        case SetupSystem::SetupOpt::Clear:
+            SetupSystem::ClearBattlefield(bf, c);
+            break;
+        case SetupSystem::SetupOpt::CharInfo:
+            SetupSystem::ViewCharacterInfo(bf);
+            break;
+        case SetupSystem::SetupOpt::Json:
+            load_json = !load_json;
+            break;
         default:
             Log::Error();
             break;
@@ -139,7 +163,7 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose)
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& b : bf.battlefield){
-        std::println("{}:{}", ++x, GetInfo::Name(b->Identity()));
+        std::println("{}:{} {}", ++x, GetInfo::Name(b->Identity()), c == &*b ? "(Chosen)" : "");
     }
     x = get_input<size_t>() - 1;
     if (x >= bf.battlefield.size()) {

@@ -17,9 +17,11 @@ enum class SkipType : std::uint8_t {
 namespace SetupSystem {
     SkipType GetPlayerSkipType() noexcept;
 
+    enum class SetupOpt : std::uint8_t { Start, AddChar, AddMult, Choose, RemoveSpecific, RemoveLast, ChooseBf,  Clear, CharInfo, Json };
+
     Character* SetupLoop(Battlefield& bf);
-    void LogSetupOptions();
-    bool SetupOptions(Battlefield& bf, Character*& c, bool& load_json);
+    std::vector<SetupOpt> GetSetupOptions();
+    bool SetupOptions(const std::vector<SetupOpt>& opts, Battlefield& bf, Character*& c, bool& load_json);
     void BattlefieldSetup(Battlefield& bf);
 
     void AddCharacter(Battlefield& bf, Character*& c, bool choosing, bool load_json);

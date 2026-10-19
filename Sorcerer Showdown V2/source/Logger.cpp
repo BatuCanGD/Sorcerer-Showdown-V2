@@ -112,7 +112,7 @@ void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
     }
     std::println("{}'s damage output increases to: {:.1f}", GetInfo::Name(tc.id), TechniqueSystem::CalculateDamage(tc, cu));
 }
-void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const Character& c2) {
+void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Character& c1, const std::variant<Character*, Shikigami*> c2) {
     std::string str{};
     if (std::holds_alternative<AttackStruct>(vr)){
         const auto& ats = std::get<AttackStruct>(vr);
@@ -120,25 +120,29 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             std::println("You cannot attack yourself");
             return;
         }
-        std::string info = std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(c2.Identity()));
-        if (ats.blocked){
-            info.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(c2.Identity())));
-        }else{
-            info.append(std::format("{} took {:.1f} damage!", GetInfo::Name(c2.Identity()), ats.damage));
-            if (ats.is_critical){
-                str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
+        if (std::holds_alternative<Character*>(c2)) {
+            const auto& ch = std::get<Character*>(c2);
+            std::string info = std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity()));
+            if (ats.blocked){
+                info.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
+            }else{
+                info.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->Identity()), ats.damage));
+                if (ats.is_critical){
+                    str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
+                }
+                if (ats.is_blackflash){
+                    str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
+                }
             }
-            if (ats.is_blackflash){
-                str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
-            }
+            str.append(info);
         }
-        str.append(info);
     }else if (std::holds_alternative<ToolStruct>(vr)){
         const auto& cts = std::get<ToolStruct>(vr);
         if (cts.dealt_damage == -1.0) {
             std::println("You cannot attack yourself");
             return;
         }
+        if (std::holds_alternative<Character*>(c2)) {
         str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c2.Identity())));
     }
     std::println("{0}", str);
@@ -211,4 +215,8 @@ void Log::Death(const Battlefield& bf){
     if (death_messages.size() == bf.battlefield.size()) {
         std::println("Everyone has been defeated!");
     }
+}
+
+void Log::Clear() {
+    std::print("\x1b[2J\x1b[H");
 }

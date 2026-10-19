@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <utility>
+#include <variant>
 #include <string>
 #include <vector>
 
@@ -25,9 +26,9 @@ namespace UserControl {
     void GetPlayerTurn(Character& c, Battlefield& bf);
     bool GetConfirmation();
 
-    Character* GetUserTarget(Battlefield& bf);
-
-    void DoAttack(Character& c, Character& cd);
+    std::variant<Character*, Shikigami*> GetTarget(Battlefield& bf);
+    Character* GetCharacterTarget(Battlefield& bf);
+    void DoAttack(Character& c, std::variant<Character*, Shikigami*> cd);
     void DoInventoryManagement(Character& c);
     void DoEffects(const Character& c);
 

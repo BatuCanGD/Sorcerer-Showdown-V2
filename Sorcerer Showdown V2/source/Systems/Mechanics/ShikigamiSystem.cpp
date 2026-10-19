@@ -41,11 +41,11 @@ void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, Sav
 
 
 void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
-    if (sk.hp.health <= 0.0){
+    if (sk.stats.health <= 0.0){
         return;
     }
     if (sk.summon_type != SummonType::Active){
-        sk.hp.health = std::min(sk.hp.health + sk.hp.regen_speed, sk.hp.max_health);
+        sk.stats.health = std::min(sk.stats.health + sk.stats.regen_speed, sk.stats.max_health);
         if (sk.summon_type == SummonType::Shadow){
             if (!sk.rollback.undone){
                 ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.rollback);

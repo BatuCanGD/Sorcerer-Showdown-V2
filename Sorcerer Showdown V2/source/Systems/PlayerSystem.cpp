@@ -62,7 +62,7 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
         if (UserControl::GetConfirmation()){
             switch(choices.first[idx]){
                 case Action::Attack:
-                    UserControl::DoAttack(c, *UserControl::GetUserTarget(bf));
+                    UserControl::DoAttack(c, UserControl::GetTarget(bf));
                     break;
                 case Action::Inventory:
                     UserControl::DoInventoryManagement(c);
@@ -95,18 +95,73 @@ bool UserControl::GetConfirmation() {
     std::println("Are you sure?\n 1 - Yes | 2 - No");
     return get_input<int>() == 1;
 }
+#include <variant>
+std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
+    std::vector<std::variant<Character*, Shikigami*>> targets;
+    targets.push_back(GetCharacterTarget(bf));
+    Character* chr = std::get<Character*>(targets.front());
+    if (const auto& ch = std::get<Character*>(targets[0])){
+        if (auto* crs = ch->CanUseSorcery()){
+            for (auto c : crs->Jujutsu().shikigami) {
+                if (c.summon_type == SummonType::Active){
+                    targets.emplace_back(&c);
+                }
+            }
+        }
+    }
+    if (targets.size() == 1) {
+        return chr;
+    }
 
-Character* UserControl::GetUserTarget(Battlefield& bf) {
+    std::uint8_t idx{};
+    for (const auto& c : targets){
+        if (std::holds_alternative<Shikigami*>(c)) {
+            auto& sh = std::get<Shikigami*>(c);
+            std::println("{}:{} | {}", ++idx, GetInfo::Name(sh->id), sh->stats.health);
+        }else{
+            auto& ch = std::get<Character*>(c);
+            std::println("{}:{} | {}", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
+        }
+    }
+    std::println("Choose your target");
+    size_t pc = get_input<size_t>();
+    if (pc > targets.size()) {
+        Log::Error();
+        return chr;
+    }else if (pc > 1){
+        return targets[--pc];
+    }else{
+        return chr;
+    }
+}
+
+Character* UserControl::GetCharacterTarget(Battlefield& bf) {
     size_t z{0};
     for (const auto& c : bf.battlefield){
-        std::println("{0}:{1} | HP: {2:.1f}", ++z, GetInfo::Name(c->Identity()), c->State().health);
+        std::string str{};
+        str.append(std::format("{}:{}", ++z, GetInfo::Name(c->Identity())));
+        str.append(" | {} ", c->State().health);
+        if (const auto& cr = c->CanUseSorcery()){
+            auto& j = cr->Jujutsu();
+            if (!j.shikigami.empty()){
+                bool appended{false};
+                for (const auto& s : j.shikigami){
+                    if (appended) continue;
+                    if (s.summon_type == SummonType::Active) {
+                        str.append("*");
+                        appended = true;
+                    }
+                }
+            }
+        }
+        std::println("{}", str);
     }
     std::println("Pick a target");
     size_t x = get_input<size_t>() - 1;
     while (x >= bf.battlefield.size()){
         std::println("Try again");
         x = get_input<size_t>() - 1;
-    }
+    } 
     return bf.battlefield[x].get();
 }
 
@@ -116,7 +171,7 @@ void UserControl::DoEffects(const Character &cc){
     }
 }
 
-void UserControl::DoAttack(Character& c, Character& cd) {
+void UserControl::DoAttack(Character& c, std::variant<Character*, Shikigami*> cd) {
     const auto result = c.Attack(cd);
     Log::Attack(result, c, cd);
 }
@@ -377,7 +432,7 @@ void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
     auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
     std::println("1 - Use Ability | 2 - Chant");
     if (get_input<int>() == 1){
-        auto& cd = *UserControl::GetUserTarget(bf);
+        auto cd = UserControl::GetTarget(bf);
         const auto result = CombatSystem::ResolveTechnique(*c, ability, cd);
         Log::TechniqueAttack(result);
     }else{
