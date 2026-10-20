@@ -1,12 +1,11 @@
 #include "../../../header/Systems/Mechanics/ShikigamiSystem.hpp"
 #include "../../../header/CharacterType/CurseUser.hpp"
-
 #include <algorithm>
-#include <cmath>
 
-void ShikigamiSystem::Damage(double amount, Shikigami &s) {
-    amount = amount * (0.10 + 0.90 * std::exp(-s.stats.durability / 450.0));
-    s.stats.health -= amount;
+DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, globalums::DamageType dt) {
+    DamageStruct ds{CombatSystem::ResolveDamage(&s, dt, amount)};
+    s.stats.health -= ds.damage;
+    return ds;
 }
 
 void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& sv, const double mult){

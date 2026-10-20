@@ -179,6 +179,10 @@ void UserControl::DoAttack(Character& c, std::variant<Character*, Shikigami*> cd
         auto& cc = std::get<Character*>(cd);
         const auto result = c.Attack(*cc);
         Log::Attack(result, c, cc);
+    }else{
+        auto& cc = std::get<Shikigami*>(cd);
+        const auto result = CombatSystem::ResolveAttacking(c, cd);
+        Log::Attack(result, c, cc);
     }
 }
 

@@ -219,7 +219,6 @@ void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){
         case ResourceUsage::AllOut: {     
             if (SorcerySystem::CEMoreThanMax(c, 0.45)){
                 type = SummonType::Active;  
-                
             }else if (SorcerySystem::CEMoreThanMax(c, 0.15)){
                 type = SummonType::Support;
             }else{

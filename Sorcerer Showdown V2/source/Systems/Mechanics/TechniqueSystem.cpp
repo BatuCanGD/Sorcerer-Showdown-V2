@@ -15,7 +15,7 @@ std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, Cu
     return {true, op};
 }
 
-std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(CurseUser& user, TechAbility chosen_ct, Character& target){
+std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(TechAbility chosen_ct, CurseUser& user){
     double cursed_energy_consumption = SorcerySystem::ApplySpendingMultiplier(chosen_ct.cost, user);
     if (user.CursedEnergy().cursed_energy < cursed_energy_consumption){
         return {false, 0.0};

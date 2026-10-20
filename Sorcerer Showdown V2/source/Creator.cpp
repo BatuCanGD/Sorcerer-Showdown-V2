@@ -217,7 +217,7 @@ Technique Create::Tech::Limitless() {
 Technique Create::Tech::Shrine() {
     Technique c{};
 
-    const EntityInfo id = {"Limitless", "\x1b[38;5;45m", "An Inherited Technique that grants the user control over space itself" };
+    const EntityInfo id = {"Shrine", "\x1b[38;5;9m", "A Cutting Technique that can send out both normal slashes and slashes that adapts to the targets durability" };
 
     c.identity = id;
 

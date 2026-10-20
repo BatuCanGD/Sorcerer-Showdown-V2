@@ -40,7 +40,7 @@ struct TechniqueStruct final {
 };
 
 namespace CombatSystem {
-    DamageStruct ResolveDamage(const Character& c, globalums::DamageType type, double amount);
+    DamageStruct ResolveDamage(const std::variant<Character*, Shikigami*> c, globalums::DamageType type, double amount);
     AttackStruct ResolveAttacking(Character& attacker, std::variant<Character*, Shikigami*> attacked);
     ToolStruct ResolveCursedTool(Character& attacker, std::variant<Character*, Shikigami*> attacked);
     TechniqueStruct ResolveTechnique(CurseUser& attacker, TechAbility& tc, std::variant<Character*, Shikigami*> attacked);

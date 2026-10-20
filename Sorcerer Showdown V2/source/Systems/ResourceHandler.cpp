@@ -50,8 +50,13 @@ void ResourceHandler::TickChant(CurseUser &crs){
 }
 void ResourceHandler::TickRCT(CurseUser& crs) {
     if (!crs.RCT().can_use_rct) return;
-    const double& output = crs.RCT().rct_output;
-    crs.CursedEnergy().cursed_energy = std::clamp(crs.CursedEnergy().cursed_energy - SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), crs), 0.0, crs.CursedEnergy().max_cursed_energy);
+    double& output = crs.RCT().rct_output;
+    const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), crs);
+    if (cost > crs.CursedEnergy().cursed_energy){
+        output = 0.0;
+        return;
+    }
+    crs.CursedEnergy().cursed_energy -= cost;
     crs.State().health = std::min(crs.State().health + output, crs.State().max_health);
 }
 void ResourceHandler::TickOutputStatus(CurseUser &crs){

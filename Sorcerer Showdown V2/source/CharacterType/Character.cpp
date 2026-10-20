@@ -34,7 +34,7 @@ DamageStruct Character::Damage(double amount, globalums::DamageType type){
     if (state.is_invulnerable){
         return ds;
     }
-    ds = CombatSystem::ResolveDamage(*this, type, amount);
+    ds = CombatSystem::ResolveDamage(this, type, amount);
     if (ds.attack_blocked){
         return ds;
     }
