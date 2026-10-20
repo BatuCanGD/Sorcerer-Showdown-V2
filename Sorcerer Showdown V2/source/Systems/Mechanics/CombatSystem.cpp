@@ -117,18 +117,16 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility&
     attacker.CursedEnergy().cursed_energy -= ce;
     attacker.Output().current_output += output;
 
-
+    DamageStruct ds{};
     if (std::holds_alternative<Character*>(attacked)) {
-        auto& c = std::get<Character*>(attacked);
-        const auto result = c->Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
-        if (chosen_ct.chant_amount > 0) chosen_ct.chant_amount = 0;
-        return {&chosen_ct , &attacker, c, result.damage, result.attack_blocked, enough_output, enough_ce};
+        ds = std::get<Character*>(attacked)->Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     }else {
-        auto& c = std::get<Shikigami*>(attacked);
-        const auto result = ShikigamiSystem::Damage(*c, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
-        if (chosen_ct.chant_amount > 0) chosen_ct.chant_amount = 0;
-        return {&chosen_ct, &attacker, c, result.damage, result.attack_blocked, enough_output, enough_ce};
+        ds = ShikigamiSystem::Damage(*std::get<Shikigami*>(attacked), TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     }
+    if (chosen_ct.chant_amount > 0) {
+        chosen_ct.chant_amount = 0;
+    }
+    return {&chosen_ct, &attacker, attacked, ds.damage, ds.attack_blocked, enough_output, enough_ce};
 }
 
 void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
