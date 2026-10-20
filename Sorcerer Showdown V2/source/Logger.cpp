@@ -139,10 +139,9 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
                 str.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
             }else{
                 str.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->Identity()), ats.damage));
-
             }
         }else{
-            str.append(std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(std::get<Shikigami*>(c2)->id)));
+            str.append(std::format("{0} attacked {1}!\n{1} took {2:.1f} damage!", GetInfo::Name(c1.Identity()), GetInfo::Name(std::get<Shikigami*>(c2)->id) ,ats.damage));
         }
     }else if (std::holds_alternative<ToolStruct>(vr)){
         const auto& cts = std::get<ToolStruct>(vr);
