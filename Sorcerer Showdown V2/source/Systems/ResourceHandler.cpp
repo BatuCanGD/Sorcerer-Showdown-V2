@@ -53,7 +53,6 @@ void ResourceHandler::TickRCT(CurseUser& crs) {
     double& output = crs.RCT().rct_output;
     const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), crs);
     if (cost > crs.CursedEnergy().cursed_energy){
-        output = 0.0;
         return;
     }
     crs.CursedEnergy().cursed_energy -= cost;

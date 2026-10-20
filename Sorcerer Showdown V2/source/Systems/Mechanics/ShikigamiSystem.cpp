@@ -4,6 +4,9 @@
 
 DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, globalums::DamageType dt) {
     DamageStruct ds{CombatSystem::ResolveDamage(&s, dt, amount)};
+    if (ds.attack_blocked){
+        return {.attack_blocked = true};
+    }
     s.stats.health -= ds.damage;
     return ds;
 }

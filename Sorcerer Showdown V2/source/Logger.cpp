@@ -96,6 +96,8 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
             }else {
                 std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(c->Identity()), tc.damage);
             }
+        }else{
+            std::println("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::get<Shikigami*>(tc.target)->id), tc.damage);
         }
     }
 }
@@ -123,21 +125,24 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             std::println("You cannot attack yourself");
             return;
         }
+        if (ats.is_critical){
+            str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
+        }
+        if (ats.is_blackflash){
+            str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
+        }
+
         if (std::holds_alternative<Character*>(c2)) {
             const auto& ch = std::get<Character*>(c2);
-            std::string info = std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity()));
+            str.append(std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
             if (ats.blocked){
-                info.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
+                str.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
             }else{
-                info.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->Identity()), ats.damage));
-                if (ats.is_critical){
-                    str.append("\x1b[38;5;124m[CRITICAL]\x1b[0m");
-                }
-                if (ats.is_blackflash){
-                    str.append("\x1b[38;5;9m[BLACKFLASH]\x1b[0m");
-                }
+                str.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->Identity()), ats.damage));
+
             }
-            str.append(info);
+        }else{
+            str.append(std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(std::get<Shikigami*>(c2)->id)));
         }
     }else if (std::holds_alternative<ToolStruct>(vr)){
         const auto& cts = std::get<ToolStruct>(vr);
@@ -146,8 +151,9 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             return;
         }
         if (std::holds_alternative<Character*>(c2)) {
-            auto& c = std::get<Character*>(c2);
-            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(c->Identity())));
+            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(std::get<Character*>(c2)->Identity())));
+        }else{
+            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(std::get<Shikigami*>(c2)->id)));
         }
     }
     std::println("{0}", str);
