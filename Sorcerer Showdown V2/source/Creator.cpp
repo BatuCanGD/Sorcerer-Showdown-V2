@@ -70,7 +70,7 @@ Character Create::Char::Maki() {
 CurseUser Create::Char::Mahito() {
     CurseUser c{};
 
-    const EntityInfo id {"Mahito", "\x1b[38;5;129m", "Cursed Spirit with the ability to Reshape souls"};
+    const EntityInfo id {"Mahito", "\x1b[38;5;129m", "A Disaster Curse with the ability to Reshape souls"};
     
     constexpr double health     = 550.0;
     constexpr double strength   = 115.0;
@@ -107,7 +107,7 @@ CurseUser Create::Char::Mahito() {
 CurseUser Create::Char::Jogo() {
     CurseUser c{};
 
-    const EntityInfo id {"Jogo", "\x1b[38;5;202m", ""};
+    const EntityInfo id {"Jogo", "\x1b[38;5;202m", "A Disaster Curse with the ability to create fire and lava"};
 
     c.Identity() = id;
 
@@ -116,7 +116,7 @@ CurseUser Create::Char::Jogo() {
 CurseUser Create::Char::Hanami() {
     CurseUser c{};
 
-    const EntityInfo id {"Hanami", "\x1b[38;5;217m", ""};
+    const EntityInfo id {"Hanami", "\x1b[38;5;217m", "A Disaster Curse with the ability to create Trees from the ground and Pacifying flowers"};
 
     c.Identity() = id;
 
