@@ -78,13 +78,15 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
 
 void AI::DF_Attack(Character &c, Character &target) {
     if (const auto& chr = c.CanUseSorcery()) {
-        bool& amp = chr->Amplification().is_active;
-        if (const auto& cc = target.CanUseSorcery()){
-            if (const auto& tech = cc->Jujutsu().technique){
-                if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
-                    amp = true;
-                }else if (amp){
-                    amp = false;
+        if (chr->Amplification().can_use_amp){
+            bool& amp = chr->Amplification().is_active;
+            if (const auto& cc = target.CanUseSorcery()){
+                if (const auto& tech = cc->Jujutsu().technique){
+                    if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
+                        amp = true;
+                    }else if (amp){
+                        amp = false;
+                    }
                 }
             }
         }
