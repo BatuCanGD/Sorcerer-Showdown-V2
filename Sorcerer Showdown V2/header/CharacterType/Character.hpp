@@ -18,6 +18,7 @@ struct DamageStruct;
 
 struct BattleIQ final {
     TargetingType targeting_type{TargetingType::Mixed};
+    TargetedTypes targeted_type {TargetedTypes::Mixed};
     FightingStyle fighting_style{FightingStyle::Mixed};
     ResourceUsage resource_usage{ResourceUsage::Mixed};
 };

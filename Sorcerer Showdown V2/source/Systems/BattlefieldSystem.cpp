@@ -5,9 +5,7 @@
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/Battlefield.hpp"
-
 #include <vector>
-#include <print>
 
 
 void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
@@ -40,7 +38,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
     }
     switch (domain_users.size()) {
         case 0: {
-            std::println("No domains are active this turn");
+            Log::Line("No domains are active this turn");
             break;
         }
         case 1: {

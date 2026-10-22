@@ -7,8 +7,6 @@
 #include "../header/Systems/ResourceHandler.hpp"
 #include "../header/Systems/PlayerSystem.hpp"
 
-#include <print>
-
 struct playerchoices final {
     Character* user_character{nullptr};
     SkipType skip_type{SkipType::None};
@@ -19,13 +17,19 @@ struct Skippy final {
     bool skip_all{false};
 };
 
-bool announce_end(Battlefield& bf){
+bool announce_end(Battlefield& bf, const playerchoices& pc){
     auto& b = bf.battlefield;
     if (b.size() < 2){
         if (b.size() != 0){
-            std::println("{} is the last fighter standing!", GetInfo::Name(b[0]->Identity()));
+            auto& chr = b[0];
+            Log::Line("{} is the last fighter standing!", GetInfo::Name(chr->Identity()));
+            if (pc.user_character == &*chr){
+                Log::Line("You Win!");
+            }else{
+                Log::Line("You Lose!");
+            }
         }else{
-            std::println("No one is left standing alive!");
+            Log::Line("No one is left standing alive!");
         }
         return false;
     }
@@ -33,7 +37,7 @@ bool announce_end(Battlefield& bf){
 }
 
 bool endgame() {
-    std::print("Continue Game?\n1 - Continue | 2 - End\n=> ");
+    Log::Line("Continue Game?\n1 - Continue | 2 - End\n=> ");
     return get_input<int>() == 1;
 }
 
@@ -41,19 +45,20 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
     for(size_t idx = 0; idx < bf.battlefield.size(); ++idx){
         auto& c = bf.battlefield[idx];
         if (c->State().health <= 0.0) continue;
-        std::print("({})", idx + 1);
+        Log::Line("({})", idx + 1);
         Log::CharacterPresentation(*c);
-        std::println();
+        Log::Line();
         if (pc.user_character == c.get()){
             UserControl::GetPlayerTurn(*c, bf);
+            hold_input();
         }else {
             AI::Fight(*c, bf);
+            if (!sp.skip_turns){
+                Log::Line("end of turn");
+                hold_input();
+            }
         }
-        std::println();
-        if (!sp.skip_turns){
-            std::println("end of turn");
-            hold_input();
-        }
+        Log::Line();
         if (!BattlefieldSystem::CanContinueFight(bf)) break;
     }
 
@@ -63,11 +68,11 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
     BattlefieldSystem::HandleDeadPeople(bf);
 
     if (!sp.skip_all){
-        std::println("end of round");
+        Log::Line("End of round");
         hold_input();
     }
     Log::Clear();
-    return announce_end(bf);
+    return announce_end(bf, pc);
 }
 
 bool rungame()  {

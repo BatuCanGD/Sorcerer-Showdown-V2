@@ -19,6 +19,12 @@ enum class TargetingType : std::uint8_t { // targeted character type
     Mixed
 };
 
+enum class TargetedTypes : std::uint8_t { // what type of target the character chooses
+    Character,
+    Shikigami,
+    Mixed
+};
+
 enum class FightingStyle : std::uint8_t { // how the character approaches a conclusion
     Aggressive,
     Defensive,
@@ -32,7 +38,7 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 };
 
 namespace AI {
-    Character* GetTarget(const Character& user, const TargetingType& tp, const Battlefield& bf);
+    Character* GetTarget(const Character& user, const BattleIQ& tp, const Battlefield& bf);
 
     void DF_UseDomain(CurseUser& c, const Battlefield& bf, const FightingStyle& fs);
     void DF_UseTechnique(CurseUser& c, Character& target, const BattleIQ& bq);

@@ -1,6 +1,7 @@
 #include "../../header/Systems/PlayerSystem.hpp"
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Battlefield.hpp"
+#include "../../header/Logger.hpp"
 #include "../../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../../header/Systems/Mechanics/VowSystem.hpp"
@@ -12,8 +13,6 @@
 #include <string_view>
 #include <optional>
 #include <format>
-#include <print>
-
 
 std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices(const Character& c) {
     std::vector<Action> ac;
@@ -53,13 +52,13 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
     auto* crs = c.CanUseSorcery();
     std::uint8_t turn_count = 3;
     do{
-        std::println("Action count: {}", turn_count);
+        Log::Line("Action count: {}", turn_count);
         for (const auto& str : choices.second){
-            std::println("{}", str);
+            Log::Line("{}", str);
         }
         size_t idx = get_input<size_t>() - 1;
         while (idx >= choices.first.size()) {
-            Log::Error();
+            Log::Error("Invalid Choice");
             idx = get_input<size_t>() - 1;
         }
         if (UserControl::GetConfirmation()){
@@ -95,7 +94,7 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
 }
 
 bool UserControl::GetConfirmation() {
-    std::println("Are you sure?\n 1 - Yes | 2 - No");
+    Log::Line("Are you sure?\n 1 - Yes | 2 - No");
     return get_input<int>() == 1;
 }
 #include <variant>
@@ -120,16 +119,16 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
     for (const auto& c : targets){
         if (std::holds_alternative<Shikigami*>(c)) {
             auto& sh = std::get<Shikigami*>(c);
-            std::println("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(sh->id), sh->stats.health);
+            Log::Line("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(sh->id), sh->stats.health);
         }else{
             auto& ch = std::get<Character*>(c);
-            std::println("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
+            Log::Line("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
         }
     }
-    std::println("Choose your target");
+    Log::Line("Choose your target");
     idx = get_input<size_t>();
     if (idx > targets.size()) {
-        Log::Error();
+        Log::Error("Invalid Choice");
         return chr;
     }else if (idx > 1){
         return targets[--idx];
@@ -157,12 +156,12 @@ Character* UserControl::GetCharacterTarget(Battlefield& bf) {
                 }
             }
         }
-        std::println("{}", str);
+        Log::Line("{}", str);
     }
-    std::println("Pick a target");
+    Log::Line("Pick a target");
     size_t x = get_input<size_t>() - 1;
     while (x >= bf.battlefield.size()){
-        std::println("Try again");
+        Log::Line("Try again");
         x = get_input<size_t>() - 1;
     } 
     return bf.battlefield[x].get();
@@ -170,7 +169,7 @@ Character* UserControl::GetCharacterTarget(Battlefield& bf) {
 
 void UserControl::DoEffects(const Character &cc){
     for (const auto& c : cc.State().status_effects){
-        std::println("{}", GetInfo::Styalized(c.id));
+        Log::Line("{}", GetInfo::Styalized(c.id));
     }
 }
 
@@ -205,7 +204,7 @@ void UserControl::DoInventoryManagement(Character& c) {
     size_t ww{0};
 
     auto add_wp([&](CursedTool& w, Origin origin, size_t index = 0){
-        std::println("{}:{}", ++ww, GetInfo::Name(w.identity));
+        Log::Line("{}:{}", ++ww, GetInfo::Name(w.identity));
         wp.push_back({&w, origin, index});
     });
 
@@ -222,19 +221,19 @@ void UserControl::DoInventoryManagement(Character& c) {
     }
 
     if (wp.empty()) {
-        std::println("You have no cursed tools"); 
+        Log::Line("You have no cursed tools"); 
         return;
     }
 
     size_t input = get_input<size_t>() - 1;
     if (input >= wp.size()) {
-        Log::Error();
+        Log::Error("Invalid Choice");
         return;
     }
 
     const Candidate chosen = wp[input];
-    std::println("Chosen Tool: [{}]", GetInfo::Name(chosen.tool->identity));
-    std::println("1 - Move to main hand\n2 - Move to Offhand\n{}", has_inv ? "3 - Move to Inventory" : "");
+    Log::Line("Chosen Tool: [{}]", GetInfo::Name(chosen.tool->identity));
+    Log::Line("1 - Move to main hand\n2 - Move to Offhand\n{}", has_inv ? "3 - Move to Inventory" : "");
 
     auto extract_chosen = [&]() -> CursedTool {
         CursedTool value = std::move(*chosen.tool);
@@ -255,7 +254,7 @@ void UserControl::DoInventoryManagement(Character& c) {
     switch (get_input<int>()) {
         case 1: {
             if (chosen.origin == Origin::MainHand) {
-                std::println("You cannot move an item in your hand");
+                Log::Line("You cannot move an item in your hand");
                 return;
             }
             CursedTool incoming = extract_chosen();
@@ -272,7 +271,7 @@ void UserControl::DoInventoryManagement(Character& c) {
         }
         case 2: {
             if (chosen.origin == Origin::OffHand) {
-                std::println("You cannot move an item in your hand");
+                Log::Line("You cannot move an item in your hand");
                 return;
             }
             CursedTool incoming = extract_chosen();
@@ -301,7 +300,7 @@ void UserControl::DoInventoryManagement(Character& c) {
 
 void UserControl::DoSorcery(CurseUser* c) {
     if (c == nullptr){
-        std::println("You are not a curse user!");
+        Log::Line("You are not a curse user!");
         return;
     }
     const auto& sp = UserControl::GetSorceryChoices(*c);
@@ -328,7 +327,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
     std::vector<SorceryType> sp;
     int k{0};
     auto add_p([&](std::string_view sv, SorceryType s){
-        std::println("{} - {}", ++k, sv);
+        Log::Line("{} - {}", ++k, sv);
         sp.push_back(s);
     });
     if (c.RCT().can_use_rct){
@@ -342,52 +341,52 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 
 void UserControl::ForRCT(CurseUser& c){
     double& rct = c.RCT().rct_output;
-    std::println("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
-    std::println("1 - Set | 2 - Return");
+    Log::Line("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
+    Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
-    std::print("Enter Output Amount: ");
+    Log::Line("Enter Output Amount: ");
     const double prv = rct;
     rct = std::max(get_input<double>(), 0.0);
 
-    std::println("New cost: {:.1f} CE per turn", SorcerySystem::ApplyRCTCost(rct));
+    Log::Line("New cost: {:.1f} CE per turn", SorcerySystem::ApplyRCTCost(rct));
     if (!UserControl::GetConfirmation()){
         rct = prv;
     }
 }
 void UserControl::ForReinforcement(CurseUser& c){
     double& rf = c.CursedEnergy().reinforcement_amount;
-    std::println("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
-    std::println("1 - Set | 2 - Return");
+    Log::Line("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
+    Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
-    std::print("Enter Reinforcement Amount: ");
+    Log::Line("Enter Reinforcement Amount: ");
     const double prv = rf;
     rf = std::max(get_input<double>(), 0.0);
 
-    std::println("New cost: {:.1f} CE per turn", SorcerySystem::ApplyReinforcementCost(rf));
+    Log::Line("New cost: {:.1f} CE per turn", SorcerySystem::ApplyReinforcementCost(rf));
     if (!UserControl::GetConfirmation()){
         rf = prv;
     }
 }
 void UserControl::ForBindingVows(CurseUser& c){ 
-    std::println("Binding vows can only be created and are not able to be removed!");
-    std::println("Current Binding Vows: ");
+    Log::Line("Binding vows can only be created and are not able to be removed!");
+    Log::Line("Current Binding Vows: ");
     if (c.Jujutsu().binding_vows.empty()) {
-        std::println("None");
+        Log::Line("None");
     }
     for (const auto& cc : c.Jujutsu().binding_vows){
-        std::println("[{}]-{}", GetInfo::Name(cc.identity), cc.identity.description);
+        Log::Line("[{}]-{}", GetInfo::Name(cc.identity), cc.identity.description);
     }
-    std::println("1 - Create Binding Vow | 2 - Return");
+    Log::Line("1 - Create Binding Vow | 2 - Return");
 
     if (get_input<int>() != 1) return;
     BindingVow bv{};
 
-    std::println("Which will you sacrifice?");
+    Log::Line("Which will you sacrifice?");
 
     std::vector<SacrificeType> stv;
     auto opt = [&](std::string_view s, SacrificeType st){
         stv.push_back(st);
-        std::println("{}:{}", stv.size(), s);
+        Log::Line("{}:{}", stv.size(), s);
     };
     opt("Health", SacrificeType::Health);
     opt("Cursed Energy", SacrificeType::CursedEnergy);
@@ -399,7 +398,7 @@ void UserControl::ForBindingVows(CurseUser& c){
     }
     const auto sack = stv[sac];
     stv.clear();
-    std::println("Which will you gain?");
+    Log::Line("Which will you gain?");
 
     opt("Health", SacrificeType::Health);
     opt("Cursed Energy", SacrificeType::CursedEnergy);
@@ -409,16 +408,16 @@ void UserControl::ForBindingVows(CurseUser& c){
     if (gan >= stv.size()) return;
     const auto gain = stv[gan];
     if (gain == sack) {
-        std::println("You cannot sacrifice and gain the same thing");
+        Log::Line("You cannot sacrifice and gain the same thing");
         return;
     }
-    std::println("How much will you sacrifice percentage-wise?\n[1-99]\n=> ");
+    Log::Line("How much will you sacrifice percentage-wise?\n[1-99]\n=> ");
     double dp = get_input<double>();
     if (dp < 0.01) {
-        std::println("You must sacrifice at least 1%");
+        Log::Line("You must sacrifice at least 1%");
         return;
     } else if (dp > 99.9 || (dp > 0.99 && dp < 1.0)){
-        std::println("You cannot sacrifice more than 99%");
+        Log::Line("You cannot sacrifice more than 99%");
         return;
     }
     const double sdp = (dp >= 1.0 && dp <= 99.9) ? dp * 0.01 : dp;
@@ -432,15 +431,15 @@ void UserControl::ForBindingVows(CurseUser& c){
 
 void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
     if (c == nullptr){
-        std::println("You are not a curse user!");
+        Log::Line("You are not a curse user!");
         return;
     }
     if (!c->Jujutsu().technique.has_value()) {
-        std::println("You do not have a technique");
+        Log::Line("You do not have a technique");
         return;
     }
     auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
-    std::println("1 - Use Ability | 2 - Chant");
+    Log::Line("1 - Use Ability | 2 - Chant");
     if (get_input<int>() == 1){
         auto cd = UserControl::GetTarget(bf);
         const auto result = CombatSystem::ResolveTechnique(*c, ability, cd);
@@ -451,14 +450,14 @@ void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
 }
 void UserControl::DoDomain(CurseUser* c) {
     if (c == nullptr){
-        std::println("You are not a curse user!");
+        Log::Line("You are not a curse user!");
         return;
     } 
     auto& domain = c->Jujutsu().domain;
     auto& neutralizer = c->Jujutsu().neutralizer;
 
     if (!domain && !neutralizer) {
-        std::println("You do not have a domain or anything that can neutralize it");
+        Log::Line("You do not have a domain or anything that can neutralize it");
         return;
     }
     enum class dmn : std::uint8_t { Domain, Neutralizer };
@@ -466,15 +465,15 @@ void UserControl::DoDomain(CurseUser* c) {
     unsigned short a = 0;
     auto add_ch = [&](dmn s){ 
         dm.push_back(s);
-        std::print("{}:{} ", ++a, s == dmn::Domain ? "Domain" : "Neutralizer");
+        Log::Line("{}:{} ", ++a, s == dmn::Domain ? "Domain" : "Neutralizer");
     };
     if (domain){
         add_ch(dmn::Domain);
-        std::println("[{}][{:.1f}/{:.1f}] - {}", GetInfo::Name(domain->identity), domain->health, domain->max_health, domain->is_active ? "Active" : "Inactive");
+        Log::Line("[{}][{:.1f}/{:.1f}] - {}", GetInfo::Name(domain->identity), domain->health, domain->max_health, domain->is_active ? "Active" : "Inactive");
     }
     if (neutralizer) {
         add_ch(dmn::Neutralizer);
-        std::println("[{}][{:.1f}/{:.1f}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->health, neutralizer->max_health,  neutralizer->is_active ? "Active" : "Inactive"); 
+        Log::Line("[{}][{:.1f}/{:.1f}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->health, neutralizer->max_health,  neutralizer->is_active ? "Active" : "Inactive"); 
     }
 
     size_t pl = get_input<size_t>() - 1;
@@ -483,8 +482,8 @@ void UserControl::DoDomain(CurseUser* c) {
     }
     switch(dm[pl]){
         case dmn::Domain: {
-            std::println("[{}] - {}", GetInfo::Name(domain->identity), domain->is_active ? "Active" : "Inactive");
-            std::println("1 - Activate | 2 - Deactivate\n=>");
+            Log::Line("[{}] - {}", GetInfo::Name(domain->identity), domain->is_active ? "Active" : "Inactive");
+            Log::Line("1 - Activate | 2 - Deactivate\n=>");
             int pch = get_input<int>();
             if (pch == 1){
                 domain->is_active = true;
@@ -494,8 +493,8 @@ void UserControl::DoDomain(CurseUser* c) {
             break;
         }
         case dmn::Neutralizer: {
-            std::println("[{}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->is_active ? "Active" : "Inactive"); 
-            std::println("1 - Activate | 2 - Deactivate\n=>");
+            Log::Line("[{}] - {}", GetInfo::Name(neutralizer->identity), neutralizer->is_active ? "Active" : "Inactive"); 
+            Log::Line("1 - Activate | 2 - Deactivate\n=>");
             int pch = get_input<int>();
             if (pch == 1){
                 neutralizer->is_active = true;
@@ -513,11 +512,11 @@ void UserControl::DoDomain(CurseUser* c) {
 
 void UserControl::DoShikigami(CurseUser* c) {
     if (c == nullptr){
-        std::println("You are not a curse user!");
+        Log::Line("You are not a curse user!");
         return;
     }
     if (c->Jujutsu().shikigami.empty()) {
-        std::println("You do not have any shikigami");
+        Log::Line("You do not have any shikigami");
         return;
     }
     UserControl::UseShikigami(*UserControl::ChooseShikigami(c->Jujutsu().shikigami));
@@ -526,13 +525,13 @@ void UserControl::DoShikigami(CurseUser* c) {
 Shikigami* UserControl::ChooseShikigami(std::vector<Shikigami>& sh) {
     size_t idx{0};
     for (const auto& x : sh){
-        std::println("{}:{}", ++idx, GetInfo::Name(x.id));
+        Log::Line("{}:{}", ++idx, GetInfo::Name(x.id));
     }
 
     idx = get_input<size_t>() - 1;
 
     while (idx >= sh.size()) {
-        Log::Error();
+        Log::Error("Invalid Choice");
         idx = get_input<size_t>() - 1;
     }
 
@@ -552,26 +551,26 @@ void UserControl::UseShikigami(Shikigami& c) {
             active = "In Shadow";
             break;
     }
-    std::println("Chosen: {} -  {}\n1 - Manifest\n2 - Partial Manifestation\n3 - Dismiss", GetInfo::Name(c.id), active);
+    Log::Line("Chosen: {} -  {}\n1 - Manifest\n2 - Partial Manifestation\n3 - Dismiss", GetInfo::Name(c.id), active);
     int g = get_input<int>();
     switch(g) {
         case 1:
             if (active_type == SummonType::Active){
-                std::println("Shikigami is already fully manifested");
+                Log::Line("Shikigami is already fully manifested");
                 return;
             }
             c.summon_type = SummonType::Active;
             break;
         case 2:
             if (active_type == SummonType::Support){
-                std::println("Shikigami is already partially manifested");
+                Log::Line("Shikigami is already partially manifested");
                 return;
             }
             c.summon_type = SummonType::Support;
             break;
         case 3:
             if (active_type == SummonType::Shadow){
-                std::println("Shikigami is already dismissed");
+                Log::Line("Shikigami is already dismissed");
                 return;
             }
             c.summon_type = SummonType::Shadow;

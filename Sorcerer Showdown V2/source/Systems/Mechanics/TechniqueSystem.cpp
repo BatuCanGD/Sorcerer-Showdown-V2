@@ -63,7 +63,7 @@ TechAbility& TechniqueSystem::ChooseAbility(Technique& tech) {
     Log::TechniqueInfo(tech, Log::CTLogType::Both, Log::LogDetailType::Detailed);
     size_t i = get_input<size_t>() - 1;
     while(i >= tech.abilities.size()) {
-        Log::Error();
+        Log::Error("Invalid Choice");
         i = get_input<size_t>() - 1;
     }
     return tech.abilities[i];

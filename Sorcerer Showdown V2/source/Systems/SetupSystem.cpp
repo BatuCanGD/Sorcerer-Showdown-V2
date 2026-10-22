@@ -4,12 +4,10 @@
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Creator.hpp"
 #include "../../header/Logger.hpp"
-
-#include <print>
 #include <map>
 
 SkipType SetupSystem::GetPlayerSkipType() noexcept {
-    std::println("1 - Skip Everything\n2 - Skip to end of round\n3 - Dont skip");
+    Log::Line("1 - Skip Everything\n2 - Skip to end of round\n3 - Dont skip");
     int tp = get_input<int>();
     if (tp == 1){
         return SkipType::All;
@@ -42,10 +40,10 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     bool load_json{false};
     while(true){
-        std::println("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
-        std::println("{}", load_json ? "[Custom Characters Enabled]" : "");
+        Log::Line("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
+        Log::Line("{}", load_json ? "[Custom Characters Enabled]" : "");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
-            std::println("{}x {}", num, name);
+            Log::Line("{}x {}", num, name);
         }
         const auto opts = SetupSystem::GetSetupOptions();
         if (!SetupSystem::SetupOptions(opts, bf, c, load_json)) break;
@@ -57,7 +55,7 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
 std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
     std::vector<SetupSystem::SetupOpt> opt;
     auto add_opt = [&opt](std::string_view v, SetupSystem::SetupOpt op){
-        std::println("{}:{}", opt.size(), v);
+        Log::Line("{}:{}", opt.size(), v);
         opt.push_back(op);
     };
     add_opt("Start", SetupSystem::SetupOpt::Start);
@@ -76,13 +74,13 @@ std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
 bool SetupSystem::SetupOptions(const std::vector<SetupOpt>& opts, Battlefield& bf, Character*& c, bool& load_json) {
     const size_t op = get_input<size_t>();
     if (op >= opts.size()) {
-        Log::Error();
+        Log::Error("Invalid Choice");
         return true;
     }
     switch(opts[op]){
         case SetupSystem::SetupOpt::Start:
             if (bf.battlefield.size() < 2){
-                std::println("Not enough fighters");
+                Log::Line("Not enough fighters");
                 break;
             }
             return false;
@@ -114,7 +112,7 @@ bool SetupSystem::SetupOptions(const std::vector<SetupOpt>& opts, Battlefield& b
             load_json = !load_json;
             break;
         default:
-            Log::Error();
+            Log::Error("Invalid Choice");
             break;
     }
     return true;
@@ -124,7 +122,7 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool choosing, bo
     size_t x{0};
     const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list) {
-        std::println("{}:{}", ++x, GetInfo::Styalized(z->Identity()));
+        Log::Line("{}:{}", ++x, GetInfo::Styalized(z->Identity()));
     }
     x = get_input<size_t>() - 1;
     if (x >= list.size()) {
@@ -139,14 +137,14 @@ void SetupSystem::AddCharacters(Battlefield& bf, bool load_json){
     size_t g{0};
     const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list){
-        std::println("{}:{}", ++g, GetInfo::Name(z->Identity()));
+        Log::Line("{}:{}", ++g, GetInfo::Name(z->Identity()));
     }
-    std::println("Which character would you like to add");
+    Log::Line("Which character would you like to add");
     g = get_input<size_t>() - 1;
     if (g >= list.size()){
         return;
     }
-    std::println("How many?\n=> ");
+    Log::Line("How many?\n=> ");
     int x = get_input<int>();
     for (int i = 0; i < x; i++){
         bf.battlefield.push_back(list[g]->Clone());
@@ -157,7 +155,7 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose)
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& b : bf.battlefield){
-        std::println("{}:{} {}", ++x, GetInfo::Name(b->Identity()), c == &*b ? "(Chosen)" : "");
+        Log::Line("{}:{} {}", ++x, GetInfo::Name(b->Identity()), c == &*b ? "(Chosen)" : "");
     }
     x = get_input<size_t>() - 1;
     if (x >= bf.battlefield.size()) {
@@ -184,9 +182,9 @@ void SetupSystem::ViewCharacterInfo(Battlefield &bf){
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& c : bf.battlefield){
-        std::println("{}:{}", ++x, GetInfo::Name(c->Identity()));
+        Log::Line("{}:{}", ++x, GetInfo::Name(c->Identity()));
     }
-    std::println("Who's info would you like to view");
+    Log::Line("Who's info would you like to view");
     x = get_input<size_t>();
     if (x == 0 || x > bf.battlefield.size()){
         return;

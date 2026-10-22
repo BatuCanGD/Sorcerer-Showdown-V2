@@ -2,6 +2,7 @@
 #include "Systems/Mechanics/CombatSystem.hpp"
 #include "Systems/Mechanics/DomainSystem.hpp"
 
+#include <format>
 #include <vector>
 #include <variant>
 #include <string_view>
@@ -22,9 +23,23 @@ namespace Log {
     enum class LogDetailType  : std::uint8_t { Basic, Detailed };
     enum class CTLogType      : std::uint8_t { Name, Abilities, Both };
     enum class SurehitHit     : std::uint8_t { Person, Neutralizer };
-    enum class ErrorType      : std::uint8_t { Choice, Amount };
 
-    void Error(std::string_view s = "",ErrorType type = ErrorType::Choice);
+    void WriteMessage(bool newline, std::string_view sv, std::format_args ags);
+    void WriteError(std::string_view sv, std::format_args ags);
+
+    template <typename... Args>
+    inline void Message(std::format_string<Args...> f, Args&&... a){
+        WriteMessage(false, f.get(), std::make_format_args(a...));
+    }
+    template <typename... Args>
+    inline void Line(std::format_string<Args...> f = "", Args&&... a){
+        WriteMessage(true, f.get(), std::make_format_args(a...));
+    }
+    template <typename... Args>
+    inline void Error(std::format_string<Args...> f, Args&&... a) {
+        WriteError(f.get(), std::make_format_args(a...));
+    }
+
     void CharacterPresentation(const Character& c);
     void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name, const LogDetailType info_type = LogDetailType::Basic);
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);

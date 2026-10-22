@@ -11,14 +11,13 @@
 #include "../header/Battlefield.hpp"
 
 #include <limits>
-#include <print>
 #include <stdexcept>
 
-Character* AI::GetTarget(const Character& user, const TargetingType& tp, const Battlefield &bf){
+Character* AI::GetTarget(const Character& user, const BattleIQ& tp, const Battlefield &bf){
     if (bf.battlefield.size() <= 1){
         throw std::runtime_error("0-1 Entities left in vector, Impossible to find target");
     }
-    switch(tp){
+    switch(tp.targeting_type){
         case TargetingType::HighestHP: {
             Character* target{nullptr};
             double highest_hp{std::numeric_limits<double>::lowest()};
@@ -340,16 +339,17 @@ void AI::DRM_UseTools(Character &c, const Character & tr) {
 
 void AI::Fight(Character &user, Battlefield &bf) {
     if (user.State().is_stunned){
+        Log::Line("{} Is stunned and their turn will be skipped!", GetInfo::Name(user.Identity()));
         return;
     }
     const auto& style{user.Style()};
     try {
-        Character* target = AI::GetTarget(user, style.targeting_type, bf);
+        Character* target = AI::GetTarget(user, style, bf);
         DoResourceManagement(user, *target, bf, style.resource_usage);
         DoFighting(user, target, bf, style);
     }catch(const std::out_of_range& oor) {
-        std::println(stderr, "Range error: {}", oor.what());
+        Log::Error("Range error: {}", oor.what());
     }catch(const std::runtime_error& re){
-        std::println(stderr, "Runtime error: {}", re.what());
+        Log::Error("Runtime error: {}", re.what());
     }
 }
