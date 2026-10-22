@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <variant>
 
 class Character;
 class CurseUser;
@@ -38,7 +39,7 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 };
 
 namespace AI {
-    Character* GetTarget(const Character& user, const BattleIQ& tp, const Battlefield& bf);
+    std::variant<Character*, Shikigami*> GetTarget(const Character& user, const BattleIQ& tp, const Battlefield& bf);
 
     void DF_UseDomain(CurseUser& c, const Battlefield& bf, const FightingStyle& fs);
     void DF_UseTechnique(CurseUser& c, Character& target, const BattleIQ& bq);

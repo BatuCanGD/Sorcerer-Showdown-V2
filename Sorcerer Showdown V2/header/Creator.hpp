@@ -15,6 +15,8 @@ namespace Create {
         [[nodiscard]] Character Toji();
         [[nodiscard]] Character Maki();
         [[nodiscard]] CurseUser Mahito();
+        [[nodiscard]] CurseUser Jogo();
+        [[nodiscard]] CurseUser Hanami();
         [[nodiscard]] CurseUser Gojo();
         [[nodiscard]] CurseUser Sukuna();
     }

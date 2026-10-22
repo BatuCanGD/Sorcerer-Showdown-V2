@@ -30,6 +30,8 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool
     std::vector<std::unique_ptr<Character>> list;
     list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
+    list.push_back(std::make_unique<CurseUser>(Create::Char::Jogo()));
+    list.push_back(std::make_unique<CurseUser>(Create::Char::Hanami()));
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
     list.push_back(std::make_unique<Character>(Create::Char::Toji()));
     list.push_back(std::make_unique<Character>(Create::Char::Maki()));

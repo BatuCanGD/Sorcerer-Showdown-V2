@@ -13,17 +13,19 @@
 #include <limits>
 #include <stdexcept>
 
-Character* AI::GetTarget(const Character& user, const BattleIQ& tp, const Battlefield &bf){
+std::variant<Character*, Shikigami*> AI::GetTarget(const Character& user, const BattleIQ& tp, const Battlefield &bf){
     if (bf.battlefield.size() <= 1){
         throw std::runtime_error("0-1 Entities left in vector, Impossible to find target");
     }
+    std::variant<Character*, Shikigami*> target;
     switch(tp.targeting_type){
         case TargetingType::HighestHP: {
-            Character* target{nullptr};
             double highest_hp{std::numeric_limits<double>::lowest()};
             for (const auto& c : bf.battlefield){
-                if (c.get() == &user || c->State().health <= 0.0) continue;
-                if (c->State().health > highest_hp || !target){
+                if (c.get() == &user || c->State().health <= 0.0) {
+                    continue;
+                } 
+                if (c->State().health > highest_hp){
                     target = c.get();
                     highest_hp = c->State().health;
                 }
@@ -31,11 +33,12 @@ Character* AI::GetTarget(const Character& user, const BattleIQ& tp, const Battle
             return target;
         }
         case TargetingType::LowestHP: {
-            Character* target{nullptr};
             double lowest_hp{std::numeric_limits<double>::max()};
             for (const auto& c : bf.battlefield){
-                if (c.get() == &user || c->State().health <= 0.0) continue;
-                if (c->State().health < lowest_hp || !target){
+                if (c.get() == &user || c->State().health <= 0.0) {
+                    continue;
+                }
+                if (c->State().health < lowest_hp){
                     target = c.get();
                     lowest_hp = c->State().health;
                 }
@@ -43,14 +46,14 @@ Character* AI::GetTarget(const Character& user, const BattleIQ& tp, const Battle
             return target;
         }
         case TargetingType::Mixed: {
-            Character* target{nullptr};
+            auto& t = std::get<Character*>(target);
             do {
-                target = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
-            }while(target->State().health <= 0.0 || target == &user);
+                t = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
+            }while(t == &user);
             return target;
         }
     }
-    return nullptr;
+    return target;
 }
 
 void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, const BattleIQ& iq) { // possible technique/domain use
@@ -344,7 +347,7 @@ void AI::Fight(Character &user, Battlefield &bf) {
     }
     const auto& style{user.Style()};
     try {
-        Character* target = AI::GetTarget(user, style, bf);
+        Character* target = std::get<Character*>(AI::GetTarget(user, style, bf));
         DoResourceManagement(user, *target, bf, style.resource_usage);
         DoFighting(user, target, bf, style);
     }catch(const std::out_of_range& oor) {

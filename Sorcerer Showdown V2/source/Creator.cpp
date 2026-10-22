@@ -104,6 +104,25 @@ CurseUser Create::Char::Mahito() {
     return c;
 }
 
+CurseUser Create::Char::Jogo() {
+    CurseUser c{};
+
+    const EntityInfo id {"Jogo", "\x1b[38;5;202m", ""};
+
+    c.Identity() = id;
+
+    return c;
+}
+CurseUser Create::Char::Hanami() {
+    CurseUser c{};
+
+    const EntityInfo id {"Hanami", "\x1b[38;5;217m", ""};
+
+    c.Identity() = id;
+
+    return c;
+}
+
 CurseUser Create::Char::Gojo() {
     CurseUser c{};
 
