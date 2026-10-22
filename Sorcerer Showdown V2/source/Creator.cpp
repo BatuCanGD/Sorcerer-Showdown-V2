@@ -109,7 +109,13 @@ CurseUser Create::Char::Jogo() {
 
     const EntityInfo id {"Jogo", "\x1b[38;5;202m", "A Disaster Curse with the ability to create fire and lava"};
 
+    const Technique technique{Create::Tech::DisasterFlames()};
+    const Domain domain{Create::Dmn::CoffinOfTheIronMountain()};
+
     c.Identity() = id;
+    c.Jujutsu().domain = domain;
+    c.Jujutsu().technique = technique;
+    c.Traits().passive_healing = true;
     c.Amplification().can_use_amp = true;
 
     return c;
@@ -119,7 +125,13 @@ CurseUser Create::Char::Hanami() {
 
     const EntityInfo id {"Hanami", "\x1b[38;5;217m", "A Disaster Curse with the ability to create Trees from the ground and Pacifying flowers"};
 
+    const Technique technique{Create::Tech::DisasterPlants()};
+    const Domain domain{Create::Dmn::ShiningSeaOfGrowingBranches()};
+
     c.Identity() = id;
+    c.Jujutsu().domain = domain;
+    c.Jujutsu().technique = technique;
+    c.Traits().passive_healing = true;
     c.Amplification().can_use_amp = true;
 
     return c;
@@ -281,6 +293,26 @@ Technique Create::Tech::IdleTransfiguration() {
     return c;
 }
 
+Technique Create::Tech::DisasterFlames() {
+    Technique c{};
+
+    const EntityInfo id = {"Disaster Flames", "\x1b[38;5;202m", ""};
+  
+    c.identity = id;
+    
+    return c;
+}
+
+Technique Create::Tech::DisasterPlants() {
+    Technique c{};
+
+    const EntityInfo id = {"Disaster Plants", "\x1b[38;5;217m", ""};
+
+    c.identity = id;
+    
+    return c;
+}
+
 // domains
 
 Domain Create::Dmn::UnlimitedVoid() {
@@ -326,7 +358,36 @@ Domain Create::Dmn::SelfEmbodimentOfPerfection() {
     c.max_health = 400.0;
     c.durability = 2.25;
     c.health = c.max_health;
-    c.range = 85;
+    c.range = 100;
+    return c;
+}
+
+Domain Create::Dmn::ShiningSeaOfGrowingBranches() {
+    Domain c{};
+    c.identity = {"Coffin of The Iron Mountain", "\x1b[38;5;217m", ""};
+    c.damage = 155.0;
+    c.cost = 1000.0;
+    c.damage_type = globalums::DamageType::BypassTech;
+    c.refinement = Refinement::Overwhelming;
+    c.surehit_type = SurehitType::Paralyzing;
+    c.durability = 1.7;
+    c.max_health = 350.0;
+    c.health = c.max_health;
+    c.range = 100;
+    return c;
+}
+Domain Create::Dmn::CoffinOfTheIronMountain() {
+    Domain c{};
+    c.identity = {"Coffin of The Iron Mountain", "\x1b[38;5;202m", ""};
+    c.damage = 265.0;
+    c.cost = 1000.0;
+    c.damage_type = globalums::DamageType::BypassTech;
+    c.refinement = Refinement::Overwhelming;
+    c.surehit_type = SurehitType::Normal;
+    c.durability = 2.0;
+    c.max_health = 450.0;
+    c.health = c.max_health;
+    c.range = 100;
     return c;
 }
 
@@ -445,6 +506,20 @@ Shikigami Create::Shk::Agito() {
     c.stats.durability = 200.0;
     c.stats.regen_speed = 35.0;
     c.support_type = SupportType::Output;
+
+    return c;
+}
+Shikigami Create::Shk::EmberInsects() {
+    Shikigami c{};
+    const EntityInfo id = { "Ember Insects", "\x1b[38;5;202m", "Shikigami that attack in swarms and are explosive"};
+
+    c.id = id;
+    c.support_type = SupportType::CursedEnergyRegen;
+    c.cost = 100.0;
+    c.stats.max_health = 50.0;
+    c.stats.health = c.stats.max_health;
+    c.stats.regen_speed = 50.0;
+    c.stats.durability = 25.0;
 
     return c;
 }

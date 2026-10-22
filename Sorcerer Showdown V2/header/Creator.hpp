@@ -24,11 +24,15 @@ namespace Create {
         [[nodiscard]] Technique Limitless();
         [[nodiscard]] Technique IdleTransfiguration();
         [[nodiscard]] Technique Shrine();
+        [[nodiscard]] Technique DisasterFlames();
+        [[nodiscard]] Technique DisasterPlants();
     }
     namespace Dmn {
         [[nodiscard]] Domain UnlimitedVoid();
         [[nodiscard]] Domain MalevolentShrine();
         [[nodiscard]] Domain SelfEmbodimentOfPerfection();
+        [[nodiscard]] Domain ShiningSeaOfGrowingBranches();
+        [[nodiscard]] Domain CoffinOfTheIronMountain();
     }
     namespace Nlr {
         [[nodiscard]] Neutralizer SimpleDomain();
@@ -38,6 +42,7 @@ namespace Create {
     namespace Shk {
         [[nodiscard]] Shikigami Mahoraga();
         [[nodiscard]] Shikigami Agito();
+        [[nodiscard]] Shikigami EmberInsects();
     }
     namespace Tool {
         [[nodiscard]] CursedTool InvertedSpearOfHeaven();
