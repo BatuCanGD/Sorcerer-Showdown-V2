@@ -42,19 +42,19 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     bool load_json{false};
     while(true){
-        Log::Line("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
+        Log::Message("Chosen: [{}]\n", const_cast<Character*>(c) ? GetInfo::Name(c->Identity()) : "None");
         Log::Line("{}", load_json ? "[Custom Characters Enabled]" : "");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             Log::Line("{}x {}", num, name);
         }
-        const auto opts = SetupSystem::GetSetupOptions();
+        const auto opts = SetupSystem::GetSetupOptions(c);
         if (!SetupSystem::SetupOptions(opts, bf, c, load_json)) break;
     }
     Log::Clear();
     return c;
 }
 
-std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
+std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions(const Character* c) {
     std::vector<SetupSystem::SetupOpt> opt;
     auto add_opt = [&opt](std::string_view v, SetupSystem::SetupOpt op){
         Log::Line("{}:{}", opt.size(), v);
@@ -65,6 +65,7 @@ std::vector<SetupSystem::SetupOpt> SetupSystem::GetSetupOptions() {
     add_opt("Add Multiple", SetupSystem::SetupOpt::AddMult);
     add_opt("Remove Specific Character", SetupSystem::SetupOpt::RemoveSpecific);
     add_opt("Remove Last Character", SetupSystem::SetupOpt::RemoveLast);
+    if (c) add_opt("Remove Chosen Character", SetupSystem::SetupOpt::RemoveChosen);
     add_opt("Choose and Add Character", SetupSystem::SetupOpt::Choose);
     add_opt("Choose from Battlefield", SetupSystem::SetupOpt::ChooseBf);
     add_opt("Clear Battlefield", SetupSystem::SetupOpt::Clear);
@@ -112,6 +113,9 @@ bool SetupSystem::SetupOptions(const std::vector<SetupOpt>& opts, Battlefield& b
             break;
         case SetupSystem::SetupOpt::Json:
             load_json = !load_json;
+            break;
+        case SetupSystem::SetupOpt::RemoveChosen:
+            c = nullptr;
             break;
         default:
             Log::Error("Invalid Choice");

@@ -64,7 +64,7 @@ void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, c
         AI::DF_UseDomain(*c, bf, iq.fighting_style);
         AI::DF_UseTechnique(*c, *target, iq);
     }
-    Log::Attack(user.Attack(*target), user, target);
+    AI::DF_Attack(user, *target);
 }
 void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
     AI::DRM_UseTools(user, tr);
@@ -74,6 +74,22 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
         AI::DRM_UseBindingVow(*c, tr, bf, ru);
         AI::DRM_UseRCT(*c, ru);
     }
+}
+
+void AI::DF_Attack(Character &c, Character &target) {
+    if (const auto& chr = c.CanUseSorcery()) {
+        bool& amp = chr->Amplification().can_use_amp;
+        if (const auto& cc = target.CanUseSorcery()){
+            if (const auto& tech = cc->Jujutsu().technique){
+                if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
+                    amp = true;
+                }else if (amp){
+                    amp = false;
+                }
+            }
+        }
+    }
+    Log::Attack(c.Attack(target), c, &target);
 }
 
 void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& fs) {
@@ -198,19 +214,18 @@ void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield 
     size_t size{0};
     switch(iq){
         case ResourceUsage::AllOut:
-            size = 3;
-            break;
-        case ResourceUsage::Conservative:
-            size = 1;
-            break;
-        case ResourceUsage::Mixed:
             size = 2;
             break;
-        default:
+        default: [[fallthrough]];
+        case ResourceUsage::Conservative:
             size = 0;
+            break;
+        case ResourceUsage::Mixed:
+            size = 1;
+            break;
     }
     if (vows.size() < size){
-        vows.push_back(VowSystem::CreateVow(c, c.Style()));
+        vows.push_back(VowSystem::CreateVow(c, c.Style()));  // these vows have insane values, i have no idea what to change except for the percentage values, they just make insane vows on the first turn and kill themselves
     }
 }
 void AI::DRM_UseShikigami(CurseUser &c, const ResourceUsage &rs){

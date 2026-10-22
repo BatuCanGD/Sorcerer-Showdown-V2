@@ -25,8 +25,6 @@ struct DomainHitStruct final {
 struct DomainClashStruct final {
     const Domain* first;
     const Domain* second;
-    double f_damage;
-    double s_damage;
     ClashWinner winner;
     DomainWinCon win_condition;
 };
@@ -41,6 +39,8 @@ namespace DomainSystem {
     bool CalculateActualHit(const Domain& domain, const Character& c); 
     DomainClashStruct ClashDomains(CurseUser& first, CurseUser& second); // use case for already active domains
     SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
+    double GetDomainDamage(const Domain& d1, const Domain& d2);
+    void HandleLifetime(CurseUser& c, Domain& d);
     bool HandleDamage(Domain& dm, const double d, CurseUser* crs = nullptr);
     void ResetDomain(Domain& domain, CurseUser* crs = nullptr);
 };

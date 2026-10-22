@@ -1,6 +1,5 @@
 #include "../../header/Systems/BattlefieldSystem.hpp"
 #include "../../header/Systems/Mechanics/DomainSystem.hpp"
-#include "../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../header/Systems/Mechanics/NeutralizerSystem.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Logger.hpp"
@@ -12,27 +11,14 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
     std::vector<CurseUser*> domain_users;
     for (const auto& c : bf.battlefield){
         if (auto* cr = c->CanUseSorcery()){
-            double& ce = cr->CursedEnergy().cursed_energy;
             if (auto& d = cr->Jujutsu().domain){
+                DomainSystem::HandleLifetime(*cr, *d);
                 if (d->is_active){
-                    const double cost = SorcerySystem::ApplySpendingMultiplier(d->cost, *cr);
-                    if (ce < cost || cr->Output().status == CurseUserOutput::Status::BurntOut){
-                        DomainSystem::ResetDomain(*cr->Jujutsu().domain, cr);
-                    }else {
-                        ce -= cost;
-                        domain_users.push_back(cr);
-                    }
+                    domain_users.push_back(cr);
                 }
             }
             if (auto& n = cr->Jujutsu().neutralizer){
-                if (n->is_active){
-                    const double cost = SorcerySystem::ApplySpendingMultiplier(n->cost, *cr);
-                    if (ce < cost){
-                        NeutralizerSystem::ResetNeutralizer(*n);
-                    }else {
-                        ce -= cost;
-                    }
-                }
+                NeutralizerSystem::HandleLifeTime(*cr, *n);
             }
         }
     }

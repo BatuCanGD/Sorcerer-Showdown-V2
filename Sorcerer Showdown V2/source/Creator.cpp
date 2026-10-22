@@ -42,6 +42,7 @@ Character Create::Char::Toji() {
     c.Equipment().has_access_to_inventory = true;
     c.Equipment().inventory.push_back(Create::Tool::InvertedSpearOfHeaven());
     c.Equipment().inventory.push_back(Create::Tool::SplitSoulKatana());
+    c.Equipment().inventory.push_back(Create::Tool::PlayfulCloud());
 
     return c;
 }
@@ -61,7 +62,6 @@ Character Create::Char::Maki() {
     c.State() = stats;
     c.Style() = style;
     c.Equipment().has_access_to_inventory = true;
-    c.Equipment().inventory.push_back(Create::Tool::PlayfulCloud());
     c.Equipment().inventory.push_back(Create::Tool::SplitSoulKatana());
 
     return c;
@@ -110,6 +110,7 @@ CurseUser Create::Char::Jogo() {
     const EntityInfo id {"Jogo", "\x1b[38;5;202m", "A Disaster Curse with the ability to create fire and lava"};
 
     c.Identity() = id;
+    c.Amplification().can_use_amp = true;
 
     return c;
 }
@@ -119,6 +120,7 @@ CurseUser Create::Char::Hanami() {
     const EntityInfo id {"Hanami", "\x1b[38;5;217m", "A Disaster Curse with the ability to create Trees from the ground and Pacifying flowers"};
 
     c.Identity() = id;
+    c.Amplification().can_use_amp = true;
 
     return c;
 }
@@ -157,6 +159,7 @@ CurseUser Create::Char::Gojo() {
     c.Jujutsu().domain = domain;
     c.Jujutsu().neutralizer = neutralizer;
     c.Jujutsu().technique = technique;
+    c.Amplification().can_use_amp = true;
     c.Traits().six_eyes = true;
     c.RCT().can_use_rct = true;
 
@@ -198,6 +201,7 @@ CurseUser Create::Char::Sukuna() {
     c.Jujutsu().technique = technique;
     c.Jujutsu().shikigami.push_back(Create::Shk::Mahoraga());
     c.Jujutsu().shikigami.push_back(Create::Shk::Agito());
+    c.Amplification().can_use_amp = true;
     c.RCT().can_use_rct = true;
 
     return c;

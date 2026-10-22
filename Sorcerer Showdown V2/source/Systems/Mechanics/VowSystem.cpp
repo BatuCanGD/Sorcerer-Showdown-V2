@@ -162,7 +162,7 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
             break;
         case FightingStyle::Mixed:
             if (get_random<uint8_t>(0, 1) == 1){
-                loss = c.State().health < c.State().max_health * get_random<double>(0.01, 0.99) ? SacrificeType::OutputPotential : SacrificeType::Health;
+                loss = c.State().health < c.State().max_health * get_random<double>(0.01, 0.5) ? SacrificeType::OutputPotential : SacrificeType::Health;
             }else{
                 loss = SacrificeType::CursedEnergy;
             }
@@ -178,13 +178,13 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
     
     switch(bq.resource_usage){
         case ResourceUsage::AllOut:
-            percentage = get_random<double>(0.75, 0.99);
+            percentage = get_random<double>(0.10, 0.35);
             break;
         case ResourceUsage::Conservative:
-            percentage = get_random<double>(0.01, 0.25);
+            percentage = get_random<double>(0.005, 0.05);
             break;
         case ResourceUsage::Mixed:
-            percentage = get_random<double>(0.25, 0.75);
+            percentage = get_random<double>(0.005, 0.25);
             break;
     }
 

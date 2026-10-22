@@ -167,7 +167,9 @@ void Log::Damage(const DamageStruct dms, const Character &attacked){
 void Log::Clash(const DomainClashStruct ds) {
     if (ds.winner == ClashWinner::None) {
         Log::Line("{} and {} are locked in battle with each other, cancelling out the sure-hits.", GetInfo::Name(ds.first->identity), GetInfo::Name(ds.second->identity));
-        Log::Line("{0} took {3:.1f} damage and {1} took {2:.1f} damage!", GetInfo::Name(ds.first->identity), GetInfo::Name(ds.second->identity), ds.f_damage, ds.s_damage);
+        const double d1d = DomainSystem::GetDomainDamage(*ds.first, *ds.second);
+        const double d2d = DomainSystem::GetDomainDamage(*ds.second, *ds.first);
+        Log::Line("{} took {:.1f} damage and {} took {:.1f} damage!", GetInfo::Name(ds.first->identity), d2d, GetInfo::Name(ds.second->identity), d1d);
         return;
     }
 

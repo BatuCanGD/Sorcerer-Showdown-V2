@@ -64,7 +64,7 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
         if (UserControl::GetConfirmation()){
             switch(choices.first[idx]){
                 case Action::Attack:
-                    UserControl::DoAttack(c, UserControl::GetTarget(bf));
+                    UserControl::DoAttack(c, UserControl::GetTarget(c, bf));
                     break;
                 case Action::Inventory:
                     UserControl::DoInventoryManagement(c);
@@ -98,9 +98,9 @@ bool UserControl::GetConfirmation() {
     return get_input<int>() == 1;
 }
 #include <variant>
-std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
+std::variant<Character*, Shikigami*> UserControl::GetTarget(const Character& cx, Battlefield &bf) {
     std::vector<std::variant<Character*, Shikigami*>> targets;
-    targets.push_back(GetCharacterTarget(bf));
+    targets.push_back(GetCharacterTarget(cx, bf));
     Character* chr = std::get<Character*>(targets.front());
     if (const auto& ch = std::get<Character*>(targets[0])){
         if (auto* crs = ch->CanUseSorcery()){
@@ -137,18 +137,19 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(Battlefield &bf) {
     }
 }
 
-Character* UserControl::GetCharacterTarget(Battlefield& bf) {
+Character* UserControl::GetCharacterTarget(const Character& cx, Battlefield& bf) {
     size_t z{0};
     for (const auto& c : bf.battlefield){
         std::string str{};
         str.append(std::format("{}:{}", ++z, GetInfo::Name(c->Identity())));
-        str.append(std::format(" | HP:[{:.1f}] ", c->State().health));
+        str.append(std::format(" {} ", &cx == c.get() ? "(Chosen Character)" : ""));
+        str.append(std::format("| HP:[{:.1f}] ", c->State().health));
         if (const auto& cr = c->CanUseSorcery()){
             auto& j = cr->Jujutsu();
             if (!j.shikigami.empty()){
                 bool appended{false};
                 for (const auto& s : j.shikigami){
-                    if (appended) continue;
+                    if (appended) break;
                     if (s.summon_type == SummonType::Active) {
                         str.append("*");
                         appended = true;
@@ -320,6 +321,11 @@ void UserControl::DoSorcery(CurseUser* c) {
         case SorceryType::BindingVows:
             UserControl::ForBindingVows(*c);
             break;
+        case SorceryType::Amplification:
+            UserControl::ForAmplification(*c);
+            break;
+        default:
+            Log::Error("Cannot find SorceryType type");
     }
 }
 
@@ -333,12 +339,33 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
     if (c.RCT().can_use_rct){
         add_p("RCT", SorceryType::RCT);
     }
+    if (c.Amplification().can_use_amp){
+        add_p("Amplification", SorceryType::Amplification);
+    }
     add_p("Reinforcement", SorceryType::Reinforcement);
     add_p("Binding Vows", SorceryType::BindingVows);
     return sp;
 }
 
+void UserControl::ForAmplification(CurseUser &c){
+    bool& amp = c.Amplification().is_active;
+    Log::Line("Amplification Status: [{}]", amp ? "Active" : "Inactive");
+    Log::Line("1 - Enable | 2 - Disable | 3 - Return");
+    int g = get_input<int>();
+    switch(g){
+        case 1:
+            amp = true;
+            break;
+        case 2:
+            amp = false;
+            break;
+        case 3:
+            return;
+        default:
+            Log::Error("Invalid Input");
+    }
 
+}
 void UserControl::ForRCT(CurseUser& c){
     double& rct = c.RCT().rct_output;
     Log::Line("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
@@ -441,7 +468,7 @@ void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
     auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
     Log::Line("1 - Use Ability | 2 - Chant");
     if (get_input<int>() == 1){
-        auto cd = UserControl::GetTarget(bf);
+        auto cd = UserControl::GetTarget(*c, bf);
         const auto result = CombatSystem::ResolveTechnique(*c, ability, cd);
         Log::TechniqueAttack(result);
     }else{

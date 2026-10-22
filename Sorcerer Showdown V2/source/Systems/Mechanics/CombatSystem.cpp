@@ -140,7 +140,7 @@ void CombatSystem::ResolveDomain(CurseUser &attacker, Battlefield& bf) {
         }
         if (const auto& sp = c->CanUseSorcery()){
             if (auto& k = sp->Jujutsu().neutralizer; k && k->is_active){
-                NeutralizerSystem::HandleDamage(*k, domain->damage);
+                NeutralizerSystem::Damage(*k, domain->damage);
                 Log::DomainSurehit({domain->damage, &*c, &*domain}, Log::SurehitHit::Neutralizer);
             }
         }

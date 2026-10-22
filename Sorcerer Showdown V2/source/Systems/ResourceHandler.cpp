@@ -17,6 +17,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
             ResourceHandler::TickCursedEnergy(*crs);
             ResourceHandler::TickShikigami(*crs);
             ResourceHandler::TickChant(*crs);
+            ResourceHandler::TickAmp(*crs);
             ResourceHandler::TickRCT(*crs);
             ResourceHandler::TickTraits(*crs);
             ResourceHandler::TickOutputStatus(*crs);
@@ -36,6 +37,18 @@ void ResourceHandler::TickTraits(CurseUser &crs){
 }
 void ResourceHandler::TickCursedEnergy(CurseUser& crs){
     crs.CursedEnergy().cursed_energy = std::min(crs.CursedEnergy().cursed_energy + crs.CursedEnergy().regeneration_amount, crs.CursedEnergy().max_cursed_energy);
+}
+void ResourceHandler::TickAmp(CurseUser &crs){
+    auto& amp = crs.Amplification();
+    if (amp.can_use_amp && amp.is_active){
+        auto& c = crs.CursedEnergy();
+        const double cost = c.max_cursed_energy * 0.01;
+        if (c.cursed_energy < cost){
+            amp.is_active = false;
+        }else{
+            c.cursed_energy -= cost;
+        }
+    }
 }
 void ResourceHandler::TickShikigami(CurseUser& crs){
     for (auto& c : crs.Jujutsu().shikigami){

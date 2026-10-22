@@ -26,15 +26,17 @@ namespace UserControl {
     void GetPlayerTurn(Character& c, Battlefield& bf);
     bool GetConfirmation();
 
-    std::variant<Character*, Shikigami*> GetTarget(Battlefield& bf);
-    Character* GetCharacterTarget(Battlefield& bf);
+    std::variant<Character*, Shikigami*> GetTarget(const Character& c, Battlefield& bf);
+    Character* GetCharacterTarget(const Character& c, Battlefield& bf);
+
     void DoAttack(Character& c, std::variant<Character*, Shikigami*> cd);
     void DoInventoryManagement(Character& c);
     void DoEffects(const Character& c);
 
-    enum class SorceryType : std::uint8_t { RCT, Reinforcement, BindingVows };
+    enum class SorceryType : std::uint8_t { RCT, Reinforcement, BindingVows, Amplification};
     void DoSorcery(CurseUser* c);
     const std::vector<SorceryType> GetSorceryChoices(const CurseUser& c);
+    void ForAmplification(CurseUser& c);
     void ForRCT(CurseUser& c);
     void ForReinforcement(CurseUser& c);
     void ForBindingVows(CurseUser& c);
