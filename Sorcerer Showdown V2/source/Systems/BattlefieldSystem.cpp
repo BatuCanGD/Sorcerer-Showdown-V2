@@ -1,6 +1,7 @@
 #include "../../header/Systems/BattlefieldSystem.hpp"
 #include "../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../header/Systems/Mechanics/NeutralizerSystem.hpp"
+#include "../../header/Systems/Mechanics/ShikigamiSystem.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/Battlefield.hpp"
@@ -46,8 +47,14 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
 }
 
 void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
+    
     for (const auto& c : bf.battlefield){
         if (auto* cr = c->CanUseSorcery()){
+            for (auto& sh : cr->Jujutsu().shikigami){
+                if (sh.stats.health <= 0.0){
+                   ShikigamiSystem::HandleShadow(*cr, sh.support_type, sh.rollback);
+                }
+            }
             std::erase_if(cr->Jujutsu().shikigami, [](const auto& s) { 
                 return s.stats.health <= 0.0;
             });
