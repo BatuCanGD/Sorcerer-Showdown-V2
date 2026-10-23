@@ -45,8 +45,6 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
     }
 }
 
-#include "../../header/Sorcery/Shikigami.hpp"
-
 void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
     for (const auto& c : bf.battlefield){
         if (auto* cr = c->CanUseSorcery()){
