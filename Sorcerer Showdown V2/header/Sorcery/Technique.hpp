@@ -1,12 +1,14 @@
 #pragma once
-
+#include "../General/StatusEffects.hpp"
 #include "../Enums.hpp"
 #include "../Info.hpp"
 
 #include <vector>
+#include <optional>
 
 struct TechAbility final {
     EntityInfo id{};
+    std::optional<StatusEffect> given_effect;
     double damage{1.0};
     double cost{1.0};
     double output{1.0};

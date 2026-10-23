@@ -35,7 +35,7 @@ struct CursedEnergySystem final {
     double regeneration_amount{1.0};
     double reinforcement_amount{1.0};
     std::uint8_t bf_chance{1}; 
-    enum class Efficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Expert, Extreme, Ultimate, Absolute };
+    enum class Efficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Precise, Expert, Extreme, Peak };
     Efficiency efficiency{Efficiency::Stable};
 };
 

@@ -119,7 +119,9 @@ TechniqueStruct CombatSystem::ResolveTechnique(CurseUser& attacker, TechAbility&
 
     DamageStruct ds{};
     if (std::holds_alternative<Character*>(attacked)) {
-        ds = std::get<Character*>(attacked)->Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+        auto& chr = std::get<Character*>(attacked);
+        if (chosen_ct.given_effect) chr->State().status_effects.push_back(*chosen_ct.given_effect);
+        ds = chr->Damage(TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     }else {
         ds = ShikigamiSystem::Damage(*std::get<Shikigami*>(attacked), TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
     }

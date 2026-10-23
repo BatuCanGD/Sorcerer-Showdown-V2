@@ -50,6 +50,6 @@ namespace Create {
         [[nodiscard]] CursedTool PlayfulCloud();
     }
     namespace Effect {
-        [[nodiscard]] StatusEffect BleedEffect();
+        [[nodiscard]] StatusEffect Bleed();
     }
 }

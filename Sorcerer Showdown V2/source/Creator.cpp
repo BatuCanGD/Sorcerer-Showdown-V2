@@ -6,6 +6,7 @@
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Enums.hpp"
 #include <format>
+#include <optional>
 
 // Base Characters
 Character Create::Char::TranfiguredHuman() {
@@ -100,6 +101,7 @@ CurseUser Create::Char::Mahito() {
     c.Jujutsu().domain = domain;
     c.Jujutsu().technique = technique;
     c.Traits().passive_healing = true;
+    c.Amplification().can_use_amp = true;
 
     return c;
 }
@@ -109,10 +111,32 @@ CurseUser Create::Char::Jogo() {
 
     const EntityInfo id {"Jogo", "\x1b[38;5;202m", "A Disaster Curse with the ability to create fire and lava"};
 
+    constexpr double health     = 350.0;
+    constexpr double strength   = 185.0;
+    constexpr double durability = 100.0;
+
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
+
+    constexpr double cursed_energy = 4000.0;
+    constexpr double regen_amount = 135.0;
+    constexpr double output_regen = 30.0;
+    constexpr double max_output = 170.0;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
+
+
     const Technique technique{Create::Tech::DisasterFlames()};
     const Domain domain{Create::Dmn::CoffinOfTheIronMountain()};
 
     c.Identity() = id;
+    c.Style() = style;
+    c.State() = stats;
+    c.CursedEnergy().max_cursed_energy = cursed_energy;
+    c.CursedEnergy().cursed_energy = cursed_energy;
+    c.CursedEnergy().regeneration_amount = regen_amount;
+    c.CursedEnergy().efficiency = ce_efficiency;
+    c.Output().max_output_potential = max_output;
+    c.Output().output_cooldown_amount = output_regen;
     c.Jujutsu().domain = domain;
     c.Jujutsu().technique = technique;
     c.Traits().passive_healing = true;
@@ -125,10 +149,32 @@ CurseUser Create::Char::Hanami() {
 
     const EntityInfo id {"Hanami", "\x1b[38;5;217m", "A Disaster Curse with the ability to create Trees from the ground and Pacifying flowers"};
 
+    constexpr double health     = 450.0;
+    constexpr double strength   = 75.0;
+    constexpr double durability = 300.0;
+
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
+
+    constexpr double cursed_energy = 3250.0;
+    constexpr double regen_amount = 75.0;
+    constexpr double output_regen = 15.0;
+    constexpr double max_output = 150.0;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Stable;
+
+
     const Technique technique{Create::Tech::DisasterPlants()};
     const Domain domain{Create::Dmn::ShiningSeaOfGrowingBranches()};
 
     c.Identity() = id;
+    c.Style() = style;
+    c.State() = stats;
+    c.CursedEnergy().max_cursed_energy = cursed_energy;
+    c.CursedEnergy().cursed_energy = cursed_energy;
+    c.CursedEnergy().regeneration_amount = regen_amount;
+    c.CursedEnergy().efficiency = ce_efficiency;
+    c.Output().max_output_potential = max_output;
+    c.Output().output_cooldown_amount = output_regen;
     c.Jujutsu().domain = domain;
     c.Jujutsu().technique = technique;
     c.Traits().passive_healing = true;
@@ -153,7 +199,7 @@ CurseUser Create::Char::Gojo() {
     constexpr double regen_amount = 175.0;
     constexpr double max_output = 175.0;
     constexpr double output_regen = 45.0;
-    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Peak;
 
     const Technique technique{Create::Tech::Limitless()};
     const Domain domain{Create::Dmn::UnlimitedVoid()};
@@ -193,7 +239,7 @@ CurseUser Create::Char::Sukuna() {
     constexpr double regen_amount = 200.0;
     constexpr double max_output = 80.0;
     constexpr double output_regen = 20.0;
-    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Absolute;
+    constexpr auto ce_efficiency = CursedEnergySystem::Efficiency::Extreme;
 
     const Technique technique{Create::Tech::Shrine()};
     const Domain domain{Create::Dmn::MalevolentShrine()};
@@ -231,14 +277,13 @@ Technique Create::Tech::Limitless() {
     
     c.identity = id;
 
-    constexpr auto at_type = globalums::DamageType::Normal;
     constexpr double blue_damage    = 125.0, blue_cost      = 335.0, blue_output    = 55.0;
     constexpr double red_damage     = 175.0, red_cost       = 650.0, red_output     = 120.0;
     constexpr double purple_damage  = 300.0, purple_cost    = 1250.0,purple_output  = 200.0;
 
-    const TechAbility blue    = {blue_id,      blue_damage,   blue_cost,   blue_output,    0, at_type}; 
-    const TechAbility red     = {red_id,       red_damage,    red_cost,    red_output,     0, at_type}; 
-    const TechAbility purple  = {purple_id,    purple_damage, purple_cost, purple_output,  0, at_type};
+    const TechAbility blue    = {blue_id, {}, blue_damage, blue_cost, blue_output}; 
+    const TechAbility red     = {red_id, {}, red_damage, red_cost, red_output}; 
+    const TechAbility purple  = {purple_id, {}, purple_damage, purple_cost, purple_output};
 
     c.abilities.push_back(blue);
     c.abilities.push_back(red);
@@ -264,9 +309,9 @@ Technique Create::Tech::Shrine() {
     constexpr double cleave_damage = 250.0, cleave_cost = 1000.0, cleave_output = 175.0;
     constexpr double spiderweb_damage = 25.0, spiderweb_cost = 500.0, spiderweb_output = 100.0;
 
-    const TechAbility dismantle = {dismantle_id, dismantle_damage, dismantle_cost, dismantle_output,0,  globalums::DamageType::Normal};
-    const TechAbility cleave = {cleave_id, cleave_damage, cleave_cost, cleave_output, 0, globalums::DamageType::BypassRein};
-    const TechAbility spiderweb = {spiderweb_id, spiderweb_damage, spiderweb_cost, spiderweb_output,0,  globalums::DamageType::Normal};
+    const TechAbility dismantle = {dismantle_id, {},dismantle_damage, dismantle_cost, dismantle_output};
+    const TechAbility cleave = {cleave_id, {},cleave_damage, cleave_cost, cleave_output, {}, globalums::DamageType::BypassRein};
+    const TechAbility spiderweb = {spiderweb_id, {},spiderweb_damage, spiderweb_cost, spiderweb_output};
 
     c.abilities.push_back(dismantle);
     c.abilities.push_back(cleave);
@@ -283,10 +328,9 @@ Technique Create::Tech::IdleTransfiguration() {
     
     c.identity = id;
 
-    constexpr auto at_type = globalums::DamageType::BypassRein;
     constexpr double tfig_damage = 100.0, tfig_cost = 225.0, tfig_output = 45.0;
 
-    const TechAbility transfiguration = {tfig_id, tfig_damage, tfig_cost ,tfig_output, 0, at_type};
+    const TechAbility transfiguration = {tfig_id, {},tfig_damage, tfig_cost ,tfig_output};
     
     c.abilities.push_back(transfiguration);
     
@@ -297,8 +341,20 @@ Technique Create::Tech::DisasterFlames() {
     Technique c{};
 
     const EntityInfo id = {"Disaster Flames", "\x1b[38;5;202m", ""};
+
+    const EntityInfo mf_id{"Melting Flames","\x1b[38;5;130m",""};
+    const EntityInfo vl_id{"Volcanic Lava","\x1b[38;5;172m",""};
+
+    constexpr double mf_d = 90.0, mf_c = 250.0, mf_o = 30.0;
+    constexpr double vl_d = 90.0, vl_c = 550.0, vl_o = 70.0;
+
+    const TechAbility mf = {mf_id, {}, mf_d, mf_c, mf_o};
+    const TechAbility vl = {vl_id, {},vl_d, vl_c, vl_o};
   
     c.identity = id;
+
+    c.abilities.push_back(mf);
+    c.abilities.push_back(vl);
     
     return c;
 }
@@ -308,7 +364,19 @@ Technique Create::Tech::DisasterPlants() {
 
     const EntityInfo id = {"Disaster Plants", "\x1b[38;5;217m", ""};
 
+    const EntityInfo sr_id = {"Sharp Roots", "\x1b[38;5;52m", ""};
+    const EntityInfo cb_id = {"Cursed Buds", "\x1b[38;5;58m", ""};
+
+    constexpr double sr_d = 105.0, sr_c = 255.0, sr_o = 60.0;
+    constexpr double cb_d = 45.0, cb_c = 175.0, cb_o = 40.0;
+    
+    const TechAbility sr = {sr_id, Create::Effect::Bleed(), sr_d, sr_c, sr_o};
+    const TechAbility cb = {cb_id, Create::Effect::Bleed(), cb_d, cb_c, cb_o};
+
     c.identity = id;
+
+    c.abilities.push_back(sr);
+    c.abilities.push_back(cb);
     
     return c;
 }
@@ -434,7 +502,7 @@ CursedTool Create::Tool::InvertedSpearOfHeaven() {
     c.identity = id;
     c.damage = damage;
     c.damage_type = at_type;
-    c.given_effect = Create::Effect::BleedEffect();
+    c.given_effect = Create::Effect::Bleed();
     return c;
 }
 CursedTool Create::Tool::SplitSoulKatana() {
@@ -445,7 +513,7 @@ CursedTool Create::Tool::SplitSoulKatana() {
     c.identity = id;
     c.damage = damage;
     c.damage_type = at_type;
-    c.given_effect = Create::Effect::BleedEffect();
+    c.given_effect = Create::Effect::Bleed();
     return c;
 }
 CursedTool Create::Tool::PlayfulCloud() {
@@ -456,13 +524,13 @@ CursedTool Create::Tool::PlayfulCloud() {
     c.identity = id;
     c.damage = damage;
     c.damage_type = at_type;
-    c.given_effect = Create::Effect::BleedEffect();
+    c.given_effect = Create::Effect::Bleed();
     return c;
 }
 
 // status effects
 
-StatusEffect Create::Effect::BleedEffect() {
+StatusEffect Create::Effect::Bleed() {
     StatusEffect c{};
 
     constexpr double severity_amount = 25.0;
