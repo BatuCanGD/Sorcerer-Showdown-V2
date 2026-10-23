@@ -28,7 +28,9 @@ std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices
     if (c.Equipment().current_tool || c.Equipment().stored_tool || (c.Equipment().has_access_to_inventory && !c.Equipment().inventory.empty())) {
         add_ch("Inventory", Action::Inventory);
     }
-
+    if (!c.State().status_effects.empty()){
+        add_ch("Status Effects", Action::Effects);
+    }
     if (const auto* cr = c.CanUseSorcery()){
         if (cr->Jujutsu().technique) {
             add_ch("Technique", Action::Technique);
@@ -175,15 +177,8 @@ void UserControl::DoEffects(const Character &cc){
 }
 
 void UserControl::DoAttack(Character& c, std::variant<Character*, Shikigami*> cd) {
-    if (std::holds_alternative<Character*>(cd)) {
-        auto& cc = std::get<Character*>(cd);
-        const auto result = c.Attack(*cc);
-        Log::Attack(result, c, cc);
-    }else{
-        auto& cc = std::get<Shikigami*>(cd);
-        const auto result = CombatSystem::ResolveAttacking(c, cd);
-        Log::Attack(result, c, cc);
-    }
+    const auto result = c.Attack(cd);
+    Log::Attack(result, c, cd);
 }
 
 void UserControl::DoInventoryManagement(Character& c) {

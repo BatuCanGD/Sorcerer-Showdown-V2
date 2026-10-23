@@ -260,7 +260,7 @@ Technique Create::Tech::Shrine() {
     const EntityInfo cleave_id = {"Cleave", "\x1b[38;5;214m", "An ability that requires touch, that cuts through anyones durability, with enough output" };
     const EntityInfo spiderweb_id = {"Spiderweb", "\x1b[38;5;9m", "Cleave used in a way that disorients other opponents"};
 
-    constexpr double dismantle_damage = 25.0, dismantle_cost = 20.0, dismantle_output = 5.0;
+    constexpr double dismantle_damage = 75.0, dismantle_cost = 35.0, dismantle_output = 17.5;
     constexpr double cleave_damage = 250.0, cleave_cost = 1000.0, cleave_output = 175.0;
     constexpr double spiderweb_damage = 25.0, spiderweb_cost = 500.0, spiderweb_output = 100.0;
 

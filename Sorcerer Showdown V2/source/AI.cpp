@@ -12,6 +12,7 @@
 
 #include <limits>
 #include <stdexcept>
+#include <variant>
 
 std::variant<Character*, Shikigami*> AI::GetTarget(const Character& user, const BattleIQ& tp, const Battlefield &bf){
     if (bf.battlefield.size() <= 1){
@@ -21,52 +22,124 @@ std::variant<Character*, Shikigami*> AI::GetTarget(const Character& user, const 
     switch(tp.targeting_type){
         case TargetingType::HighestHP: {
             double highest_hp{std::numeric_limits<double>::lowest()};
-            for (const auto& c : bf.battlefield){
-                if (c.get() == &user || c->State().health <= 0.0) {
-                    continue;
-                } 
-                if (c->State().health > highest_hp){
-                    target = c.get();
-                    highest_hp = c->State().health;
+            switch(tp.targeted_type){
+                default:
+                    [[fallthrough]];
+                case TargetedTypes::Character: {
+                    for (const auto& c : bf.battlefield){
+                        if (c.get() == &user || c->State().health <= 0.0) {
+                            continue;
+                        } 
+                        if (c->State().health > highest_hp){
+                            target = c.get();
+                            highest_hp = c->State().health;
+                        }
+                    }
+                    break;
+                }
+                case TargetedTypes::Mixed: {
+                    std::vector<std::variant<Character*, Shikigami*>> targets;
+                    for (const auto& c : bf.battlefield){
+                        if (c.get() == &user || c->State().health <= 0.0) {
+                            continue;
+                        } 
+                        if (c->State().health > highest_hp){
+                            target = c.get();
+                            highest_hp = c->State().health;
+                        }
+                    }
+                    targets.push_back(target);
+                    if (const auto& crs = std::get<Character*>(target)->CanUseSorcery()) {
+                        for(auto& s : crs->Jujutsu().shikigami){
+                            if (s.summon_type == SummonType::Active){
+                                targets.push_back(&s);
+                            }
+                        }
+                    }
+                    target = targets[get_random<size_t>(0, targets.size() - 1)];
+                    break;
                 }
             }
             return target;
         }
         case TargetingType::LowestHP: {
             double lowest_hp{std::numeric_limits<double>::max()};
-            for (const auto& c : bf.battlefield){
-                if (c.get() == &user || c->State().health <= 0.0) {
-                    continue;
-                }
-                if (c->State().health < lowest_hp){
-                    target = c.get();
-                    lowest_hp = c->State().health;
-                }
+            switch(tp.targeted_type){
+                default:
+                    [[fallthrough]];
+                case TargetedTypes::Character:
+                    for (const auto& c : bf.battlefield){
+                        if (c.get() == &user || c->State().health <= 0.0) {
+                            continue;
+                        }
+                        if (c->State().health < lowest_hp){
+                            target = c.get();
+                            lowest_hp = c->State().health;
+                        }
+                    }
+                    break;
+                case TargetedTypes::Mixed:
+                    std::vector<std::variant<Character*, Shikigami*>> targets;
+                    for (const auto& c : bf.battlefield){
+                        if (c.get() == &user || c->State().health <= 0.0) {
+                            continue;
+                        }
+                        if (c->State().health < lowest_hp){
+                            target = c.get();
+                            lowest_hp = c->State().health;
+                        }
+                    }
+                    targets.push_back(target);
+                    if (const auto& crs = std::get<Character*>(target)->CanUseSorcery()) {
+                        for(auto& s : crs->Jujutsu().shikigami){
+                            if (s.summon_type == SummonType::Active){
+                                targets.push_back(&s);
+                            }
+                        }
+                    }
+                    target = targets[get_random<size_t>(0, targets.size() - 1)];
+                    break;
             }
+
             return target;
         }
-        case TargetingType::Mixed: {
-            auto& t = std::get<Character*>(target);
-            do {
-                t = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
-            }while(t == &user);
+        case TargetingType::Random: {
+            switch(tp.targeted_type){
+                case TargetedTypes::Character:
+                    do {
+                        target = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
+                    }while(std::get<Character*>(target) == &user);
+                    break;
+                case TargetedTypes::Mixed:
+                    do {
+                        target = bf.battlefield[get_random<size_t>(0, bf.battlefield.size() - 1)].get();
+                    }while(std::get<Character*>(target) == &user);
+                    std::vector<std::variant<Character*, Shikigami*>> targets;
+                    targets.push_back(target);
+                    if (const auto& crs = std::get<Character*>(target)->CanUseSorcery()) {
+                        for(auto& s : crs->Jujutsu().shikigami){
+                            if (s.summon_type == SummonType::Active){
+                                targets.push_back(&s);
+                            }
+                        }
+                    }
+                    target = targets[get_random<size_t>(0, targets.size() - 1)];
+                    break;
+            }
             return target;
         }
     }
     return target;
 }
 
-void AI::DoFighting(Character& user, Character* target, const Battlefield& bf, const BattleIQ& iq) { // possible technique/domain use
-    if (!target){
-        throw std::runtime_error("No target exists");
-    }
+void AI::DoFighting(Character& user, std::variant<Character*, Shikigami*> target, const Battlefield& bf, const BattleIQ& iq) { // possible technique/domain use
     if (auto* c = user.CanUseSorcery()){
         AI::DF_UseDomain(*c, bf, iq.fighting_style);
-        AI::DF_UseTechnique(*c, *target, iq);
+        AI::DF_UseTechnique(*c, target, iq);
     }
-    AI::DF_Attack(user, *target);
+    AI::DF_Attack(user, target);
 }
-void AI::DoResourceManagement(Character& user, const Character& tr,const Battlefield& bf ,const ResourceUsage& ru) {
+void AI::DoResourceManagement(Character& user, const std::variant<Character*, Shikigami*> tr,const Battlefield& bf ,const ResourceUsage& ru) {
     AI::DRM_UseTools(user, tr);
     if (auto* c = user.CanUseSorcery()){
         AI::DRM_UseReinforcement(*c, ru);
@@ -76,22 +149,25 @@ void AI::DoResourceManagement(Character& user, const Character& tr,const Battlef
     }
 }
 
-void AI::DF_Attack(Character &c, Character &target) {
-    if (const auto& chr = c.CanUseSorcery()) {
-        if (chr->Amplification().can_use_amp){
-            bool& amp = chr->Amplification().is_active;
-            if (const auto& cc = target.CanUseSorcery()){
-                if (const auto& tech = cc->Jujutsu().technique){
-                    if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
-                        amp = true;
-                    }else if (amp){
-                        amp = false;
+void AI::DF_Attack(Character &c, std::variant<Character*, Shikigami*> target) {
+    if (std::holds_alternative<Character*>(target)) {
+        auto& tr = std::get<Character*>(target);
+        if (const auto& chr = c.CanUseSorcery()) {
+            if (chr->Amplification().can_use_amp){
+                bool& amp = chr->Amplification().is_active;
+                if (const auto& cc = tr->CanUseSorcery()){
+                    if (const auto& tech = cc->Jujutsu().technique){
+                        if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
+                            amp = true;
+                        }else if (amp){
+                            amp = false;
+                        }
                     }
                 }
-            }
+            } // this is scarily visible on the visual studio scroll bar
         }
     }
-    Log::Attack(c.Attack(target), c, &target);
+    Log::Attack(c.Attack(target), c, target);
 }
 
 void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& fs) {
@@ -178,7 +254,7 @@ void AI::DF_UseDomain(CurseUser &c, const Battlefield &bf, const FightingStyle& 
     }
 }
 
-void AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
+void AI::DF_UseTechnique(CurseUser &c, std::variant<Character*, Shikigami*> target, const BattleIQ &iq) {
     auto& tech = c.Jujutsu().technique;
     if (!tech){
         return;
@@ -209,9 +285,9 @@ void AI::DF_UseTechnique(CurseUser &c, Character &target, const BattleIQ &iq) {
         TechniqueSystem::ChantAbility(*ab, c);
     }
 
-    Log::TechniqueAttack(CombatSystem::ResolveTechnique(c, *ab, &target));
+    Log::TechniqueAttack(CombatSystem::ResolveTechnique(c, *ab, target));
 }
-void AI::DRM_UseBindingVow(CurseUser &c, const Character &tr, const Battlefield &bf, const ResourceUsage &iq) {
+void AI::DRM_UseBindingVow(CurseUser &c, const std::variant<Character*, Shikigami*> tr, const Battlefield &bf, const ResourceUsage &iq) {
     auto& vows = c.Jujutsu().binding_vows;
     size_t size{0};
     switch(iq){
@@ -339,21 +415,26 @@ void AI::DRM_UseRCT(CurseUser &c, const ResourceUsage &rs) {
     }
     c.RCT().rct_output = val;
 }
-void AI::DRM_UseTools(Character &c, const Character & tr) {
+void AI::DRM_UseTools(Character &c, const std::variant<Character*, Shikigami*> tar) {
     auto& eq = c.Equipment();
     if ((!eq.current_tool && !eq.stored_tool && (!eq.has_access_to_inventory || eq.inventory.empty()))){
         return;
     }
-    if (const auto& cr = tr.CanUseSorcery()){
-        if (const auto& t = cr->Jujutsu().technique) {
-            if (TechniqueSystem::HasBarrier(*t)){
-                CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
-                return;
+    if (std::holds_alternative<Character*>(tar)) {
+        auto& tr = std::get<Character*>(tar);
+        if (const auto& cr = tr->CanUseSorcery()){
+            if (const auto& t = cr->Jujutsu().technique) {
+                if (TechniqueSystem::HasBarrier(*t)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
+                    return;
+                }
             }
         }
-    }
-    if (tr.State().health > c.State().health || GenericSystems::HPMoreThanMax(c, 0.70)){
-        CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+        if (tr->State().health > c.State().health || GenericSystems::HPMoreThanMax(c, 0.70)){
+            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+        }else if (eq.current_tool && eq.current_tool->damage < c.State().strength){
+            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+        }
     }
 }
 
@@ -364,8 +445,8 @@ void AI::Fight(Character &user, Battlefield &bf) {
     }
     const auto& style{user.Style()};
     try {
-        Character* target = std::get<Character*>(AI::GetTarget(user, style, bf));
-        DoResourceManagement(user, *target, bf, style.resource_usage);
+        std::variant<Character*, Shikigami*> target = AI::GetTarget(user, style, bf);
+        DoResourceManagement(user, target, bf, style.resource_usage);
         DoFighting(user, target, bf, style);
     }catch(const std::out_of_range& oor) {
         Log::Error("Range error: {}", oor.what());

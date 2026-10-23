@@ -17,12 +17,11 @@ struct Battlefield;
 enum class TargetingType : std::uint8_t { // targeted character type
     LowestHP,
     HighestHP,
-    Mixed
+    Random
 };
 
 enum class TargetedTypes : std::uint8_t { // what type of target the character chooses
     Character,
-    Shikigami,
     Mixed
 };
 
@@ -41,18 +40,18 @@ enum class ResourceUsage : std::uint8_t { // techniques, domains, shikigami, cur
 namespace AI {
     std::variant<Character*, Shikigami*> GetTarget(const Character& user, const BattleIQ& tp, const Battlefield& bf);
 
-    void DF_Attack(Character& c, Character& target);
+    void DF_Attack(Character& c, std::variant<Character*, Shikigami*> target);
     void DF_UseDomain(CurseUser& c, const Battlefield& bf, const FightingStyle& fs);
-    void DF_UseTechnique(CurseUser& c, Character& target, const BattleIQ& bq);
+    void DF_UseTechnique(CurseUser& c, std::variant<Character*, Shikigami*> target, const BattleIQ& bq);
 
     void DRM_UseShikigami(CurseUser& c, const ResourceUsage& rs);
-    void DRM_UseBindingVow(CurseUser& c, const Character& tr, const Battlefield& bf, const ResourceUsage& iq);
+    void DRM_UseBindingVow(CurseUser& c, const std::variant<Character*, Shikigami*> tr, const Battlefield& bf, const ResourceUsage& iq);
     void DRM_UseReinforcement(CurseUser& c, const ResourceUsage& rs);
     void DRM_UseRCT(CurseUser& c, const ResourceUsage& rs);
-    void DRM_UseTools(Character& c, const Character& cc);
+    void DRM_UseTools(Character& c, const std::variant<Character*, Shikigami*> tr);
 
-    void DoFighting(Character& user, Character* target, const Battlefield& bf, const BattleIQ& iq);
-    void DoResourceManagement(Character& user, const Character& tr ,const Battlefield& bf, const ResourceUsage& ru);
+    void DoFighting(Character& user, std::variant<Character*, Shikigami*> target, const Battlefield& bf, const BattleIQ& iq);
+    void DoResourceManagement(Character& user, const std::variant<Character*, Shikigami*> tr ,const Battlefield& bf, const ResourceUsage& ru);
 
     void Fight(Character& user, Battlefield& bf);
 };

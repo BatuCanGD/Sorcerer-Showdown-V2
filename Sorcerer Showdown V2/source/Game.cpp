@@ -65,6 +65,7 @@ bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { /
     ResourceHandler::TickAll(bf);
     BattlefieldSystem::HandleSpawns(bf);
     BattlefieldSystem::HandleDomainInteraction(bf);
+    BattlefieldSystem::HandleDeadShikigami(bf);
     BattlefieldSystem::HandleDeadPeople(bf);
 
     if (!sp.skip_all){

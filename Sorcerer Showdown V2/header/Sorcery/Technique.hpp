@@ -10,7 +10,7 @@ struct TechAbility final {
     double damage{1.0};
     double cost{1.0};
     double output{1.0};
-    unsigned int chant_amount{0};
+    int chant_amount{0};
     globalums::DamageType damage_type{globalums::DamageType::Normal};
 };
 struct TechBarrier final {

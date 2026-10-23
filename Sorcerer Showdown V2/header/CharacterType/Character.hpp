@@ -17,7 +17,7 @@ struct ToolStruct;
 struct DamageStruct;
 
 struct BattleIQ final {
-    TargetingType targeting_type{TargetingType::Mixed};
+    TargetingType targeting_type{TargetingType::Random};
     TargetedTypes targeted_type {TargetedTypes::Mixed};
     FightingStyle fighting_style{FightingStyle::Mixed};
     ResourceUsage resource_usage{ResourceUsage::Mixed};
@@ -61,7 +61,7 @@ public:
     CharInv& Equipment() noexcept;
 
     DamageStruct Damage(double amount, globalums::DamageType dmg_type = globalums::DamageType::Normal);
-    std::variant<AttackStruct, ToolStruct> Attack(Character& attacked);
+    std::variant<AttackStruct, ToolStruct> Attack(std::variant<Character*, Shikigami*> attacked);
 
     [[nodiscard]] virtual const CurseUser* CanUseSorcery() const noexcept;
     virtual CurseUser* CanUseSorcery() noexcept;

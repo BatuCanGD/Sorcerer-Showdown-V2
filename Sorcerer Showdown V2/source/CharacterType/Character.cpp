@@ -41,11 +41,11 @@ DamageStruct Character::Damage(double amount, globalums::DamageType type){
     this->state.health -= ds.damage;
     return ds;
 }
-std::variant<AttackStruct, ToolStruct> Character::Attack(Character& cc){
+std::variant<AttackStruct, ToolStruct> Character::Attack(std::variant<Character*, Shikigami*> cc){
     if (this->Equipment().current_tool){
-        return CombatSystem::ResolveCursedTool(*this, &cc);
+        return CombatSystem::ResolveCursedTool(*this, cc);
     }
-    return CombatSystem::ResolveAttacking(*this, &cc);
+    return CombatSystem::ResolveAttacking(*this, cc);
 }
 
 const CurseUser* Character::CanUseSorcery() const noexcept {

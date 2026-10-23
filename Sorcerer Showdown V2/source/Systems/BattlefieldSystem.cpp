@@ -45,12 +45,24 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
     }
 }
 
+#include "../../header/Sorcery/Shikigami.hpp"
+
+void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
+    for (const auto& c : bf.battlefield){
+        if (auto* cr = c->CanUseSorcery()){
+            std::erase_if(cr->Jujutsu().shikigami, [](const auto& s) { 
+                return s.stats.health <= 0.0;
+            });
+        }
+    }
+}
 void BattlefieldSystem::HandleDeadPeople(Battlefield &bf){
     Log::Death(bf);
     std::erase_if(bf.battlefield, [](const auto& s) { 
         return s->State().health <= 0.0;
     });
 }
+
 void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
     for (auto& c : bf.spawn_next){
         bf.battlefield.push_back(std::move(c));

@@ -74,6 +74,6 @@ bool TechniqueSystem::HasBarrier(const Technique &tech){
 }
 
 void TechniqueSystem::ChantAbility(TechAbility &tech, const CurseUser& cu){
-    tech.chant_amount = std::min(tech.chant_amount + 1, 5u);
+    tech.chant_amount = std::min(tech.chant_amount + 1, 5);
     Log::TechniqueChant(cu, tech);
 }

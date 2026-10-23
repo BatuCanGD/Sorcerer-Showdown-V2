@@ -58,7 +58,7 @@ void ResourceHandler::TickShikigami(CurseUser& crs){
 void ResourceHandler::TickChant(CurseUser &crs){
     if (!crs.Jujutsu().technique) return;
     for (auto& c : crs.Jujutsu().technique->abilities) {
-        if (c.chant_amount > 0) c.chant_amount--;
+        if (c.chant_amount > 0) c.chant_amount = std::max(c.chant_amount - 2, 0);
     }
 }
 void ResourceHandler::TickRCT(CurseUser& crs) {
