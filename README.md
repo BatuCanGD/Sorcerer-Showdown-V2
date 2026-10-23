@@ -12,7 +12,9 @@
 |------------|-------|-----------|
 | Gojo Satoru | Curse User | Limitless, Six Eyes |
 | Ryomen Sukuna | Curse User | Shrine, High CE Pool |
-| Mahito | Cursed Spirit | Idle Transfiguration, Passive Healing
+| Mahito | Cursed Spirit | Idle Transfiguration, Passive Healing |
+| Jogo | Cursed Spirit | Disaster Flames, Passive Healing |
+| Hanami | Cursed Spirit | Disaster Plants, Passive Healing |
 | Maki Zenin | Heavenly Restricted | Glass Cannon |
 | Toji Fushiguro | Heavenly Restricted | Diverse Cursed Tools |
 
