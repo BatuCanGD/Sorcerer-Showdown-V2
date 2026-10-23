@@ -12,7 +12,7 @@ double SorcerySystem::EfficiencyMultiplier(CursedEnergySystem::Efficiency type) 
     switch(type){
         case CursedEnergySystem::Efficiency::Peak:     return 0.40;
         case CursedEnergySystem::Efficiency::Extreme:  return 0.55;
-        case CursedEnergySystem::Efficiency::Expert:   return 0.72;
+        case CursedEnergySystem::Efficiency::Expert:   return 0.70;
         case CursedEnergySystem::Efficiency::Precise:  return 0.80;
         case CursedEnergySystem::Efficiency::Stable:   return 1.00;
         case CursedEnergySystem::Efficiency::Unstable: return 1.30;

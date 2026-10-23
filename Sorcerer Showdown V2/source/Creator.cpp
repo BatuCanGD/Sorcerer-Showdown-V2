@@ -77,7 +77,7 @@ CurseUser Create::Char::Mahito() {
     constexpr double strength   = 115.0;
     constexpr double durability = 75.0;
 
-    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const BattleIQ style {.targeting_type = TargetingType::LowestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
@@ -115,7 +115,7 @@ CurseUser Create::Char::Jogo() {
     constexpr double strength   = 185.0;
     constexpr double durability = 100.0;
 
-    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Defensive,  .resource_usage = ResourceUsage::AllOut};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 4000.0;
@@ -153,7 +153,7 @@ CurseUser Create::Char::Hanami() {
     constexpr double strength   = 75.0;
     constexpr double durability = 300.0;
 
-    const BattleIQ style {.targeting_type = TargetingType::HighestHP,.fighting_style = FightingStyle::Aggressive,  .resource_usage = ResourceUsage::Mixed};
+    const BattleIQ style {.targeting_type = TargetingType::Random,.fighting_style = FightingStyle::Mixed,  .resource_usage = ResourceUsage::Conservative};
     const CharState stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 3250.0;
