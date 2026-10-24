@@ -47,7 +47,6 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
 }
 
 void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
-    
     for (const auto& c : bf.battlefield){
         if (auto* cr = c->CanUseSorcery()){
             for (auto& sh : cr->Jujutsu().shikigami){

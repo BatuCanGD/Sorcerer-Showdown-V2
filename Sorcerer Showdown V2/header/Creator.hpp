@@ -1,4 +1,6 @@
 #pragma once
+#include <nlohmann/json.hpp>
+#include <memory>
 class Character;
 class CurseUser;
 struct Technique;
@@ -11,6 +13,7 @@ struct StatusEffect;
 
 namespace Create {
     namespace Char {
+        [[nodiscard]] std::unique_ptr<Character> Custom(const nlohmann::json& j);
         [[nodiscard]] Character TranfiguredHuman();
         [[nodiscard]] Character Toji();
         [[nodiscard]] Character Maki();
