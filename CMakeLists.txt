@@ -11,6 +11,10 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${SOURCE_DIR}/*.cpp")
 add_executable(SorcererShowdownV2 ${SOURCES})
 target_include_directories(SorcererShowdownV2 PRIVATE "${HEADER_DIR}")
 
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Characters.json")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Characters.json" "${CMAKE_CURRENT_BINARY_DIR}/Characters.json" COPYONLY)
+endif()
+
 if(MSVC)
     target_compile_options(SorcererShowdownV2 PRIVATE
         /EHsc /utf-8 /W4 /permissive-

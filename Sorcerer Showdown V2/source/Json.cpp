@@ -29,7 +29,7 @@ void Json::LoadCharacters(std::vector<std::unique_ptr<Character>>& bf) {
     }
 
     if (data.contains("Characters") && data["Characters"].is_array()) {
-        for (const auto& charData : data["characters"]) {
+        for (const auto& charData : data["Characters"]) {
             bf.push_back(std::move(Json::BuildCharacter(charData)));
         }
     }
@@ -39,8 +39,9 @@ void Json::LoadCharacters(std::vector<std::unique_ptr<Character>>& bf) {
 std::unique_ptr<Character> Json::BuildCharacter(const nlohmann::json &j){
     std::unique_ptr<Character> c{};
 
-    if (j.contains("Type")){
-        if (j.at("Type").contains("Curse User")){
+    if (j.contains("Type") && j.at("Type").is_string()){
+        const auto& type = j.at("Type").get<std::string_view>();
+        if (type == "Curse User"){
             c = std::make_unique<CurseUser>();
         }
     }
@@ -111,6 +112,7 @@ void Json::GetCurseUserValues(const nlohmann::json& j, CurseUser& c) {
     if (j.contains("Cursed Energy")) {
         const auto& cs = j.at("Cursed Energy");
         c.CursedEnergy().max_cursed_energy = GetValue<double>(cs, "Amount", 500.0);
+        c.CursedEnergy().cursed_energy = c.CursedEnergy().max_cursed_energy;
         c.CursedEnergy().regeneration_amount = GetValue<double>(cs, "Regen Amount", 25.0);
         c.CursedEnergy().bf_chance = static_cast<std::uint8_t>(std::clamp(GetValue<unsigned int>(cs, "Blackflash Chance", 5u), 0u, 100u));
         c.CursedEnergy().efficiency = Json::GetEfficiency(GetValue<std::string_view>(cs, "Efficiency"));

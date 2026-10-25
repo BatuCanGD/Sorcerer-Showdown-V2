@@ -46,7 +46,7 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     bool load_json{false};
     while(true){
-        Log::Message("Chosen: [{}]\n", const_cast<Character*>(c) ? GetInfo::Name(c->Identity()) : "None");
+        Log::Line("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
         Log::Line("{}", load_json ? "[Custom Characters Enabled]" : "");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             Log::Line("{}x {}", num, name);

@@ -1,0 +1,59 @@
+{
+    "Characters": [
+        {
+            "Type": "Curse User",
+            "Identity": {
+                "Name": "Limitless Sorcerer",
+                "Color": "\u001b[38;5;117m",
+                "Description": "Extremely strong Limitless Technique user."
+            },
+            "Stats": {
+                "Health": 2000.0,
+                "Strength": 400.0,
+                "Durability": 400.0,
+                "Undefeatable": false
+            },
+            "Brain": {
+                "Fighting Style": "Aggressive",
+                "Resource Usage": "All Out",
+                "Targeted Type": "Mixed",
+                "Targeting Type": "Highest HP"
+            },
+            "Equipment": {
+                "Held Tool": "Inverted Spear of Heaven",
+                "Stored Tool": "Playful Cloud",
+                "Inventory Access": true,
+                "Inventory": [
+                    "Split Soul Katana",
+                    "Playful Cloud"
+                ]
+            },
+            "Sorcery": {
+                "Jujutsu": {
+                    "Technique": "Limitless",
+                    "Domain": "Unlimited Void",
+                    "Neutralizer": "Simple Domain",
+                    "Shikigami": [
+                        "Mahoraga",
+                        "Agito"
+                    ]
+                },
+                "Cursed Energy": {
+                    "Amount": 15000.0,
+                    "Regen Amount": 500.0,
+                    "Blackflash Chance": 50,
+                    "Efficiency": "Peak"
+                },
+                "Cursed Energy Output": {
+                    "Maximum": 500.0
+                },
+                "Domain Amplification": true,
+                "Reverse Cursed Technique": true,
+                "Traits": {
+                    "Passive Healing": true,
+                    "Six Eyes": true
+                }
+            }
+        }
+    ]
+}
