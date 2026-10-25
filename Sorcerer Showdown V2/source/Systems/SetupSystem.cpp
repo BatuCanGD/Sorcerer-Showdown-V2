@@ -1,4 +1,5 @@
 #include "../../header/Systems/SetupSystem.hpp"
+#include "../../header/Json.hpp"
 #include "../../header/CharacterType/CurseUser.hpp"
 #include "../../header/Battlefield.hpp"
 #include "../../header/Utilities/Input.hpp"
@@ -35,6 +36,9 @@ const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool
     list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
     list.push_back(std::make_unique<Character>(Create::Char::Toji()));
     list.push_back(std::make_unique<Character>(Create::Char::Maki()));
+    if (get_custom){
+        Json::LoadCharacters(list);
+    }
     return list;
 }
 
