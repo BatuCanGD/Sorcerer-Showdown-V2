@@ -134,7 +134,7 @@ a small json file example would look like this:
 
 ```json
 {
-    "Characters": "Characters": [
+    "Characters": [
         {
             "Type": "Curse User",
             "Identity": {
