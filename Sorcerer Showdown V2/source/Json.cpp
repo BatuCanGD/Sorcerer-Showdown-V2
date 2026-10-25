@@ -12,7 +12,7 @@
 #include <fstream>
 #include <memory>
 
-void LoadCharacters(std::vector<std::unique_ptr<Character>>& bf) {
+void Json::LoadCharacters(std::vector<std::unique_ptr<Character>>& bf) {
     Log::Line("Looking for characters.json in: {}", std::filesystem::current_path().string());
     std::ifstream file("Characters.json");
 
