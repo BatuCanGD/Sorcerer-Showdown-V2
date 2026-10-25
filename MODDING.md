@@ -124,4 +124,77 @@ CurseUser Create::MyChar() {
 sets the characters health to 500.0 and gives the character the limitless technique \
 you dont have to follow this example strictly, you can add any value of your choice
 
-### JSON Route (Coming Soon)
+### JSON Route
+
+**### JSON Route**
+
+The JSON route allows you to create and configure characters without modifying C++ code.
+
+a small json file example would look like this:
+
+```json
+{
+    "Characters": "Characters": [
+        {
+            "Type": "Curse User",
+            "Identity": {
+                "Name": "My Character",
+                "Description": "A custom curse user."
+            },
+            "Stats": {
+                "Health": 500.0,
+                "Strength": 25.0,
+                "Durability": 15.0,
+                "Undefeatable": false
+            },
+            "Brain": {
+                "Fighting Style": "Aggressive",
+                "Resource Usage": "All Out",
+                "Targeted Type": "Mixed",
+                "Targeting Type": "Highest HP"
+            },
+            "Equipment": {
+                "Held Tool": "Playful Cloud",
+                "Inventory Access": true,
+                "Inventory": ["Split Soul Katana"]
+            },
+            "Sorcery": {
+                "Jujutsu": {
+                    "Technique": "Limitless",
+                    "Domain": "Unlimited Void",
+                    "Neutralizer": "Simple Domain",
+                    "Shikigami": ["Mahoraga"]
+                },
+                "Cursed Energy": {
+                    "Amount": 500.0,
+                    "Regen Amount": 25.0,
+                    "Blackflash Chance": 5,
+                    "Efficiency": "Peak"
+                },
+                "Cursed Energy Output": {
+                    "Maximum": 100.0
+                },
+                "Domain Amplification": false,
+                "Reverse Cursed Technique": true,
+                "Traits": {
+                    "Passive Healing": false,
+                    "Six Eyes": true
+                }
+            }
+        }
+    ]
+}
+```
+
+**Categories:**
+- **Type:** Character type.
+- **Identity:** Name, color, and description.
+- **Stats:** Health, strength, and durability.
+- **Brain:** AI behavior and targeting preferences.
+- **Equipment:** Cursed tools and inventory.
+- **Sorcery:** Curse-user abilities and resources, including:
+    - **Jujutsu:** Techniques, domains, neutralizers, and shikigami.
+    - **Cursed Energy:** Cursed Energy Amount, regeneration amount, efficiency, and Black Flash chance.
+    - **Cursed Energy Output:** Maximum output potential.
+    - **Traits:** Passive healing and Six Eyes.
+    - **Other abilities:** Domain Amplification and Reverse Cursed Technique.
