@@ -6,17 +6,20 @@
 #include "../header/Sorcery/Technique.hpp"
 
 #include <algorithm>
+#include <nlohmann/detail/macro_scope.hpp>
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 
 std::vector<std::unique_ptr<Character>> Json::LoadCharacters() {
-    Log::Line("Looking for characters.json in: {}", std::filesystem::current_path().string());
-    std::ifstream file("Characters.json");
+    static constexpr const char* fl = "characters.json";
+    static constexpr const char* js = "Characters";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
 
     if (!file.is_open()) {
-        Log::Error("Could not find characters.json!");
+        Log::Error("Could not find {}!", fl);
         return {};
     }
     nlohmann::json data;
@@ -27,14 +30,116 @@ std::vector<std::unique_ptr<Character>> Json::LoadCharacters() {
         return {};
     }
     std::vector<std::unique_ptr<Character>> bf;
-    if (data.contains("Characters") && data["Characters"].is_array()) {
-        for (const auto& charData : data["Characters"]) {
-            bf.push_back(std::move(Json::BuildCharacter(charData)));
+    if (data.contains(js) && data[js].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildCharacter(charData));
         }
     }
     return bf;
 }
+std::vector<Technique> Json::LoadTechniques() {
+    static constexpr const char* fl = "techniques.json";
+    static constexpr const char* js = "Techniques";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
 
+    if (!file.is_open()) {
+        Log::Error("Could not find {}!", fl);
+        return {};
+    }
+    nlohmann::json data;
+    try {
+        file >> data;
+    }catch (const nlohmann::json::parse_error& e) {
+        Log::Error("JSON Parse Error: {}", e.what());
+        return {};
+    }
+
+    std::vector<Technique> bf;
+    if (data.contains(js) && data[js].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildTechnique(charData));
+        }
+    }
+    return bf;
+}
+std::vector<Domain> Json::LoadDomains() {
+    static constexpr const char* fl = "domains.json";
+    static constexpr const char* js = "Domains";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
+
+    if (!file.is_open()) {
+        Log::Error("Could not find {}!", fl);
+        return {};
+    }
+
+    nlohmann::json data;
+    try {
+        file >> data;
+    }catch (const nlohmann::json::parse_error& e) {
+        Log::Error("JSON Parse Error: {}", e.what());
+        return {};
+    }
+    std::vector<Domain> bf;
+    if (data.contains("Domains") && data["Domains"].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildDomain(charData));
+        }
+    }
+    return bf;
+}
+std::vector<CursedTool> Json::LoadCursedTools() {
+    static constexpr const char* fl = "cursedtools.json";
+    static constexpr const char* js = "Cursed Tools";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
+
+    if (!file.is_open()) {
+        Log::Error("Could not find {}!", fl);
+        return {};
+    }
+
+    nlohmann::json data;
+    try {
+        file >> data;
+    }catch (const nlohmann::json::parse_error& e) {
+        Log::Error("JSON Parse Error: {}", e.what());
+        return {};
+    }
+    std::vector<CursedTool> bf;
+    if (data.contains(js) && data[js].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildTool(charData));
+        }
+    }
+    return bf;
+}
+std::vector<Shikigami> Json::LoadShikigami() {
+    static constexpr const char* fl = "shikigami.json";
+    static constexpr const char* js = "Shikigami";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
+
+    if (!file.is_open()) {
+        Log::Error("Could not find {}!", fl);
+        return {};
+    }
+    nlohmann::json data;
+    try {
+        file >> data;
+    }catch (const nlohmann::json::parse_error& e) {
+        Log::Error("JSON Parse Error: {}", e.what());
+        return {};
+    }
+    std::vector<Shikigami> bf;
+    if (data.contains(js) && data[js].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildShikigami(charData));
+        }
+    }
+    return bf;
+}
 
 std::unique_ptr<Character> Json::BuildCharacter(const nlohmann::json &j){
     std::unique_ptr<Character> c{std::make_unique<Character>()};
@@ -74,6 +179,27 @@ bool ContainsArray(const nlohmann::json& j, std::string_view sv){
     }
     Log::Error("\"{}\" Array couldnt be found", sv);
     return false;
+}
+
+CursedTool Json::BuildTool(const nlohmann::json &j){
+    CursedTool t{};
+
+    return t;
+}
+Domain Json::BuildDomain(const nlohmann::json &j){
+    Domain d{};
+
+    return d;
+}
+Technique Json::BuildTechnique(const nlohmann::json &j){
+    Technique t{};
+
+    return t;
+}
+Shikigami Json::BuildShikigami(const nlohmann::json &j){
+    Shikigami s{};
+
+    return s;
 }
 
 void Json::GetDefaultValues(const nlohmann::json& j, Character& c) {
@@ -250,6 +376,12 @@ void Json::ModifyInventory(const nlohmann::json& j, std::vector<CursedTool>& t) 
             const auto b = m.find(c);
             if (b != m.end()){
                 t.push_back(b->second);
+            }else{
+                for(const auto& tl : Json::LoadCursedTools()){
+                    if (tl.identity.name == c){
+                        t.push_back(tl);
+                    }
+                }
             }
         }
     }
@@ -262,7 +394,14 @@ void Json::ModifyShikigami(const nlohmann::json& j, std::vector<Shikigami>& t){
             const auto b = m.find(c);
             if (b != m.end()){
                 t.push_back(b->second);
+            }else{
+                for (const auto& sc : Json::LoadShikigami()){
+                    if (sc.id.name == c){
+                        t.push_back(sc);
+                    }
+                }
             }
+
         }
     }
 }
@@ -274,6 +413,9 @@ std::optional<CursedTool> Json::GetCursedTool(std::string_view sv){
             return c.second;
         }
     }
+    for (const auto& c : Json::LoadCursedTools()){
+        if (c.identity.name == sv) return c;
+    }
     return std::nullopt;
 }
 
@@ -284,7 +426,9 @@ std::optional<Technique> Json::GetTechnique(std::string_view sv) {
             return c.second;
         }
     }
-
+    for (const auto& c : Json::LoadTechniques()){
+        if (c.identity.name == sv) return c;
+    }
     return std::nullopt;
 }
 std::optional<Domain> Json::GetDomain(std::string_view sv) {
@@ -293,6 +437,9 @@ std::optional<Domain> Json::GetDomain(std::string_view sv) {
         if (c.first == sv){
             return c.second;
         }
+    }
+    for (const auto& c : Json::LoadDomains()){
+        if (c.identity.name == sv) return c;
     }
     return std::nullopt;
 }
