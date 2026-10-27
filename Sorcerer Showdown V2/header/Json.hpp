@@ -1,5 +1,8 @@
 #pragma once
 #include "AI.hpp"
+#include "General/StatusEffects.hpp"
+#include "Sorcery/Domain.hpp"
+#include "Sorcery/Shikigami.hpp"
 #include "SorceryStruct.hpp"
 #include <nlohmann/json.hpp>
 #include <memory>
@@ -42,6 +45,11 @@ namespace Json {
     TargetingType GetTargetingType(std::string_view sv);
     TargetedTypes GetTargetedTypes(std::string_view sv);
     DamageType GetDamageType(std::string_view sv);
+    SurehitType GetSurehitType(std::string_view sv);
+    Refinement GetRefinement(std::string_view sv);
+    ActiveAbility GetActiveAbility(std::string_view sv);
+    SupportType GetSupportType(std::string_view sv);
+    EffectForType GetEffectForType(std::string_view sv);
     Sorcery::CursedEnergySystem::Efficiency GetEfficiency(std::string_view sv);
 
     std::optional<CursedTool> GetCursedTool(std::string_view sv);

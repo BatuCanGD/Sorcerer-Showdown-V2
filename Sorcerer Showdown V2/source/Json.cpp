@@ -221,7 +221,7 @@ CursedTool Json::BuildTool(const nlohmann::json &j){
         const auto& st = j.at("Stats");
         c.damage = GetValue<double>(st, "Damage", 50.0);
         c.damage_type = Json::GetDamageType(GetValue<std::string_view>(st, "Damage Type"));
-        c.given_effect = Json::GetStatusEffect(GetValue<std::string_view>(st, "Status Effect"));
+        c.given_effect = Json::GetStatusEffect(GetValue<std::string_view>(st, "Inflicted Effect"));
     }
 
     return c;
@@ -229,20 +229,92 @@ CursedTool Json::BuildTool(const nlohmann::json &j){
 Domain Json::BuildDomain(const nlohmann::json &j){
     Domain c{};
 
+    if (j.contains("Identity")){
+        const auto& id = j.at("Identity");
+        c.identity.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.identity.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.identity.description = GetValue<std::string>(id, "Description");
+    }
+    c.type = GetValue<std::string_view>(j, "Type") == "Open" ? DomainType::Open : DomainType::Closed;
+    if (j.contains("Stats")) {
+        const auto& st = j.at("Stats");
+        c.max_health = GetValue<double>(st, "Health", 50.0);
+        c.health = c.max_health;
+        c.durability = GetValue<double>(st, "Durability", 50.0);
+        c.damage = GetValue<double>(st, "Damage", 50.0);
+        c.cost = GetValue<double>(st, "Cost", 50.0);
+        c.range = GetValue<int>(st, "Range", 75);
+        c.damage_type = Json::GetDamageType(GetValue<std::string_view>(st, "Damage Type"));
+        c.surehit_type = Json::GetSurehitType(GetValue<std::string_view>(st, "Surehit Type"));
+        c.refinement = Json::GetRefinement(GetValue<std::string_view>(st, "Refinement"));
+    }
+    
     return c;
 }
 Technique Json::BuildTechnique(const nlohmann::json &j){
     Technique c{};
+    if (j.contains("Identity")){
+        const auto& id = j.at("Identity");
+        c.identity.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.identity.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.identity.description = GetValue<std::string>(id, "Description");
+    }
+    if (j.contains("Abilities") && j.at("Abilities").is_array()){
+        for (const auto& jr : j.at("Abilities")){
+            TechAbility tb;
+
+            tb.id.name = GetValue<std::string>(jr, "Name");
+            tb.id.color = GetValue<std::string>(jr, "Color");
+            tb.id.description = GetValue<std::string>(jr, "Description");
+            tb.damage = GetValue<double>(jr, "Damage");
+            tb.damage_type = Json::GetDamageType(GetValue<std::string>(jr, "Damage Type", "Normal"));
+            tb.output = GetValue<double>(jr, "Output");
+            tb.cost = GetValue<double>(jr, "Cost");
+            tb.given_effect = Json::GetStatusEffect(GetValue<std::string>(jr, "Inflicted Effect"));
+
+            c.abilities.push_back(tb);
+        }
+    }
 
     return c;
 }
 Shikigami Json::BuildShikigami(const nlohmann::json &j){
     Shikigami c{};
-
+    if (j.contains("Identity")){
+        const auto& id = j.at("Identity");
+        c.id.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.id.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.id.description = GetValue<std::string>(id, "Description");
+    }
+    if (j.contains("Stats")) {
+        const auto& st = j.at("Stats");
+        c.stats.max_health = GetValue<double>(st, "Health", 100.0);
+        c.stats.health = c.stats.max_health;
+        c.stats.durability = GetValue<double>(st, "Durability", 10.0);
+        c.stats.regen_speed = GetValue<double>(st, "Health Regeneration Speed", 15.0);
+        c.cost = GetValue<double>(st, "Cost", 100.0);
+        c.support_type = Json::GetSupportType(GetValue<std::string_view>(st, "Support Type"));
+        c.active_ability = Json::GetActiveAbility(GetValue<std::string_view>(st, "Activation Ability"));
+    }
+    
     return c;
 }
 StatusEffect Json::BuildEffect(const nlohmann::json &j) {
     StatusEffect c{};
+
+    if (j.contains("Identity")){
+        const auto& id = j.at("Identity");
+        c.id.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.id.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.id.description = GetValue<std::string>(id, "Description");
+    }
+    if (j.contains("Stats")) {
+        const auto& st = j.at("Stats");
+        c.effect_type = GetValue<std::string_view>(st, "Effect Type") == "Regenerating" ? EffectType::Increase : EffectType::Decrease;
+        c.effect_for_type = Json::GetEffectForType(GetValue<std::string_view>(st, "Affected Stat"));
+        c.effect_amount = GetValue<double>(st, "Effect Strength");
+        c.turn_amount = GetValue<int>(st, "Turn Amount", 3);
+    }
 
     return c;
 }
@@ -324,6 +396,79 @@ Sorcery::CursedEnergySystem::Efficiency Json::GetEfficiency(std::string_view sv)
     }
     return Sorcery::CursedEnergySystem::Efficiency::Stable;
 }
+
+
+
+SurehitType Json::GetSurehitType(std::string_view sv) {
+    static const UMap<SurehitType> m {
+        {"Basic", SurehitType::Basic},
+        {"Bypass Techniques", SurehitType::Paralyzing},
+    };
+    for (const auto& c : m){
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+
+    return SurehitType::Normal;
+}
+Refinement Json::GetRefinement(std::string_view sv) {
+    static const UMap<Refinement> m {
+        {"Absolute", Refinement::Absolue},
+        {"Overwhelming", Refinement::Overwhelming},
+        {"Adept", Refinement::Adept},
+        {"Brittle", Refinement::Brittle},
+        {"Weak", Refinement::Weak}
+    };
+    for (const auto& c : m){
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return Refinement::Standard;
+}
+ActiveAbility Json::GetActiveAbility(std::string_view sv) {
+    static const UMap<ActiveAbility> m {
+        {"Technique Bypassing", ActiveAbility::TechniqueBypass}
+    };
+    for (const auto& c : m){
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return ActiveAbility::None;
+}
+SupportType Json::GetSupportType(std::string_view sv) {
+    static const UMap<SupportType> m {
+        {"Strength", SupportType::Offense},
+        {"Durability", SupportType::Defense},
+        {"Cursed Energy Regeneration", SupportType::CursedEnergyRegen},
+        {"Output", SupportType::Output}
+    };
+    for (const auto& c : m){
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return SupportType::None;
+}
+EffectForType Json::GetEffectForType(std::string_view sv) {
+    static const UMap<EffectForType> m {
+        {"Health", EffectForType::Health},
+        {"Durability", EffectForType::Durability},
+        {"Strength", EffectForType::Strength},
+        {"Cursed Energy", EffectForType::CursedEnergy},
+        {"Max Output", EffectForType::MaxOutput}
+    };
+    for (const auto& c : m){
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return EffectForType::None;
+}
+
+
 DamageType Json::GetDamageType(std::string_view sv){
     static const UMap<DamageType> m {
         {"Bypass All", DamageType::BypassAll},
