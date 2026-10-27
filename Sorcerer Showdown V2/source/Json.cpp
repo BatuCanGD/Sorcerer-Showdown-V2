@@ -6,7 +6,7 @@
 #include "../header/Sorcery/Technique.hpp"
 
 #include <algorithm>
-#include <nlohmann/detail/macro_scope.hpp>
+#include <optional>
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
@@ -141,6 +141,33 @@ std::vector<Shikigami> Json::LoadShikigami() {
     return bf;
 }
 
+std::vector<StatusEffect> Json::LoadEffects() {
+    static constexpr const char* fl = "statuseffects.json";
+    static constexpr const char* js = "Status Effects";
+    Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
+    std::ifstream file(fl);
+
+    if (!file.is_open()) {
+        Log::Error("Could not find {}!", fl);
+        return {};
+    }
+    nlohmann::json data;
+    try {
+        file >> data;
+    }catch (const nlohmann::json::parse_error& e) {
+        Log::Error("JSON Parse Error: {}", e.what());
+        return {};
+    }
+    std::vector<StatusEffect> bf;
+    if (data.contains(js) && data[js].is_array()) {
+        for (const auto& charData : data[js]) {
+            bf.push_back(Json::BuildEffect(charData));
+        }
+    }
+    return bf;
+}
+
+
 std::unique_ptr<Character> Json::BuildCharacter(const nlohmann::json &j){
     std::unique_ptr<Character> c{std::make_unique<Character>()};
 
@@ -155,10 +182,10 @@ std::unique_ptr<Character> Json::BuildCharacter(const nlohmann::json &j){
         Log::Error("\"Type\" doesnt exist, defaulting to Character Type");
     }
 
-    Json::GetDefaultValues(j, *c);
+    Json::GetBaseValues(j, *c);
     if (j.contains("Sorcery")) {
         if (auto& cr = c->curseUser){
-            Json::GetCurseUserValues(j.at("Sorcery"), *cr);
+            Json::GetSorceryValues(j.at("Sorcery"), *cr);
         }
     }
     return c;
@@ -182,27 +209,45 @@ bool ContainsArray(const nlohmann::json& j, std::string_view sv){
 }
 
 CursedTool Json::BuildTool(const nlohmann::json &j){
-    CursedTool t{};
+    CursedTool c{};
 
-    return t;
+    if (j.contains("Identity")){
+        const auto& id = j.at("Identity");
+        c.identity.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.identity.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.identity.description = GetValue<std::string>(id, "Description");
+    }
+    if (j.contains("Stats")) {
+        const auto& st = j.at("Stats");
+        c.damage = GetValue<double>(st, "Damage", 50.0);
+        c.damage_type = Json::GetDamageType(GetValue<std::string_view>(st, "Damage Type"));
+        c.given_effect = Json::GetStatusEffect(GetValue<std::string_view>(st, "Status Effect"));
+    }
+
+    return c;
 }
 Domain Json::BuildDomain(const nlohmann::json &j){
-    Domain d{};
+    Domain c{};
 
-    return d;
+    return c;
 }
 Technique Json::BuildTechnique(const nlohmann::json &j){
-    Technique t{};
+    Technique c{};
 
-    return t;
+    return c;
 }
 Shikigami Json::BuildShikigami(const nlohmann::json &j){
-    Shikigami s{};
+    Shikigami c{};
 
-    return s;
+    return c;
+}
+StatusEffect Json::BuildEffect(const nlohmann::json &j) {
+    StatusEffect c{};
+
+    return c;
 }
 
-void Json::GetDefaultValues(const nlohmann::json& j, Character& c) {
+void Json::GetBaseValues(const nlohmann::json& j, Character& c) {
     if (j.contains("Identity")){
         const auto& id = j.at("Identity");
         c.identity.name = GetValue<std::string>(id, "Name", "Delamain");
@@ -233,7 +278,7 @@ void Json::GetDefaultValues(const nlohmann::json& j, Character& c) {
     }
 }
 
-void Json::GetCurseUserValues(const nlohmann::json& j, Sorcery::CurseUserSystem& c) {
+void Json::GetSorceryValues(const nlohmann::json& j, Sorcery::CurseUserSystem& c) {
     if (j.contains("Jujutsu")){
         const auto& jj = j.at("Jujutsu");
         c.jujutsu.technique = Json::GetTechnique(GetValue<std::string_view>(jj, "Technique"));
@@ -261,9 +306,6 @@ void Json::GetCurseUserValues(const nlohmann::json& j, Sorcery::CurseUserSystem&
     }
 }
 
-template <typename T>
-using UMap = std::unordered_map<std::string, T>;
-
 Sorcery::CursedEnergySystem::Efficiency Json::GetEfficiency(std::string_view sv){
     static const UMap<Sorcery::CursedEnergySystem::Efficiency> m {
         {"Peak", Sorcery::CursedEnergySystem::Efficiency::Peak},
@@ -282,7 +324,19 @@ Sorcery::CursedEnergySystem::Efficiency Json::GetEfficiency(std::string_view sv)
     }
     return Sorcery::CursedEnergySystem::Efficiency::Stable;
 }
-
+DamageType Json::GetDamageType(std::string_view sv){
+    static const UMap<DamageType> m {
+        {"Bypass All", DamageType::BypassAll},
+        {"Bypass Reinforcement", DamageType::BypassRein},
+        {"Bypass Techniques", DamageType::BypassTech},
+    };
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return DamageType::Normal;
+}
 
 TargetedTypes Json::GetTargetedTypes(std::string_view sv) {
     return sv == "Mixed" ? TargetedTypes::Mixed : TargetedTypes::Character;
@@ -328,7 +382,7 @@ FightingStyle Json::GetFightingStyle(std::string_view sv) {
     return FightingStyle::Mixed;
 }
 
-UMap<CursedTool> GetCTMap() {
+UMap<CursedTool> UMaps::GetCTMap() {
     return {
         {"Split Soul Katana", Create::Tool::SplitSoulKatana()},
         {"Inverted Spear of Heaven", Create::Tool::InvertedSpearOfHeaven()},
@@ -336,7 +390,7 @@ UMap<CursedTool> GetCTMap() {
     };
 }
 
-UMap<Shikigami> GetSKMap() {
+UMap<Shikigami> UMaps::GetSKMap() {
     return {
         {"Mahoraga", Create::Shk::Mahoraga()},
         {"Agito", Create::Shk::Agito()},
@@ -344,7 +398,7 @@ UMap<Shikigami> GetSKMap() {
     };
 }
 
-UMap<Technique> GetTCMap() {
+UMap<Technique> UMaps::GetTCMap() {
     return {
         {"Limitless", Create::Tech::Limitless()},
         {"Shrine", Create::Tech::Shrine()},
@@ -352,7 +406,7 @@ UMap<Technique> GetTCMap() {
     };
 }
 
-UMap<Domain> GetDMMap() {
+UMap<Domain> UMaps::GetDMMap() {
     return {
         {"Unlimited Void", Create::Dmn::UnlimitedVoid()},
         {"Malevolent Shrine", Create::Dmn::MalevolentShrine()},
@@ -360,7 +414,7 @@ UMap<Domain> GetDMMap() {
     };
 }
 
-UMap<Neutralizer> GetNLMap() {
+UMap<Neutralizer> UMaps::GetNLMap() {
     return {
         {"Hollow Wicker Basket", Create::Nlr::HollowWickerBasket()},
         {"Simple Domain", Create::Nlr::SimpleDomain()},
@@ -368,9 +422,14 @@ UMap<Neutralizer> GetNLMap() {
     };
 }
 
+UMap<StatusEffect> UMaps::GetSTMap() {
+    return {
+        {"Bleed", Create::Effect::Bleed()}
+    };
+}
 
 void Json::ModifyInventory(const nlohmann::json& j, std::vector<CursedTool>& t) {
-    const auto& m = GetCTMap();
+    const auto& m = UMaps::GetCTMap();
     if (ContainsArray(j, "Inventory")){
         for (const auto& c : j.at("Inventory").get<std::vector<std::string>>()){
             const auto b = m.find(c);
@@ -388,7 +447,7 @@ void Json::ModifyInventory(const nlohmann::json& j, std::vector<CursedTool>& t) 
 }
 
 void Json::ModifyShikigami(const nlohmann::json& j, std::vector<Shikigami>& t){
-    const auto& m = GetSKMap();
+    const auto& m = UMaps::GetSKMap();
     if (ContainsArray(j, "Shikigami")){
         for (const auto& c : j.at("Shikigami").get<std::vector<std::string>>()){
             const auto b = m.find(c);
@@ -407,7 +466,7 @@ void Json::ModifyShikigami(const nlohmann::json& j, std::vector<Shikigami>& t){
 }
 
 std::optional<CursedTool> Json::GetCursedTool(std::string_view sv){
-    const auto& m = GetCTMap();
+    const auto& m = UMaps::GetCTMap();
     for (const auto& c : m) {
         if (c.first == sv){
             return c.second;
@@ -419,8 +478,21 @@ std::optional<CursedTool> Json::GetCursedTool(std::string_view sv){
     return std::nullopt;
 }
 
+std::optional<StatusEffect> Json::GetStatusEffect(std::string_view sv){
+    const auto& m = UMaps::GetSTMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEffects()){
+        if (c.id.name == sv) return c;
+    }
+    return std::nullopt;
+}
+
 std::optional<Technique> Json::GetTechnique(std::string_view sv) {
-    const auto& m = GetTCMap();
+    const auto& m = UMaps::GetTCMap();
     for (const auto& c : m) {
         if (c.first == sv){
             return c.second;
@@ -432,7 +504,7 @@ std::optional<Technique> Json::GetTechnique(std::string_view sv) {
     return std::nullopt;
 }
 std::optional<Domain> Json::GetDomain(std::string_view sv) {
-    const auto& m = GetDMMap();
+    const auto& m = UMaps::GetDMMap();
     for (const auto& c : m) {
         if (c.first == sv){
             return c.second;
@@ -444,7 +516,7 @@ std::optional<Domain> Json::GetDomain(std::string_view sv) {
     return std::nullopt;
 }
 std::optional<Neutralizer> Json::GetNeutralizer(std::string_view sv) {
-    const auto& m = GetNLMap();
+    const auto& m = UMaps::GetNLMap();
     for (const auto& c : m) {
         if (c.first == sv){
             return c.second;

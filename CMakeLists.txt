@@ -16,8 +16,8 @@ add_executable(SorcererShowdownV2 ${SOURCES})
 target_include_directories(SorcererShowdownV2 PRIVATE "${HEADER_DIR}")
 target_link_libraries(SorcererShowdownV2 PRIVATE nlohmann_json::nlohmann_json)
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Characters.json")
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Characters.json" "${CMAKE_CURRENT_BINARY_DIR}/Characters.json" COPYONLY)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/characters.json")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/characters.json" "${CMAKE_CURRENT_BINARY_DIR}/characters.json" COPYONLY)
 endif()
 
 if(MSVC)
