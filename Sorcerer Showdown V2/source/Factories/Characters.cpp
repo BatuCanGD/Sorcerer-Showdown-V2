@@ -99,7 +99,7 @@ Character Create::Char::Mahito() {
     crs.traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
-    c.curseUser = crs;
+    c.curseUser.emplace(std::move(crs));
 
     return c;
 }
@@ -142,7 +142,7 @@ Character Create::Char::Jogo() {
     crs.traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
-    c.curseUser = crs;
+    c.curseUser.emplace(std::move(crs));
 
     return c;
 }
@@ -185,7 +185,7 @@ Character Create::Char::Hanami() {
     crs.traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
-    c.curseUser = crs;
+    c.curseUser.emplace(std::move(crs));
 
     return c;
 }
@@ -230,7 +230,7 @@ Character Create::Char::Gojo() {
     crs.traits.six_eyes = true;
     crs.rct_system.can_use_rct = true;
 
-    c.curseUser = crs;
+    c.curseUser.emplace(std::move(crs));
 
     return c;
 }
@@ -276,7 +276,7 @@ Character Create::Char::Sukuna() {
     crs.amplification.can_use_amp = true;
     crs.rct_system.can_use_rct = true;
 
-    c.curseUser = crs;
+    c.curseUser.emplace(std::move(crs));
 
     return c;
 }
