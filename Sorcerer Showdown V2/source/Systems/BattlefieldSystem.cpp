@@ -11,7 +11,7 @@
 void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
     std::vector<Character*> domain_users;
     for (auto& c : bf.battlefield){
-        if (auto cr = c->curseUser){
+        if (auto& cr = c->curseUser){
             if (auto& d = c->curseUser->jujutsu.domain){
                 DomainSystem::HandleLifetime(*c, *d);
                 if (d->is_active){
