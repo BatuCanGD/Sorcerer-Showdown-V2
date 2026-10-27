@@ -1,12 +1,11 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include <memory>
 #include <map>
 #include <string>
 
 struct Battlefield;
-class Character;
+struct Character;
 
 enum class SkipType : std::uint8_t {
     None,
@@ -36,6 +35,6 @@ namespace SetupSystem {
     void ClearBattlefield(Battlefield& bf, Character*& c);
     void ViewCharacterInfo(Battlefield& bf);
 
-    const std::vector<std::unique_ptr<Character>> GetCharacterList(bool get_custom);
+    const std::vector<Character> GetCharacterList(bool get_custom);
     const std::map<std::string, int> SetList(const Battlefield& bf);
 }

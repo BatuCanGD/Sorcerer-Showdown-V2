@@ -1,11 +1,11 @@
 #pragma once
 
-class Character;
-class CurseUser;
+struct Character;
+
 struct Neutralizer;
 
 namespace NeutralizerSystem {
-    void HandleLifeTime(CurseUser& c, Neutralizer& n);
+    void HandleLifeTime(Character& c, Neutralizer& n);
     void Damage(Neutralizer& c, const double damage);
     void Reset(Neutralizer& c);
 }

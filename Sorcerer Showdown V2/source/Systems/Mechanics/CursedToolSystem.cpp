@@ -1,14 +1,13 @@
 #include "../../../header/Systems/Mechanics/CursedToolSystem.hpp"
-#include "../../../header/CharacterType/Character.hpp"
-#include "../../../header/Systems/GenericSystems.hpp"
+#include "../../../header/DamageType.hpp"
 #include "../../../header/General/CursedTool.hpp"
 #include "../../../header/Utilities/Random.hpp"
 
-void CursedToolSystem::SwitchTo(CharInv &eq, WeaponChoice wc) {
+void CursedToolSystem::SwitchTo(Base::Equipment &eq, WeaponChoice wc) {
     const bool& has_inv = eq.has_access_to_inventory;    
     if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
         auto is_the_one = [wc](const CursedTool* ct)->bool{
-            return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && GenericSystems::BypassesTech(ct->damage_type)));
+            return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && DamageCheck::BypassesTech(ct->damage_type)));
         };
         if (is_the_one(&*eq.current_tool)){
             return;
@@ -39,7 +38,7 @@ void CursedToolSystem::SwitchTo(CharInv &eq, WeaponChoice wc) {
     }
 }
 
-CursedTool CursedToolSystem::GetFromInv(CharInv& eq, WeaponChoice wc) {
+CursedTool CursedToolSystem::GetFromInv(Base::Equipment& eq, WeaponChoice wc) {
     auto& inv = eq.inventory;
     if (inv.empty() || wc == WeaponChoice::None) {
         return {};
@@ -65,7 +64,7 @@ CursedTool CursedToolSystem::GetFromInv(CharInv& eq, WeaponChoice wc) {
             break;
         case WeaponChoice::TechniqueBypassing:
             for (size_t i = 0; i < inv.size(); ++i) {
-                if (inv[i].damage_type == globalums::DamageType::BypassTech || inv[i].damage_type == globalums::DamageType::BypassAll) {
+                if (inv[i].damage_type == DamageType::BypassTech || inv[i].damage_type == DamageType::BypassAll) {
                     chosen = i;
                     break;
                 }
@@ -82,7 +81,7 @@ CursedTool CursedToolSystem::GetFromInv(CharInv& eq, WeaponChoice wc) {
     return selected;
 }
 
-CursedTool CursedToolSystem::GetWeapon(CharInv& eq, WeaponPlacement which, WeaponChoice which_type) {
+CursedTool CursedToolSystem::GetWeapon(Base::Equipment& eq, WeaponPlacement which, WeaponChoice which_type) {
     if (which_type == WeaponChoice::Unequip){
         return {};
     }
@@ -108,7 +107,7 @@ CursedTool CursedToolSystem::GetWeapon(CharInv& eq, WeaponPlacement which, Weapo
     }
     throw std::runtime_error("No Weapon able to be chosen");
 }
-bool CursedToolSystem::HasWeapon(CharInv &c, WeaponChoice wc){
+bool CursedToolSystem::HasWeapon(Base::Equipment &c, WeaponChoice wc){
     switch(wc){
         case CursedToolSystem::WeaponChoice::EffectInducing:
             if ((c.current_tool && c.current_tool->given_effect) || (c.stored_tool && c.stored_tool->given_effect)){
@@ -121,12 +120,12 @@ bool CursedToolSystem::HasWeapon(CharInv &c, WeaponChoice wc){
             }
             break;
         case CursedToolSystem::WeaponChoice::TechniqueBypassing: {
-            if ((c.current_tool && GenericSystems::BypassesTech(c.current_tool->damage_type)) || (c.stored_tool && GenericSystems::BypassesTech(c.stored_tool->damage_type))) {
+            if ((c.current_tool && DamageCheck::BypassesTech(c.current_tool->damage_type)) || (c.stored_tool && DamageCheck::BypassesTech(c.stored_tool->damage_type))) {
                 return true;
             }
             if (c.has_access_to_inventory){
                 for (const auto& cc : c.inventory){
-                    if (GenericSystems::BypassesTech(cc.damage_type)) return true;
+                    if (DamageCheck::BypassesTech(cc.damage_type)) return true;
                 }
             }
             break;
@@ -136,7 +135,7 @@ bool CursedToolSystem::HasWeapon(CharInv &c, WeaponChoice wc){
     }
     return false;
 }
-void CursedToolSystem::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement where, WeaponChoice wc) {
+void CursedToolSystem::MoveWeapon(Base::Equipment& c, CursedTool wp, WeaponPlacement where, WeaponChoice wc) {
     const bool unequip = wc == WeaponChoice::Unequip;
     const bool& has_inv = c.has_access_to_inventory;
     auto& inv = c.inventory;
@@ -188,6 +187,6 @@ void CursedToolSystem::MoveWeapon(CharInv& c, CursedTool wp, WeaponPlacement whe
     }
 }
 
-void CursedToolSystem::SwitchWeapons(CharInv& eq, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc) {
+void CursedToolSystem::SwitchWeapons(Base::Equipment& eq, WeaponPlacement which, WeaponPlacement where, WeaponChoice wc) {
     CursedToolSystem::MoveWeapon(eq, CursedToolSystem::GetWeapon(eq, which, wc), where, wc);
 }

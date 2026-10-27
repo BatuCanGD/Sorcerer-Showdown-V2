@@ -1,5 +1,5 @@
 #include "../../../header/Systems/Mechanics/TechniqueSystem.hpp"
-#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Character.hpp"
 #include "../../../header/Logger.hpp"
 #include "../../../header/Utilities/Input.hpp"
 #include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
@@ -7,17 +7,19 @@
 #include "../../../header/Utilities/Random.hpp"
 #include <algorithm>
 
-std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, CurseUser& user) {
-    const double op = chosen_ct.output * SorcerySystem::EfficiencyMultiplier(user.CursedEnergy().efficiency);
-    if (user.Output().current_output + op > user.Output().max_output_potential){
+std::pair<bool, double> TechniqueSystem::ResolveOutput(TechAbility chosen_ct, Character& user) {
+    auto& cr = user.curseUser;
+    const double op = chosen_ct.output * SorcerySystem::EfficiencyMultiplier(cr->ce_system.efficiency);
+    if (cr->output.current_output + op > cr->output.max_output_potential){
         return {false, 0.0};
     }
     return {true, op};
 }
 
-std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(TechAbility chosen_ct, CurseUser& user){
+std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(TechAbility chosen_ct, Character& user){
     double cursed_energy_consumption = SorcerySystem::ApplySpendingMultiplier(chosen_ct.cost, user);
-    if (user.CursedEnergy().cursed_energy < cursed_energy_consumption){
+    auto& cr = user.curseUser;
+    if (cr->ce_system.cursed_energy < cursed_energy_consumption){
         return {false, 0.0};
     }
     return {true, cursed_energy_consumption};
@@ -55,8 +57,8 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
     throw std::runtime_error("couldnt find any fitting technique ability");
 }
 
-double TechniqueSystem::CalculateDamage(const TechAbility& tc, const CurseUser& c) {
-    return tc.damage * (tc.chant_amount > 0 ? 1.0 + tc.chant_amount / 2.0 : 1.0) * SorcerySystem::OutputStatusMultiplier(c.Output().status);
+double TechniqueSystem::CalculateDamage(const TechAbility& tc, const Character& c) {
+    return tc.damage * (tc.chant_amount > 0 ? 1.0 + tc.chant_amount / 2.0 : 1.0) * SorcerySystem::OutputStatusMultiplier(c.curseUser->output.status);
 }
 
 TechAbility& TechniqueSystem::ChooseAbility(Technique& tech) {
@@ -73,7 +75,7 @@ bool TechniqueSystem::HasBarrier(const Technique &tech){
     return tech.barrier.can_use_barrier && tech.barrier.is_active;
 }
 
-void TechniqueSystem::ChantAbility(TechAbility &tech, const CurseUser& cu){
+void TechniqueSystem::ChantAbility(TechAbility &tech, const Character& cu){
     tech.chant_amount = std::min(tech.chant_amount + 1, 5);
     Log::TechniqueChant(cu, tech);
 }

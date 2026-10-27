@@ -1,7 +1,6 @@
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
-#include "../header/CharacterType/Character.hpp"
-#include "../header/CharacterType/CurseUser.hpp"
+#include "../header/Character.hpp"
 #include "../header/Sorcery/Technique.hpp"
 #include "../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../header/Systems/Mechanics/DomainSystem.hpp"
@@ -27,23 +26,25 @@ void Log::WriteError(std::string_view sv, std::format_args ags) {
 }
 
 void Log::CharacterPresentation(const Character &c){
-    Log::Line("[{}]{}", GetInfo::Name(c.Identity()), c.State().is_stunned ? "[Stunned]" : "");
-    Log::Line("Health-[\x1b[31m{:.1f}/{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.State().health, c.State().max_health, c.State().durability, c.State().strength);
-    if (const auto& t = c.Equipment().current_tool) {
-        Log::Message("Held Tool: [{}] ", GetInfo::Name(t->identity));
-    }
-    if (const auto& t = c.Equipment().stored_tool){
-        Log::Message("Stored Tool: [{}] ", GetInfo::Name(t->identity));
-    }
-    if (const auto* crs = c.CanUseSorcery()){
-        Log::Line("Cursed Energy-[\x1b[36m{:.1f}/{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->CursedEnergy().cursed_energy, crs->CursedEnergy().max_cursed_energy, Stringet::OutputCmpStr(crs->Output().current_output, crs->Output().max_output_potential));
-        Log::Message("Status: [{}] ", Stringet::OutputStatusStr(crs->Output().status));
-        if (const auto& tech = crs->Jujutsu().technique){
+    Log::Line("[{}]{}", GetInfo::Name(c.identity), c.state.is_stunned ? "[Stunned]" : "");
+    Log::Line("Health-[\x1b[31m{:.1f}/{:.1f}\x1b[0m] | Durability-[\x1b[35m{:.1f}\x1b[0m] | Strength-[\x1b[32m{:.1f}\x1b[0m]", c.state.health, c.state.max_health, c.state.durability, c.state.strength);
+
+    if (const auto& crs = c.curseUser){
+        Log::Line("Cursed Energy-[\x1b[36m{:.1f}/{:.1f}\x1b[0m] | Cursed Energy Output-[{}] ", crs->ce_system.cursed_energy, crs->ce_system.max_cursed_energy, Stringet::OutputCmpStr(crs->output.current_output, crs->output.max_output_potential));
+        Log::Message("Status: [{}] ", Stringet::OutputStatusStr(crs->output.status));
+        if (const auto& tech = crs->jujutsu.technique){
             Log::Message("Technique: [{}] ", GetInfo::Name(tech->identity));
         }
-        if (const auto& domain = crs->Jujutsu().domain){
+        if (const auto& domain = crs->jujutsu.domain){
             Log::Message("Domain: [{}][{}] ", GetInfo::Name(domain->identity), domain->is_active ? "Active":"Inactive");
         }
+    }
+    Log::Line();
+    if (const auto& t = c.equipment.current_tool) {
+        Log::Message("Held Tool: [{}] ", GetInfo::Name(t->identity));
+    }
+    if (const auto& t = c.equipment.stored_tool){
+        Log::Message("Stored Tool: [{}] ", GetInfo::Name(t->identity));
     }
     Log::Line();
 }
@@ -67,37 +68,37 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const Log
 
 void Log::DomainSurehit(const SurehitStruct st, const SurehitHit ht){
     if (ht == SurehitHit::Person){
-        Log::Line("{} got hit by {} for {:.1f} damage!", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.dm->identity), st.damage);
+        Log::Line("{} got hit by {} for {:.1f} damage!", GetInfo::Name(st.c->identity), GetInfo::Name(st.dm->identity), st.damage);
     }else{
-        Log::Line("{}'s {} got damaged by {} for {:.1f} damage", GetInfo::Name(st.c->Identity()), GetInfo::Name(st.c->CanUseSorcery()->Jujutsu().neutralizer->identity), GetInfo::Name(st.dm->identity), st.damage);
+        Log::Line("{}'s {} got damaged by {} for {:.1f} damage", GetInfo::Name(st.c->identity), GetInfo::Name(st.c->curseUser->jujutsu.neutralizer->identity), GetInfo::Name(st.dm->identity), st.damage);
     } //                                                                                                                         oh my goodness
 }
 
 void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
     for (const auto& s : v){
-        Log::Line("{} got affected by the {} effect and {} {:.1f} {}", GetInfo::Name(p.Identity()), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
+        Log::Line("{} got affected by the {} effect and {} {:.1f} {}", GetInfo::Name(p.identity), GetInfo::Name(s.id), s.effect_type == EffectType::Increase ? "gained" : "lost", s.effect_amount, EffectSystem::GetEffectForTypeStr(s.effect_for_type));
     }
 }
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
     if (!tc.enough_ce || !tc.enough_output){
-        Log::Line("{} tried to use {} but it couldn't be actived due to insufficient {}", GetInfo::Name(tc.user->Identity() ),GetInfo::Name(tc.used_ability->id), tc.enough_output ? "Cursed Energy" : "Output");
+        Log::Line("{} tried to use {} but it couldn't be actived due to insufficient {}", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id), tc.enough_output ? "Cursed Energy" : "Output");
         return;
     }
     if (tc.used_ability){
         if (std::holds_alternative<Character*>(tc.target)) {
             auto& c = std::get<Character*>(tc.target);
             if (tc.blocked) {
-                Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->Identity()), GetInfo::Name(c->Identity()), GetInfo::Name(tc.used_ability->id));
+                Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->identity), GetInfo::Name(c->identity), GetInfo::Name(tc.used_ability->id));
             }else {
-                Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(c->Identity()), tc.damage);
+                Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(c->identity), tc.damage);
             }
         }else{
-            Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->Identity()), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::get<Shikigami*>(tc.target)->id), tc.damage);
+            Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::get<Shikigami*>(tc.target)->id), tc.damage);
         }
     }
 }
-void Log::TechniqueChant(const CurseUser& cu, const TechAbility& tc){
+void Log::TechniqueChant(const Character& cu, const TechAbility& tc){
     switch(get_random<int>(0, 10)){
         case 0: Log::Line("Phase!"); break;
         case 1: Log::Line("Twin Meteors!"); break;
@@ -130,14 +131,14 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
 
         if (std::holds_alternative<Character*>(c2)) {
             const auto& ch = std::get<Character*>(c2);
-            str.append(std::format("{} attacked {}!\n", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
+            str.append(std::format("{} attacked {}!\n", GetInfo::Name(c1.identity), GetInfo::Name(ch->identity)));
             if (ats.blocked){
-                str.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.Identity()), GetInfo::Name(ch->Identity())));
+                str.append(std::format("{}'s attack was blocked by {}'s Technique", GetInfo::Name(c1.identity), GetInfo::Name(ch->identity)));
             }else{
-                str.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->Identity()), ats.damage));
+                str.append(std::format("{} took {:.1f} damage!", GetInfo::Name(ch->identity), ats.damage));
             }
         }else{
-            str.append(std::format("{0} attacked {1}!\n{1} took {2:.1f} damage!", GetInfo::Name(c1.Identity()), GetInfo::Name(std::get<Shikigami*>(c2)->id) ,ats.damage));
+            str.append(std::format("{0} attacked {1}!\n{1} took {2:.1f} damage!", GetInfo::Name(c1.identity), GetInfo::Name(std::get<Shikigami*>(c2)->id) ,ats.damage));
         }
     }else if (std::holds_alternative<ToolStruct>(vr)){
         const auto& cts = std::get<ToolStruct>(vr);
@@ -146,9 +147,9 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
             return;
         }
         if (std::holds_alternative<Character*>(c2)) {
-            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(std::get<Character*>(c2)->Identity())));
+            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.identity), cts.dealt_damage, GetInfo::Name(std::get<Character*>(c2)->identity)));
         }else{
-            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.Identity()), cts.dealt_damage, GetInfo::Name(std::get<Shikigami*>(c2)->id)));
+            str.append(std::format("{0} attacked {2}!\n{2} took {1:.1f} damage!\n", GetInfo::Name(c1.identity), cts.dealt_damage, GetInfo::Name(std::get<Shikigami*>(c2)->id)));
         }
     }
     Log::Line("{0}", str);
@@ -156,11 +157,11 @@ void Log::Attack(const std::variant<AttackStruct, ToolStruct> vr, const Characte
 
 void Log::Damage(const DamageStruct dms, const Character &attacked){
     if (dms.attack_blocked) {
-        Log::Line("{} took no damage. The attack was negated and blocked", GetInfo::Name(attacked.Identity()));
+        Log::Line("{} took no damage. The attack was negated and blocked", GetInfo::Name(attacked.identity));
     } else if (dms.negated_damage == 0.0) {
-        Log::Line("{} took {:.1f} damage.", GetInfo::Name(attacked.Identity()), dms.damage);
+        Log::Line("{} took {:.1f} damage.", GetInfo::Name(attacked.identity), dms.damage);
     } else {
-        Log::Line("{} took {:.1f} damage. {:.1f} damage has been negated", GetInfo::Name(attacked.Identity()), dms.damage, dms.negated_damage);
+        Log::Line("{} took {:.1f} damage. {:.1f} damage has been negated", GetInfo::Name(attacked.identity), dms.damage, dms.negated_damage);
     }
 }
 
@@ -194,7 +195,7 @@ void Log::Clash(const DomainClashStruct ds) {
 void Log::Death(const Battlefield& bf){
     std::vector<std::string> death_messages;
     for (const auto& c : bf.battlefield){
-        const double hp = c->State().health;
+        const double& hp = c->state.health;
         if (hp > 0.0) continue;
         std::string msg{""}, severity{"DEATH"}, color{"\x1b[38;5;237m"};
         
@@ -210,7 +211,7 @@ void Log::Death(const Battlefield& bf){
         }
 
         msg.append(std::format("[{0}{1}\x1b[0m] ({0}{2:.1f}\x1b[0m)", color, severity, hp));
-        msg.append(std::format(" {} has been defeated", GetInfo::Name(c->Identity())));
+        msg.append(std::format(" {} has been defeated", GetInfo::Name(c->identity)));
         death_messages.push_back(msg);
     }
     if (death_messages.empty()){

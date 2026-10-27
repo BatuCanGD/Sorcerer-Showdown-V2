@@ -8,8 +8,8 @@
 enum class SummonType : std::uint8_t;
 struct Battlefield;
 struct Shikigami;
-class Character;
-class CurseUser;
+struct Character;
+
 
 enum class Action : std::uint8_t {
     Attack,
@@ -34,17 +34,17 @@ namespace UserControl {
     void DoEffects(const Character& c);
 
     enum class SorceryType : std::uint8_t { RCT, Reinforcement, BindingVows, Amplification};
-    void DoSorcery(CurseUser* c);
-    const std::vector<SorceryType> GetSorceryChoices(const CurseUser& c);
-    void ForAmplification(CurseUser& c);
-    void ForRCT(CurseUser& c);
-    void ForReinforcement(CurseUser& c);
-    void ForBindingVows(CurseUser& c);
+    void DoSorcery(Character& c);
+    const std::vector<SorceryType> GetSorceryChoices(const Character& c);
+    void ForAmplification(Character& c);
+    void ForRCT(Character& c);
+    void ForReinforcement(Character& c);
+    void ForBindingVows(Character& c);
 
-    void DoTechnique(CurseUser* c, Battlefield& bf);
-    void DoDomain(CurseUser* c);
+    void DoTechnique(Character& c, Battlefield& bf);
+    void DoDomain(Character& c);
 
-    void DoShikigami(CurseUser* c);
+    void DoShikigami(Character& c);
     Shikigami* ChooseShikigami(std::vector<Shikigami>& sh);
     void UseShikigami(Shikigami& c);
 

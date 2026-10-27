@@ -1,6 +1,6 @@
 #pragma once
 
-class Character;
+struct Character;
 struct Battlefield;
 
 namespace BattlefieldSystem {

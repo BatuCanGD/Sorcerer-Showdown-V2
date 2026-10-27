@@ -7,8 +7,8 @@
 #include <variant>
 #include <string_view>
 
-class Character;
-class CurseUser;
+struct Character;
+
 
 struct Shikigami;
 struct Technique;
@@ -45,7 +45,7 @@ namespace Log {
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);
     void Attack(const std::variant<AttackStruct, ToolStruct> ats, const Character& c1, const std::variant<Character*, Shikigami*> c2);
     void TechniqueAttack(const TechniqueStruct tc);
-    void TechniqueChant(const CurseUser& cu, const TechAbility& tc);
+    void TechniqueChant(const Character& cu, const TechAbility& tc);
     void Damage(const DamageStruct dms, const Character& attacked);
     void Clash(const DomainClashStruct ds);
     void Effects(const std::vector<StatusEffect>&, const Character& p);

@@ -1,15 +1,17 @@
 #pragma once
-#include "../../CharacterType/CurseUser.hpp"
+#include "../../SorceryStruct.hpp"
+
+
 
 namespace SorcerySystem {
-    double ApplySpendingMultiplier(double amount, const CurseUser& c);
-    double OutputStatusMultiplier(CurseUserOutput::Status st) noexcept;
-    double EfficiencyMultiplier(CursedEnergySystem::Efficiency type) noexcept;
+    double ApplySpendingMultiplier(double amount, const Character& c);
+    double OutputStatusMultiplier(Sorcery::OutputSystem::Status st) noexcept;
+    double EfficiencyMultiplier(Sorcery::CursedEnergySystem::Efficiency type) noexcept;
     
     double ApplySixEyes(const double amount);
     double ApplyRCTCost(const double amount);
     double ApplyReinforcementCost(const double amount);
 
-    bool CEMoreThanMax(CurseUser& c, double p);
-    void ApplyBurnOut(CurseUser& c);
+    bool CEMoreThanMax(Character& c, double p);
+    void ApplyBurnOut(Character& c);
 }

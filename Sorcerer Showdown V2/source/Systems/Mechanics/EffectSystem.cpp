@@ -1,9 +1,9 @@
 #include "../../../header/Systems/Mechanics/EffectSystem.hpp"
 #include "../../../header/Systems/ResourceHandler.hpp"
-#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Character.hpp"
 
 std::pair<const std::vector<StatusEffect>&, const Character&> EffectSystem::ApplyEffects(Character &c){
-    auto& s = c.State().status_effects;
+    auto& s = c.state.status_effects;
     std::erase_if(s, [&](const auto& z){
         return z.turn_amount <= 0;
     });
@@ -19,23 +19,23 @@ void EffectSystem::ApplyEffectsType(const StatusEffect &ste, Character& c) {
 
     switch(ste.effect_for_type){
         case EffectForType::CursedEnergy:
-            if (auto* crs = c.CanUseSorcery()){
-                crs->CursedEnergy().cursed_energy = std::min(crs->CursedEnergy().cursed_energy + amount, crs->CursedEnergy().max_cursed_energy);
+            if (auto& crs = c.curseUser){
+                crs->ce_system.cursed_energy = std::min(crs->ce_system.cursed_energy + amount, crs->ce_system.max_cursed_energy);
             }
             break;
         case EffectForType::Durability:
-            c.State().durability += amount;
+            c.state.durability += amount;
             break;
         case EffectForType::Health:
-            c.State().health = std::min(c.State().health + amount, c.State().max_health);
+            c.state.health = std::min(c.state.health + amount, c.state.max_health);
             break;
         case EffectForType::MaxOutput:
-            if (auto* crs = c.CanUseSorcery()){
-                crs->Output().max_output_potential += amount;
+            if (auto& crs = c.curseUser){
+                crs->output.max_output_potential += amount;
             }
             break;
         case EffectForType::Strength:
-            c.State().strength += amount;
+            c.state.strength += amount;
             break;
         default:
             break;

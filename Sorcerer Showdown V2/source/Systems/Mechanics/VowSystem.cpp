@@ -1,12 +1,13 @@
 #include "../../../header/Systems/Mechanics/VowSystem.hpp"
-#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Character.hpp"
 #include "../../../header/Utilities/Random.hpp"
 #include "../../../header/Systems/Stringet.hpp"
 #include <stdexcept>
 #include <format>
 
-void VowSystem::ApplyVows(CurseUser &c) {
-    for (auto& cb : c.Jujutsu().binding_vows) {
+void VowSystem::ApplyVows(Character &c) {
+    auto& cr = c.curseUser;
+    for (auto& cb : cr->jujutsu.binding_vows) {
         if (cb.applied) continue;
         if (VowSystem::DoVow(c, VowSystem::GetVowCost(c, cb))) {
             cb.applied = true;
@@ -14,31 +15,32 @@ void VowSystem::ApplyVows(CurseUser &c) {
     }
 }
 
-bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
+bool VowSystem::DoVow(Character &c, const VowCostSystem &vcs) {
+    auto& cr = c.curseUser;
     switch(vcs.bv->loss) {
         case SacrificeType::CursedEnergy:
-            c.CursedEnergy().max_cursed_energy -= vcs.sacrifice;
-            if (c.CursedEnergy().cursed_energy > c.CursedEnergy().max_cursed_energy) c.CursedEnergy().cursed_energy = c.CursedEnergy().max_cursed_energy;
+            cr->ce_system.max_cursed_energy -= vcs.sacrifice;
+            if (cr->ce_system.cursed_energy > cr->ce_system.max_cursed_energy) cr->ce_system.cursed_energy = cr->ce_system.max_cursed_energy;
             break;
         case SacrificeType::Health:
-            c.State().max_health -= vcs.sacrifice;
-            if (c.State().health > c.State().max_health) c.State().health = c.State().max_health;
+            c.state.max_health -= vcs.sacrifice;
+            if (c.state.health > c.state.max_health) c.state.health = c.state.max_health;
             break;
         case SacrificeType::OutputPotential:
-            c.Output().max_output_potential -= vcs.sacrifice;
+            cr->output.max_output_potential -= vcs.sacrifice;
             break;
         default:
             throw std::runtime_error("Unexpected SacrificeType Type");
     }
     switch(vcs.bv->gain){
         case SacrificeType::CursedEnergy:
-            c.CursedEnergy().max_cursed_energy += vcs.gain;
+            cr->ce_system.max_cursed_energy += vcs.gain;
             break;
         case SacrificeType::Health:
-            c.State().max_health += vcs.gain;
+            c.state.max_health += vcs.gain;
             break;
         case SacrificeType::OutputPotential:
-            c.Output().max_output_potential += vcs.gain;
+            cr->output.max_output_potential += vcs.gain;
             break;
         default:
             throw std::runtime_error("Unexpected SacrificeType Type");
@@ -46,22 +48,23 @@ bool VowSystem::DoVow(CurseUser &c, const VowCostSystem &vcs) {
     return true;
 }
 
-const VowCostSystem VowSystem::GetVowCost(const CurseUser& c, const BindingVow& bv){ // for the stat multiplier
+const VowCostSystem VowSystem::GetVowCost(const Character& c, const BindingVow& bv){ // for the stat multiplier
     if (bv.gain == bv.loss){ 
         return {};
     }
+    auto& cr = c.curseUser;
     const double sac_mult = bv.percentage;
-    
     double sacrifice_amount{};
+
     switch(bv.loss){
         case SacrificeType::CursedEnergy:
-            sacrifice_amount = c.CursedEnergy().max_cursed_energy * sac_mult;
+            sacrifice_amount = cr->ce_system.max_cursed_energy * sac_mult;
             break;
         case SacrificeType::Health:
-            sacrifice_amount = c.State().max_health * sac_mult;
+            sacrifice_amount = c.state.max_health * sac_mult;
             break;
         case SacrificeType::OutputPotential:
-            sacrifice_amount = c.Output().max_output_potential * sac_mult;
+            sacrifice_amount = cr->output.max_output_potential * sac_mult;
             break;
         default:
             break;
@@ -133,7 +136,7 @@ const EntityInfo VowSystem::GenerateVowId(const BindingVow& bv) {
 
     return {name,color , desc};
 }
-const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
+const BindingVow VowSystem::CreateVow(Character& c, const Base::DecisionMaker& bq) {
     BindingVow vow{};
     SacrificeType gain{};
     SacrificeType loss{};
@@ -141,7 +144,7 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
 
     switch(bq.fighting_style){
         case FightingStyle::Aggressive:
-            loss = c.State().health < c.State().max_health * 0.35 ? SacrificeType::OutputPotential : SacrificeType::Health;
+            loss = c.state.health < c.state.max_health * 0.35 ? SacrificeType::OutputPotential : SacrificeType::Health;
             if (loss == SacrificeType::Health){
                 gain = SacrificeType::OutputPotential;
             } else if (loss == SacrificeType::OutputPotential){
@@ -151,7 +154,7 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
             }
             break;
         case FightingStyle::Defensive:
-            loss = c.State().health < c.State().max_health * 0.50 ? SacrificeType::OutputPotential : SacrificeType::CursedEnergy;
+            loss = c.state.health < c.state.max_health * 0.50 ? SacrificeType::OutputPotential : SacrificeType::CursedEnergy;
             if (loss == SacrificeType::CursedEnergy){
                 gain = SacrificeType::OutputPotential;
             } else if (loss == SacrificeType::OutputPotential){
@@ -162,7 +165,7 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
             break;
         case FightingStyle::Mixed:
             if (get_random<uint8_t>(0, 1) == 1){
-                loss = c.State().health < c.State().max_health * get_random<double>(0.01, 0.5) ? SacrificeType::OutputPotential : SacrificeType::Health;
+                loss = c.state.health < c.state.max_health * get_random<double>(0.01, 0.5) ? SacrificeType::OutputPotential : SacrificeType::Health;
             }else{
                 loss = SacrificeType::CursedEnergy;
             }
@@ -193,6 +196,6 @@ const BindingVow VowSystem::CreateVow(CurseUser& c, const BattleIQ& bq) {
     vow.loss = loss;
     vow.identity = VowSystem::GenerateVowId(vow);
 
-    c.Jujutsu().binding_vows.push_back(vow);
+    c.curseUser->jujutsu.binding_vows.push_back(vow);
     return vow;
 }

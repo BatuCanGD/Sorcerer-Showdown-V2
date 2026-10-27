@@ -1,8 +1,8 @@
 #include "../../../header/Systems/Mechanics/ShikigamiSystem.hpp"
-#include "../../../header/CharacterType/CurseUser.hpp"
+#include "../../../header/Character.hpp"
 #include <algorithm>
 
-DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, globalums::DamageType dt) {
+DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, DamageType dt) {
     DamageStruct ds{CombatSystem::ResolveDamage(&s, dt, amount)};
     if (ds.attack_blocked){
         return {.attack_blocked = true};
@@ -11,44 +11,46 @@ DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, globalums::Dam
     return ds;
 }
 
-void ShikigamiSystem::HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& sv, const double mult){
+void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, SavedValue& sv, const double mult){
     const double amount = sv.value * mult;
     
     switch(st){
         case SupportType::Offense:
                 if (!sv.saved){
-                    sv.value = owner.State().strength; 
+                    sv.value = owner.state.strength; 
                 }
-                owner.State().strength = amount;
+                owner.state.strength = amount;
             break;
         case SupportType::Defense:
                 if (!sv.saved){
-                    sv.value = owner.State().durability; 
+                    sv.value = owner.state.durability; 
                 }
-                owner.State().durability = amount;
+                owner.state.durability = amount;
             break;
         case SupportType::Output:
-            if (auto* crs = owner.CanUseSorcery()){
+            if (auto& crs = owner.curseUser){
                 if (!sv.saved){
-                    sv.value = crs->Output().max_output_potential; 
+                    sv.value = crs->output.max_output_potential; 
                 }
-                crs->Output().max_output_potential = amount;
+                crs->output.max_output_potential = amount;
             }
             break;
         case SupportType::CursedEnergyRegen:
-            if (auto* crs = owner.CanUseSorcery()){
+            if (auto& crs = owner.curseUser){
                 if (!sv.saved){
-                    sv.value = crs->CursedEnergy().regeneration_amount; 
+                    sv.value = crs->ce_system.regeneration_amount; 
                 }
-                crs->CursedEnergy().regeneration_amount = amount;
+                crs->ce_system.regeneration_amount = amount;
             }
+            break;
+        default:
             break;
     }
     sv.saved = true;
 }
 
 
-void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
+void ShikigamiSystem::TickShikigami(Shikigami& sk, Character& owner) {
     if (sk.stats.health <= 0.0){
         return;
     }
@@ -69,23 +71,25 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, CurseUser& owner) {
     ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.rollback, mult);
 }
 
-void ShikigamiSystem::HandleShadow(CurseUser& owner, const SupportType& st, const SavedValue& sv){
+void ShikigamiSystem::HandleShadow(Character& owner, const SupportType& st, const SavedValue& sv){
     switch(st){
         case SupportType::Offense:
-            owner.State().strength = sv.value;
+            owner.state.strength = sv.value;
             break;
         case SupportType::Defense:
-            owner.State().durability = sv.value;
+            owner.state.durability = sv.value;
             break;
         case SupportType::Output:
-            if (auto* crs = owner.CanUseSorcery()){
-                crs->Output().max_output_potential = sv.value;
+            if (auto& crs = owner.curseUser){
+                crs->output.max_output_potential = sv.value;
             }
             break;
         case SupportType::CursedEnergyRegen:
-            if (auto* crs = owner.CanUseSorcery()){
-                crs->CursedEnergy().regeneration_amount = sv.value;
+            if (auto& crs = owner.curseUser){
+                crs->ce_system.regeneration_amount = sv.value;
             }
+            break;
+        default:
             break;
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "../General/StatusEffects.hpp"
-#include "../Enums.hpp"
+#include "../DamageType.hpp"
 #include "../Info.hpp"
 
 #include <vector>
@@ -13,7 +13,7 @@ struct TechAbility final {
     double cost{1.0};
     double output{1.0};
     int chant_amount{0};
-    globalums::DamageType damage_type{globalums::DamageType::Normal};
+    DamageType damage_type{DamageType::Normal};
 };
 struct TechBarrier final {
     bool can_use_barrier{false};

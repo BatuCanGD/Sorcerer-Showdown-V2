@@ -1,8 +1,7 @@
 #include "../header/Creator.hpp"
 #include "../header/Json.hpp"
 #include "../header/Logger.hpp"
-#include "../header/CharacterType/Character.hpp"
-#include "../header/CharacterType/CurseUser.hpp"
+#include "../header/Character.hpp"
 #include "../header/General/CursedTool.hpp"
 #include "../header/Sorcery/Technique.hpp"
 
@@ -12,46 +11,48 @@
 #include <fstream>
 #include <memory>
 
-void Json::LoadCharacters(std::vector<std::unique_ptr<Character>>& bf) {
+std::vector<std::unique_ptr<Character>> Json::LoadCharacters() {
     Log::Line("Looking for characters.json in: {}", std::filesystem::current_path().string());
     std::ifstream file("Characters.json");
 
     if (!file.is_open()) {
         Log::Error("Could not find characters.json!");
-        return;
+        return {};
     }
     nlohmann::json data;
     try {
         file >> data;
     }catch (const nlohmann::json::parse_error& e) {
         Log::Error("JSON Parse Error: {}", e.what());
-        return;
+        return {};
     }
-
+    std::vector<std::unique_ptr<Character>> bf;
     if (data.contains("Characters") && data["Characters"].is_array()) {
         for (const auto& charData : data["Characters"]) {
             bf.push_back(std::move(Json::BuildCharacter(charData)));
         }
     }
+    return bf;
 }
 
 
 std::unique_ptr<Character> Json::BuildCharacter(const nlohmann::json &j){
-    std::unique_ptr<Character> c{};
+    std::unique_ptr<Character> c{std::make_unique<Character>()};
 
     if (j.contains("Type") && j.at("Type").is_string()){
         const auto& type = j.at("Type").get<std::string_view>();
         if (type == "Curse User"){
-            c = std::make_unique<CurseUser>();
+            c->curseUser = Sorcery::CurseUserSystem();
+        }else{
+            Log::Error("Invalid Type, defaulting to Character Type");
         }
-    }
-    if (!c) {
-        c = std::make_unique<Character>();
+    }else{
+        Log::Error("\"Type\" doesnt exist, defaulting to Character Type");
     }
 
     Json::GetDefaultValues(j, *c);
     if (j.contains("Sorcery")) {
-        if (auto* cr = c->CanUseSorcery()){
+        if (auto& cr = c->curseUser){
             Json::GetCurseUserValues(j.at("Sorcery"), *cr);
         }
     }
@@ -63,92 +64,97 @@ T GetValue(const nlohmann::json& j, std::string_view sv, T default_val = T{}){
     if (j.contains(sv)){
         return j.at(sv).get<T>();
     }
+    Log::Error("\"{}\" couldn't be found. default values were applied", sv);
     return default_val;
 }
 
 bool ContainsArray(const nlohmann::json& j, std::string_view sv){
-    return (j.contains(sv) && j.at(sv).is_array());
+    if (j.contains(sv) && j.at(sv).is_array()) {
+        return true;
+    }
+    Log::Error("\"{}\" Array couldnt be found", sv);
+    return false;
 }
 
 void Json::GetDefaultValues(const nlohmann::json& j, Character& c) {
     if (j.contains("Identity")){
         const auto& id = j.at("Identity");
-        c.Identity().name = GetValue<std::string>(id, "Name", "Delamain");
-        c.Identity().color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
-        c.Identity().description = GetValue<std::string>(id, "Description");
+        c.identity.name = GetValue<std::string>(id, "Name", "Delamain");
+        c.identity.color = GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
+        c.identity.description = GetValue<std::string>(id, "Description");
     }
     if (j.contains("Stats")){
         const auto& stats = j.at("Stats");
-        c.State().max_health = GetValue<double>(stats, "Health", 50.0);
-        c.State().health = c.State().max_health;
-        c.State().strength = GetValue<double>(stats, "Strength", 25.0);
-        c.State().durability = GetValue<double>(stats, "Durability", 15.0);
-        c.State().is_invulnerable = GetValue<bool>(stats, "Undefeatable", false);
+        c.state.max_health = GetValue<double>(stats, "Health", 50.0);
+        c.state.health = c.state.max_health;
+        c.state.strength = GetValue<double>(stats, "Strength", 25.0);
+        c.state.durability = GetValue<double>(stats, "Durability", 15.0);
+        c.state.is_invulnerable = GetValue<bool>(stats, "Undefeatable", false);
     }
     if (j.contains("Brain")){
         const auto& style = j.at("Brain");
-        c.Style().fighting_style = Json::GetFightingStyle(GetValue<std::string_view>(style, "Fighting Style", "Mixed")); 
-        c.Style().resource_usage = Json::GetResourceUsage(GetValue<std::string_view>(style, "Resource Usage", "Mixed"));
-        c.Style().targeted_type  = Json::GetTargetedTypes(GetValue<std::string_view>(style, "Targeted Type", "Mixed"));
-        c.Style().targeting_type = Json::GetTargetingType(GetValue<std::string_view>(style, "Targeting Type", "Random"));
+        c.brain.fighting_style = Json::GetFightingStyle(GetValue<std::string_view>(style, "Fighting Style", "Mixed")); 
+        c.brain.resource_usage = Json::GetResourceUsage(GetValue<std::string_view>(style, "Resource Usage", "Mixed"));
+        c.brain.targeted_type  = Json::GetTargetedTypes(GetValue<std::string_view>(style, "Targeted Type", "Mixed"));
+        c.brain.targeting_type = Json::GetTargetingType(GetValue<std::string_view>(style, "Targeting Type", "Random"));
     }
     if (j.contains("Equipment")){
         const auto& eq = j.at("Equipment");
-        c.Equipment().current_tool = GetCursedTool(GetValue<std::string_view>(eq, "Held Tool"));
-        c.Equipment().stored_tool = GetCursedTool(GetValue<std::string_view>(eq, "Stored Tool"));
-        c.Equipment().has_access_to_inventory = GetValue<bool>(eq, "Inventory Access");
-        Json::ModifyInventory(eq, c.Equipment().inventory);
+        c.equipment.current_tool = GetCursedTool(GetValue<std::string_view>(eq, "Held Tool"));
+        c.equipment.stored_tool = GetCursedTool(GetValue<std::string_view>(eq, "Stored Tool"));
+        c.equipment.has_access_to_inventory = GetValue<bool>(eq, "Inventory Access");
+        Json::ModifyInventory(eq, c.equipment.inventory);
     }
 }
 
-void Json::GetCurseUserValues(const nlohmann::json& j, CurseUser& c) {
+void Json::GetCurseUserValues(const nlohmann::json& j, Sorcery::CurseUserSystem& c) {
     if (j.contains("Jujutsu")){
         const auto& jj = j.at("Jujutsu");
-        c.Jujutsu().technique = Json::GetTechnique(GetValue<std::string_view>(jj, "Technique"));
-        c.Jujutsu().domain = Json::GetDomain(GetValue<std::string_view>(jj, "Domain"));
-        c.Jujutsu().neutralizer = Json::GetNeutralizer(GetValue<std::string_view>(jj, "Neutralizer"));
-        Json::ModifyShikigami(jj, c.Jujutsu().shikigami);
+        c.jujutsu.technique = Json::GetTechnique(GetValue<std::string_view>(jj, "Technique"));
+        c.jujutsu.domain = Json::GetDomain(GetValue<std::string_view>(jj, "Domain"));
+        c.jujutsu.neutralizer = Json::GetNeutralizer(GetValue<std::string_view>(jj, "Neutralizer"));
+        Json::ModifyShikigami(jj, c.jujutsu.shikigami);
     }
     if (j.contains("Cursed Energy")) {
         const auto& cs = j.at("Cursed Energy");
-        c.CursedEnergy().max_cursed_energy = GetValue<double>(cs, "Amount", 500.0);
-        c.CursedEnergy().cursed_energy = c.CursedEnergy().max_cursed_energy;
-        c.CursedEnergy().regeneration_amount = GetValue<double>(cs, "Regen Amount", 25.0);
-        c.CursedEnergy().bf_chance = static_cast<std::uint8_t>(std::clamp(GetValue<unsigned int>(cs, "Blackflash Chance", 5u), 0u, 100u));
-        c.CursedEnergy().efficiency = Json::GetEfficiency(GetValue<std::string_view>(cs, "Efficiency"));
+        c.ce_system.max_cursed_energy = GetValue<double>(cs, "Amount", 500.0);
+        c.ce_system.cursed_energy = c.ce_system.max_cursed_energy;
+        c.ce_system.regeneration_amount = GetValue<double>(cs, "Regen Amount", 25.0);
+        c.ce_system.bf_chance = static_cast<std::uint8_t>(std::clamp(GetValue<unsigned int>(cs, "Blackflash Chance", 5u), 0u, 100u));
+        c.ce_system.efficiency = Json::GetEfficiency(GetValue<std::string_view>(cs, "Efficiency"));
     }
     if (j.contains("Cursed Energy Output")){
-        c.Output().max_output_potential = GetValue<double>(j.at("Cursed Energy Output"), "Maximum", 100.0);
+        c.output.max_output_potential = GetValue<double>(j.at("Cursed Energy Output"), "Maximum", 100.0);
     }
-    c.Amplification().can_use_amp = GetValue<bool>(j, "Domain Amplification");
-    c.RCT().can_use_rct = GetValue<bool>(j, "Reverse Cursed Technique");
+    c.amplification.can_use_amp = GetValue<bool>(j, "Domain Amplification");
+    c.rct_system.can_use_rct = GetValue<bool>(j, "Reverse Cursed Technique");
     if (j.contains("Traits")){
         const auto& tr = j.at("Traits");
-        c.Traits().passive_healing = GetValue<bool>(tr, "Passive Healing", false);
-        c.Traits().six_eyes = GetValue<bool>(tr, "Six Eyes", false);
+        c.traits.passive_healing = GetValue<bool>(tr, "Passive Healing", false);
+        c.traits.six_eyes = GetValue<bool>(tr, "Six Eyes", false);
     }
 }
 
 template <typename T>
 using UMap = std::unordered_map<std::string, T>;
 
-CursedEnergySystem::Efficiency Json::GetEfficiency(std::string_view sv){
-    static const UMap<CursedEnergySystem::Efficiency> m {
-        {"Peak", CursedEnergySystem::Efficiency::Peak},
-        {"Extreme", CursedEnergySystem::Efficiency::Extreme},
-        {"Expert", CursedEnergySystem::Efficiency::Expert},
-        {"Precise", CursedEnergySystem::Efficiency::Precise},
-        {"Stable", CursedEnergySystem::Efficiency::Stable},
-        {"Unstable", CursedEnergySystem::Efficiency::Unstable},
-        {"Rough", CursedEnergySystem::Efficiency::Rough},
-        {"Wasteful", CursedEnergySystem::Efficiency::Wasteful}
+Sorcery::CursedEnergySystem::Efficiency Json::GetEfficiency(std::string_view sv){
+    static const UMap<Sorcery::CursedEnergySystem::Efficiency> m {
+        {"Peak", Sorcery::CursedEnergySystem::Efficiency::Peak},
+        {"Extreme", Sorcery::CursedEnergySystem::Efficiency::Extreme},
+        {"Expert", Sorcery::CursedEnergySystem::Efficiency::Expert},
+        {"Precise", Sorcery::CursedEnergySystem::Efficiency::Precise},
+        {"Stable", Sorcery::CursedEnergySystem::Efficiency::Stable},
+        {"Unstable", Sorcery::CursedEnergySystem::Efficiency::Unstable},
+        {"Rough", Sorcery::CursedEnergySystem::Efficiency::Rough},
+        {"Wasteful", Sorcery::CursedEnergySystem::Efficiency::Wasteful}
     };
     for(const auto& c : m){
         if (sv == c.first){
             return c.second;
         }
     }
-    return CursedEnergySystem::Efficiency::Stable;
+    return Sorcery::CursedEnergySystem::Efficiency::Stable;
 }
 
 

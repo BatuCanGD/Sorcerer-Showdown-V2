@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-class Character;
+struct Character;
 
 namespace EffectSystem {
     std::pair<const std::vector<StatusEffect>&, const Character&> ApplyEffects(Character& c);

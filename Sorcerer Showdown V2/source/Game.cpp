@@ -1,6 +1,8 @@
 #include "../header/Game.hpp"
+#include "../header/AI.hpp"
 #include "../header/Logger.hpp"
 #include "../header/Battlefield.hpp"
+#include "../header/Character.hpp"
 #include "../header/Utilities/Input.hpp"
 #include "../header/Systems/SetupSystem.hpp"
 #include "../header/Systems/BattlefieldSystem.hpp"
@@ -22,8 +24,8 @@ bool announce_end(Battlefield& bf, const playerchoices& pc){
     if (b.size() < 2){
         if (b.size() != 0){
             auto& chr = b[0];
-            Log::Line("{} is the last fighter standing!", GetInfo::Name(chr->Identity()));
-            if (pc.user_character == &*chr){
+            Log::Line("{} is the last fighter standing!", GetInfo::Name(chr->identity));
+            if (pc.user_character == chr.get()){
                 Log::Line("You Win!");
             }else{
                 Log::Line("You Lose!");
@@ -43,12 +45,12 @@ bool endgame() {
 
 bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { // final checklist: Improve logging and finish the AI Implementation
     for(size_t idx = 0; idx < bf.battlefield.size(); ++idx){
-        auto& c = bf.battlefield[idx];
-        if (c->State().health <= 0.0) continue;
+        auto* c = bf.battlefield[idx].get();
+        if (c->state.health <= 0.0) continue;
         Log::Line("({})", idx + 1);
         Log::CharacterPresentation(*c);
         Log::Line();
-        if (pc.user_character == c.get()){
+        if (pc.user_character == c){
             UserControl::GetPlayerTurn(*c, bf);
             hold_input();
         }else {

@@ -2,24 +2,24 @@
 #include "../../header/Systems/Mechanics/DomainSystem.hpp"
 #include "../../header/Systems/Mechanics/NeutralizerSystem.hpp"
 #include "../../header/Systems/Mechanics/ShikigamiSystem.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/Character.hpp"
 #include "../../header/Logger.hpp"
 #include "../../header/Battlefield.hpp"
 #include <vector>
 
 
 void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
-    std::vector<CurseUser*> domain_users;
-    for (const auto& c : bf.battlefield){
-        if (auto* cr = c->CanUseSorcery()){
-            if (auto& d = cr->Jujutsu().domain){
-                DomainSystem::HandleLifetime(*cr, *d);
+    std::vector<Character*> domain_users;
+    for (auto& c : bf.battlefield){
+        if (auto cr = c->curseUser){
+            if (auto& d = c->curseUser->jujutsu.domain){
+                DomainSystem::HandleLifetime(*c, *d);
                 if (d->is_active){
-                    domain_users.push_back(cr);
+                    domain_users.push_back(&*c);
                 }
             }
-            if (auto& n = cr->Jujutsu().neutralizer){
-                NeutralizerSystem::HandleLifeTime(*cr, *n);
+            if (auto& n = cr->jujutsu.neutralizer){
+                NeutralizerSystem::HandleLifeTime(*c, *n);
             }
         }
     }
@@ -39,7 +39,7 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
         }
         default: {
             for (auto* c : domain_users) {
-                DomainSystem::ResetDomain(*c->Jujutsu().domain, c);
+                DomainSystem::ResetDomain(*c->curseUser->jujutsu.domain, c);
             }
             break;
         }
@@ -47,14 +47,14 @@ void BattlefieldSystem::HandleDomainInteraction(Battlefield &bf){
 }
 
 void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
-    for (const auto& c : bf.battlefield){
-        if (auto* cr = c->CanUseSorcery()){
-            for (auto& sh : cr->Jujutsu().shikigami){
+    for (auto& c : bf.battlefield){
+        if (auto& cr = c->curseUser){
+            for (auto& sh : cr->jujutsu.shikigami){
                 if (sh.stats.health <= 0.0){
-                   ShikigamiSystem::HandleShadow(*cr, sh.support_type, sh.rollback);
+                   ShikigamiSystem::HandleShadow(*c, sh.support_type, sh.rollback);
                 }
             }
-            std::erase_if(cr->Jujutsu().shikigami, [](const auto& s) { 
+            std::erase_if(cr->jujutsu.shikigami, [](const auto& s) { 
                 return s.stats.health <= 0.0;
             });
         }
@@ -63,7 +63,7 @@ void BattlefieldSystem::HandleDeadShikigami(Battlefield &bf){
 void BattlefieldSystem::HandleDeadPeople(Battlefield &bf){
     Log::Death(bf);
     std::erase_if(bf.battlefield, [](const auto& s) { 
-        return s->State().health <= 0.0;
+        return s->state.health <= 0.0;
     });
 }
 
@@ -76,7 +76,7 @@ void BattlefieldSystem::HandleSpawns(Battlefield &bf) {
 bool BattlefieldSystem::CanContinueFight(Battlefield &bf){
     std::uint8_t i{};
     for (const auto& c : bf.battlefield){
-        if (c->State().health > 0.0 && ++i > 1) {
+        if (c->state.health > 0.0 && ++i > 1) {
             return true;
         }
     }

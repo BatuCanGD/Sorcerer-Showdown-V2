@@ -1,8 +1,8 @@
 #pragma once
 #include "../../Sorcery/BindingVow.hpp"
-class CurseUser;
+#include "../../BaseStruct.hpp"
+struct Character;
 struct EntityInfo;
-struct BattleIQ;
 struct JujutsuSystem;
 
 struct VowCostSystem final {
@@ -17,9 +17,9 @@ struct VowType final {
 };
 
 namespace VowSystem {
-    void ApplyVows(CurseUser& c);
-    bool DoVow(CurseUser& c, const VowCostSystem& vcs);
-    const VowCostSystem GetVowCost(const CurseUser& c, const BindingVow& bv);
+    void ApplyVows(Character& c);
+    bool DoVow(Character& c, const VowCostSystem& vcs);
+    const VowCostSystem GetVowCost(const Character& c, const BindingVow& bv);
     const EntityInfo GenerateVowId(const BindingVow& bv);
-    const BindingVow CreateVow(CurseUser& j, const BattleIQ& bq);
+    const BindingVow CreateVow(Character& j, const Base::DecisionMaker& bq);
 }

@@ -2,13 +2,13 @@
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Battlefield.hpp"
 #include "../../header/Logger.hpp"
+#include "../../header/Systems/CharacterSystem.hpp"
 #include "../../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../../header/Systems/Mechanics/TechniqueSystem.hpp"
 #include "../../header/Systems/Mechanics/VowSystem.hpp"
 #include "../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../header/Logger.hpp"
-#include "../../header/CharacterType/Character.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/Character.hpp"
 
 #include <string_view>
 #include <optional>
@@ -25,20 +25,20 @@ std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices
 
     add_ch("Attack", Action::Attack);
 
-    if (c.Equipment().current_tool || c.Equipment().stored_tool || (c.Equipment().has_access_to_inventory && !c.Equipment().inventory.empty())) {
+    if (c.equipment.current_tool || c.equipment.stored_tool || (c.equipment.has_access_to_inventory && !c.equipment.inventory.empty())) {
         add_ch("Inventory", Action::Inventory);
     }
-    if (!c.State().status_effects.empty()){
+    if (!c.state.status_effects.empty()){
         add_ch("Status Effects", Action::Effects);
     }
-    if (const auto* cr = c.CanUseSorcery()){
-        if (cr->Jujutsu().technique) {
+    if (const auto& cr = c.curseUser){
+        if (cr->jujutsu.technique) {
             add_ch("Technique", Action::Technique);
         }
-        if (cr->Jujutsu().domain) {
+        if (cr->jujutsu.domain) {
             add_ch("Domain", Action::Domain);
         }
-        if (!cr->Jujutsu().shikigami.empty()) {
+        if (!cr->jujutsu.shikigami.empty()) {
             add_ch("Shikigami", Action::Shikigami);
         }
         add_ch("Sorcery", Action::Sorcery);
@@ -47,11 +47,10 @@ std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices
 }
 
 void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
-    if (c.State().is_stunned){
+    if (c.state.is_stunned){
         return;
     }
     const auto choices = UserControl::GetChoices(c);
-    auto* crs = c.CanUseSorcery();
     std::uint8_t turn_count = 3;
     do{
         Log::Line("Action count: {}", turn_count);
@@ -72,16 +71,16 @@ void UserControl::GetPlayerTurn(Character& c, Battlefield& bf) {
                     UserControl::DoInventoryManagement(c);
                     break;
                 case Action::Technique:
-                    UserControl::DoTechnique(crs, bf);
+                    UserControl::DoTechnique(c, bf);
                     break;
                 case Action::Domain:
-                    UserControl::DoDomain(crs);
+                    UserControl::DoDomain(c);
                     break;
                 case Action::Shikigami:
-                    UserControl::DoShikigami(crs);
+                    UserControl::DoShikigami(c);
                     break;
                 case Action::Sorcery:
-                    UserControl::DoSorcery(crs);
+                    UserControl::DoSorcery(c);
                     break;
                 case Action::Effects:
                     UserControl::DoEffects(c);
@@ -105,8 +104,8 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(const Character& cx,
     targets.push_back(GetCharacterTarget(cx, bf));
     Character* chr = std::get<Character*>(targets.front());
     if (const auto& ch = std::get<Character*>(targets[0])){
-        if (auto* crs = ch->CanUseSorcery()){
-            for (auto& c : crs->Jujutsu().shikigami) {
+        if (auto& crs = ch->curseUser){
+            for (auto& c : crs->jujutsu.shikigami) {
                 if (c.summon_type == SummonType::Active && c.stats.health > 0.0){
                     targets.emplace_back(&c);
                 }
@@ -124,7 +123,7 @@ std::variant<Character*, Shikigami*> UserControl::GetTarget(const Character& cx,
             Log::Line("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(sh->id), sh->stats.health);
         }else{
             auto& ch = std::get<Character*>(c);
-            Log::Line("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(ch->Identity()), ch->State().health);
+            Log::Line("{}:{} | HP:[{:.1f}]", ++idx, GetInfo::Name(ch->identity), ch->state.health);
         }
     }
     Log::Line("Choose your target");
@@ -143,11 +142,11 @@ Character* UserControl::GetCharacterTarget(const Character& cx, Battlefield& bf)
     size_t z{0};
     for (const auto& c : bf.battlefield){
         std::string str{};
-        str.append(std::format("{}:{}", ++z, GetInfo::Name(c->Identity())));
+        str.append(std::format("{}:{}", ++z, GetInfo::Name(c->identity)));
         str.append(std::format(" {} ", &cx == c.get() ? "(Chosen Character)" : ""));
-        str.append(std::format("| HP:[{:.1f}] ", c->State().health));
-        if (const auto& cr = c->CanUseSorcery()){
-            auto& j = cr->Jujutsu();
+        str.append(std::format("| HP:[{:.1f}] ", c->state.health));
+        if (const auto& cr = c->curseUser){
+            auto& j = cr->jujutsu;
             if (!j.shikigami.empty()){
                 bool appended{false};
                 for (const auto& s : j.shikigami){
@@ -171,18 +170,18 @@ Character* UserControl::GetCharacterTarget(const Character& cx, Battlefield& bf)
 }
 
 void UserControl::DoEffects(const Character &cc){
-    for (const auto& c : cc.State().status_effects){
+    for (const auto& c : cc.state.status_effects){
         Log::Line("{}", GetInfo::Styalized(c.id));
     }
 }
 
 void UserControl::DoAttack(Character& c, std::variant<Character*, Shikigami*> cd) {
-    const auto result = c.Attack(cd);
+    const auto result = CharacterSystem::Attack(c, cd);
     Log::Attack(result, c, cd);
 }
 
 void UserControl::DoInventoryManagement(Character& c) {
-    auto& equip = c.Equipment();
+    auto& equip = c.equipment;
     const bool has_inv = equip.has_access_to_inventory;
 
     enum class Origin : std::uint8_t { 
@@ -294,12 +293,12 @@ void UserControl::DoInventoryManagement(Character& c) {
     }
 }
 
-void UserControl::DoSorcery(CurseUser* c) {
-    if (c == nullptr){
+void UserControl::DoSorcery(Character& c) {
+    if (!c.curseUser.has_value()){
         Log::Line("You are not a curse user!");
         return;
     }
-    const auto& sp = UserControl::GetSorceryChoices(*c);
+    const auto& sp = UserControl::GetSorceryChoices(c);
     size_t ch = get_input<size_t>() - 1;
 
     if (ch >= sp.size()) {
@@ -308,33 +307,34 @@ void UserControl::DoSorcery(CurseUser* c) {
 
     switch(sp[ch]){
         case SorceryType::RCT:
-            UserControl::ForRCT(*c);
+            UserControl::ForRCT(c);
             break;
         case SorceryType::Reinforcement:
-            UserControl::ForReinforcement(*c);
+            UserControl::ForReinforcement(c);
             break;
         case SorceryType::BindingVows:
-            UserControl::ForBindingVows(*c);
+            UserControl::ForBindingVows(c);
             break;
         case SorceryType::Amplification:
-            UserControl::ForAmplification(*c);
+            UserControl::ForAmplification(c);
             break;
         default:
             Log::Error("Cannot find SorceryType type");
     }
 }
 
-const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const CurseUser& c) {
+const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const Character& c) {
     std::vector<SorceryType> sp;
     int k{0};
     auto add_p([&](std::string_view sv, SorceryType s){
         Log::Line("{} - {}", ++k, sv);
         sp.push_back(s);
     });
-    if (c.RCT().can_use_rct){
+    auto cr = c.curseUser;
+    if (cr->rct_system.can_use_rct){
         add_p("RCT", SorceryType::RCT);
     }
-    if (c.Amplification().can_use_amp){
+    if (cr->amplification.can_use_amp){
         add_p("Amplification", SorceryType::Amplification);
     }
     add_p("Reinforcement", SorceryType::Reinforcement);
@@ -342,8 +342,8 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
     return sp;
 }
 
-void UserControl::ForAmplification(CurseUser &c){
-    bool& amp = c.Amplification().is_active;
+void UserControl::ForAmplification(Character &c){
+    bool& amp = c.curseUser->amplification.is_active;
     Log::Line("Amplification Status: [{}]", amp ? "Active" : "Inactive");
     Log::Line("1 - Enable | 2 - Disable | 3 - Return");
     int g = get_input<int>();
@@ -361,8 +361,8 @@ void UserControl::ForAmplification(CurseUser &c){
     }
 
 }
-void UserControl::ForRCT(CurseUser& c){
-    double& rct = c.RCT().rct_output;
+void UserControl::ForRCT(Character& c){
+    double& rct = c.curseUser->rct_system.rct_output;
     Log::Line("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
     Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
@@ -375,8 +375,8 @@ void UserControl::ForRCT(CurseUser& c){
         rct = prv;
     }
 }
-void UserControl::ForReinforcement(CurseUser& c){
-    double& rf = c.CursedEnergy().reinforcement_amount;
+void UserControl::ForReinforcement(Character& c){
+    double& rf = c.curseUser->ce_system.reinforcement_amount;
     Log::Line("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
     Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
@@ -389,13 +389,14 @@ void UserControl::ForReinforcement(CurseUser& c){
         rf = prv;
     }
 }
-void UserControl::ForBindingVows(CurseUser& c){ 
+void UserControl::ForBindingVows(Character& c){ 
     Log::Line("Binding vows can only be created and are not able to be removed!");
     Log::Line("Current Binding Vows: ");
-    if (c.Jujutsu().binding_vows.empty()) {
+    auto& cr = c.curseUser;
+    if (cr->jujutsu.binding_vows.empty()) {
         Log::Line("None");
     }
-    for (const auto& cc : c.Jujutsu().binding_vows){
+    for (const auto& cc : cr->jujutsu.binding_vows){
         Log::Line("[{}]-{}", GetInfo::Name(cc.identity), cc.identity.description);
     }
     Log::Line("1 - Create Binding Vow | 2 - Return");
@@ -448,35 +449,37 @@ void UserControl::ForBindingVows(CurseUser& c){
     bv.loss = sack;
     bv.percentage = sdp;
     bv.identity = VowSystem::GenerateVowId(bv);
-    c.Jujutsu().binding_vows.push_back(bv);
+    cr->jujutsu.binding_vows.push_back(bv);
 }
 
-void UserControl::DoTechnique(CurseUser* c, Battlefield& bf) {
-    if (c == nullptr){
+void UserControl::DoTechnique(Character& c, Battlefield& bf) {
+    if (!c.curseUser.has_value()){
         Log::Line("You are not a curse user!");
         return;
     }
-    if (!c->Jujutsu().technique.has_value()) {
+    auto& cr = c.curseUser;
+    if (!cr->jujutsu.technique.has_value()) {
         Log::Line("You do not have a technique");
         return;
     }
-    auto& ability = TechniqueSystem::ChooseAbility(*c->Jujutsu().technique);
+    auto& ability = TechniqueSystem::ChooseAbility(*cr->jujutsu.technique);
     Log::Line("1 - Use Ability | 2 - Chant");
     if (get_input<int>() == 1){
-        auto cd = UserControl::GetTarget(*c, bf);
-        const auto result = CombatSystem::ResolveTechnique(*c, ability, cd);
+        auto cd = UserControl::GetTarget(c, bf);
+        const auto result = CombatSystem::ResolveTechnique(c, ability, cd);
         Log::TechniqueAttack(result);
     }else{
-        TechniqueSystem::ChantAbility(ability, *c);
+        TechniqueSystem::ChantAbility(ability, c);
     }
 }
-void UserControl::DoDomain(CurseUser* c) {
-    if (c == nullptr){
+void UserControl::DoDomain(Character& c) {
+    if (!c.curseUser.has_value()){
         Log::Line("You are not a curse user!");
         return;
-    } 
-    auto& domain = c->Jujutsu().domain;
-    auto& neutralizer = c->Jujutsu().neutralizer;
+    }
+    auto& cr = c.curseUser;
+    auto& domain = cr->jujutsu.domain;
+    auto& neutralizer = cr->jujutsu.neutralizer;
 
     if (!domain && !neutralizer) {
         Log::Line("You do not have a domain or anything that can neutralize it");
@@ -532,16 +535,17 @@ void UserControl::DoDomain(CurseUser* c) {
 // Shikigami player Functions
 //
 
-void UserControl::DoShikigami(CurseUser* c) {
-    if (c == nullptr){
+void UserControl::DoShikigami(Character& c) {
+    if (!c.curseUser.has_value()){
         Log::Line("You are not a curse user!");
         return;
     }
-    if (c->Jujutsu().shikigami.empty()) {
+    auto& cr = c.curseUser;
+    if (cr->jujutsu.shikigami.empty()) {
         Log::Line("You do not have any shikigami");
         return;
     }
-    UserControl::UseShikigami(*UserControl::ChooseShikigami(c->Jujutsu().shikigami));
+    UserControl::UseShikigami(*UserControl::ChooseShikigami(cr->jujutsu.shikigami));
 }
 
 Shikigami* UserControl::ChooseShikigami(std::vector<Shikigami>& sh) {

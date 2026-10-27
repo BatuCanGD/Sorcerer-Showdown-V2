@@ -1,8 +1,7 @@
 #pragma once
 #include <cstdint>
 
-class Character;
-class CurseUser;
+struct Character;
 struct Domain;
 
 enum class ClashWinner : std::uint8_t {
@@ -37,10 +36,10 @@ struct SurehitStruct final {
 namespace DomainSystem {
     double CalculateHitDamage(const Domain& domain, const Character& c);
     bool CalculateActualHit(const Domain& domain, const Character& c); 
-    DomainClashStruct ClashDomains(CurseUser& first, CurseUser& second); // use case for already active domains
+    DomainClashStruct ClashDomains(Character& first, Character& second); // use case for already active domains
     SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
     double GetDomainDamage(const Domain& d1, const Domain& d2);
-    void HandleLifetime(CurseUser& c, Domain& d);
-    bool HandleDamage(Domain& dm, const double d, CurseUser* crs = nullptr);
-    void ResetDomain(Domain& domain, CurseUser* crs = nullptr);
+    void HandleLifetime(Character& c, Domain& d);
+    bool HandleDamage(Domain& dm, const double d, Character* crs = nullptr);
+    void ResetDomain(Domain& domain, Character* crs = nullptr);
 };

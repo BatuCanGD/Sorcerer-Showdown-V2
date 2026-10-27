@@ -28,22 +28,22 @@ const std::string Stringet::SacrificeStr(const SacrificeType type){
     }
 }
 
-const std::string Stringet::OutputStatusStr(const CurseUserOutput::Status s) {
+const std::string Stringet::OutputStatusStr(const Sorcery::OutputSystem::Status s) {
     std::string n{}, c{};
     switch(s){
-        case CurseUserOutput::Status::BurntOut: 
+        case Sorcery::OutputSystem::Status::BurntOut: 
             c = "\x1b[31m";
             n = "Burnt Out";
             break;
-        case CurseUserOutput::Status::Regular:
+        case Sorcery::OutputSystem::Status::Regular:
             c = "\x1b[38;5;208m";
             n = "Regular Output";
             break;
-        case CurseUserOutput::Status::Boosted:  
+        case Sorcery::OutputSystem::Status::Boosted:  
             c = "\x1b[36";
             n = "Increased Output";
             break;
-        case CurseUserOutput::Status::Max:
+        case Sorcery::OutputSystem::Status::Max:
             c = "\x1b[34";
             n = "120%";
             break;

@@ -1,6 +1,5 @@
 #pragma once
-class Character;
-class CurseUser;
+struct Character;
 struct Technique;
 struct CursedTool;
 struct Shikigami;
@@ -14,11 +13,11 @@ namespace Create {
         [[nodiscard]] Character TranfiguredHuman();
         [[nodiscard]] Character Toji();
         [[nodiscard]] Character Maki();
-        [[nodiscard]] CurseUser Mahito();
-        [[nodiscard]] CurseUser Jogo();
-        [[nodiscard]] CurseUser Hanami();
-        [[nodiscard]] CurseUser Gojo();
-        [[nodiscard]] CurseUser Sukuna();
+        [[nodiscard]] Character Mahito();
+        [[nodiscard]] Character Jogo();
+        [[nodiscard]] Character Hanami();
+        [[nodiscard]] Character Gojo();
+        [[nodiscard]] Character Sukuna();
     }
     namespace Tech {
         [[nodiscard]] Technique Limitless();

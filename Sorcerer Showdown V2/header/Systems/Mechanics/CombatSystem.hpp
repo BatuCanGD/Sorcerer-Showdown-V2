@@ -1,9 +1,9 @@
 #pragma once
-#include "../../Enums.hpp"
+#include "../../DamageType.hpp"
 #include <variant>
 
-class Character;
-class CurseUser;
+struct Character;
+
 struct Shikigami;
 struct Battlefield;
 struct StatusEffect;
@@ -40,9 +40,9 @@ struct TechniqueStruct final {
 };
 
 namespace CombatSystem {
-    DamageStruct ResolveDamage(const std::variant<Character*, Shikigami*> c, globalums::DamageType type, double amount);
+    DamageStruct ResolveDamage(const std::variant<Character*, Shikigami*> c, DamageType type, double amount);
     AttackStruct ResolveAttacking(Character& attacker, std::variant<Character*, Shikigami*> attacked);
     ToolStruct ResolveCursedTool(Character& attacker, std::variant<Character*, Shikigami*> attacked);
-    TechniqueStruct ResolveTechnique(CurseUser& attacker, TechAbility& tc, std::variant<Character*, Shikigami*> attacked);
-    void ResolveDomain(CurseUser& attacker, Battlefield& bf);
+    TechniqueStruct ResolveTechnique(Character& attacker, TechAbility& tc, std::variant<Character*, Shikigami*> attacked);
+    void ResolveDomain(Character& attacker, Battlefield& bf);
 };

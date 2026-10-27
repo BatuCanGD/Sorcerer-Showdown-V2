@@ -1,6 +1,7 @@
 #include "../../header/Systems/SetupSystem.hpp"
+#include "../../header/Systems/CharacterSystem.hpp"
 #include "../../header/Json.hpp"
-#include "../../header/CharacterType/CurseUser.hpp"
+#include "../../header/Character.hpp"
 #include "../../header/Battlefield.hpp"
 #include "../../header/Utilities/Input.hpp"
 #include "../../header/Creator.hpp"
@@ -22,22 +23,24 @@ SkipType SetupSystem::GetPlayerSkipType() noexcept {
 const std::map<std::string, int> SetupSystem::SetList(const Battlefield &bf){
     std::map<std::string, int> list;
     for (const auto& c : bf.battlefield){
-        list[GetInfo::Name(c->Identity())]++;
+        list[GetInfo::Name(c->identity)]++;
     }
     return list;
 }
 
-const std::vector<std::unique_ptr<Character>> SetupSystem::GetCharacterList(bool get_custom) {
-    std::vector<std::unique_ptr<Character>> list;
-    list.push_back(std::make_unique<CurseUser>(Create::Char::Gojo()));
-    list.push_back(std::make_unique<CurseUser>(Create::Char::Sukuna()));
-    list.push_back(std::make_unique<CurseUser>(Create::Char::Jogo()));
-    list.push_back(std::make_unique<CurseUser>(Create::Char::Hanami()));
-    list.push_back(std::make_unique<CurseUser>(Create::Char::Mahito()));
-    list.push_back(std::make_unique<Character>(Create::Char::Toji()));
-    list.push_back(std::make_unique<Character>(Create::Char::Maki()));
+const std::vector<Character> SetupSystem::GetCharacterList(bool get_custom) {
+    std::vector<Character> list;
+    list.push_back(Create::Char::Gojo());
+    list.push_back(Create::Char::Sukuna());
+    list.push_back(Create::Char::Jogo());
+    list.push_back(Create::Char::Hanami());
+    list.push_back(Create::Char::Mahito());
+    list.push_back(Create::Char::Toji());
+    list.push_back(Create::Char::Maki());
     if (get_custom){
-        Json::LoadCharacters(list);
+        for (auto& c : Json::LoadCharacters()){
+            list.push_back(std::move(*c));
+        }
     }
     return list;
 }
@@ -46,7 +49,7 @@ Character* SetupSystem::SetupLoop(Battlefield& bf) {
     Character* c{nullptr};
     bool load_json{false};
     while(true){
-        Log::Line("Chosen: [{}]", c ? GetInfo::Name(c->Identity()) : "None");
+        Log::Line("Chosen: [{}]", c ? GetInfo::Name(c->identity) : "None");
         Log::Line("{}", load_json ? "[Custom Characters Enabled]" : "");
         for (const auto& [name, num] : SetupSystem::SetList(bf)){
             Log::Line("{}x {}", num, name);
@@ -132,13 +135,13 @@ void SetupSystem::AddCharacter(Battlefield& bf, Character*& c, bool choosing, bo
     size_t x{0};
     const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list) {
-        Log::Line("{}:{}", ++x, GetInfo::Styalized(z->Identity()));
+        Log::Line("{}:{}", ++x, GetInfo::Styalized(z.identity));
     }
     x = get_input<size_t>() - 1;
     if (x >= list.size()) {
         return;
     }
-    bf.battlefield.push_back(list[x]->Clone());
+    bf.battlefield.push_back(CharacterSystem::Clone(list[x]));
     if (choosing) {
         c = bf.battlefield.back().get();
     }
@@ -147,7 +150,7 @@ void SetupSystem::AddCharacters(Battlefield& bf, bool load_json){
     size_t g{0};
     const auto list = SetupSystem::GetCharacterList(load_json);
     for (const auto& z : list){
-        Log::Line("{}:{}", ++g, GetInfo::Name(z->Identity()));
+        Log::Line("{}:{}", ++g, GetInfo::Name(z.identity));
     }
     Log::Line("Which character would you like to add");
     g = get_input<size_t>() - 1;
@@ -157,7 +160,7 @@ void SetupSystem::AddCharacters(Battlefield& bf, bool load_json){
     Log::Line("How many?\n=> ");
     int x = get_input<int>();
     for (int i = 0; i < x; i++){
-        bf.battlefield.push_back(list[g]->Clone());
+        bf.battlefield.push_back(CharacterSystem::Clone(list[g]));
     }
 }
 
@@ -165,7 +168,7 @@ void SetupSystem::RemoveCharacter(Battlefield& bf, Character*& c, bool p_choose)
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& b : bf.battlefield){
-        Log::Line("{}:{} {}", ++x, GetInfo::Name(b->Identity()), c == &*b ? "(Chosen)" : "");
+        Log::Line("{}:{} {}", ++x, GetInfo::Name(b->identity), c == &*b ? "(Chosen)" : "");
     }
     x = get_input<size_t>() - 1;
     if (x >= bf.battlefield.size()) {
@@ -192,12 +195,12 @@ void SetupSystem::ViewCharacterInfo(Battlefield &bf){
     if (bf.battlefield.empty()) return;
     size_t x{0};
     for (const auto& c : bf.battlefield){
-        Log::Line("{}:{}", ++x, GetInfo::Name(c->Identity()));
+        Log::Line("{}:{}", ++x, GetInfo::Name(c->identity));
     }
     Log::Line("Who's info would you like to view");
     x = get_input<size_t>();
     if (x == 0 || x > bf.battlefield.size()){
         return;
     }
-    Log::CharacterPresentation(*bf.battlefield[--x]);
+    Log::CharacterPresentation(*bf.battlefield[--x].get());
 }

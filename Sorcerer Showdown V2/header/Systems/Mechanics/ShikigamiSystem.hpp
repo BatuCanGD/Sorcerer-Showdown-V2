@@ -2,14 +2,14 @@
 #include "../../Sorcery/Shikigami.hpp"
 #include "CombatSystem.hpp"
 
-class Character;
-class CurseUser;
+struct Character;
+
 
 struct DamageStruct;
 
 namespace ShikigamiSystem {
-    DamageStruct Damage(Shikigami& s, double amount, globalums::DamageType dt);
-    void TickShikigami(Shikigami& sk, CurseUser& owner);
-    void HandleSupport(CurseUser& owner, const SupportType& st, SavedValue& saved_vals, const double mult);
-    void HandleShadow(CurseUser& sk, const SupportType& st, const SavedValue& sv);
+    DamageStruct Damage(Shikigami& s, double amount, DamageType dt = DamageType::Normal);
+    void TickShikigami(Shikigami& sk, Character& owner);
+    void HandleSupport(Character& owner, const SupportType& st, SavedValue& saved_vals, const double mult);
+    void HandleShadow(Character& sk, const SupportType& st, const SavedValue& sv);
 }
