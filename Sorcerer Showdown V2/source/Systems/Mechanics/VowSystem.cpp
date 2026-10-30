@@ -181,13 +181,13 @@ const BindingVow VowSystem::CreateVow(Character& c, const Base::DecisionMaker& b
     
     switch(bq.resource_usage){
         case ResourceUsage::AllOut:
-            percentage = get_random<double>(0.10, 0.35);
+            percentage = get_random<double>(0.05, 0.10);
             break;
         case ResourceUsage::Conservative:
             percentage = get_random<double>(0.005, 0.05);
             break;
         case ResourceUsage::Mixed:
-            percentage = get_random<double>(0.005, 0.25);
+            percentage = get_random<double>(0.005, 0.10);
             break;
     }
 

@@ -1,0 +1,15 @@
+{
+    "Status Effects": [
+        {
+            "Identity": {
+                "Name": "Obliteration",
+                "Description": "Destroys the affected persons atoms"
+            },
+            "Stats": {
+                "Affected Stat": "Health",
+                "Effect Strength": 5000.0,
+                "Turn Amount": 999
+            }
+        }
+    ]
+}

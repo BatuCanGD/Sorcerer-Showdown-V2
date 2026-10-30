@@ -41,7 +41,7 @@
                 "Damage": 9999.0,
                 "Output": 1000.0,
                 "Cost": 10000.0,
-                "Inflicted Effect": "Bleed"
+                "Inflicted Effect": "Obliteration"
             }
             }
         ]
