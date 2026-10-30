@@ -7,6 +7,7 @@ struct StatusEffect;
 
 namespace ResourceHandler {
     void TickAll(Battlefield& bf);
+    void TickStun(Character& c);
     void TickTraits(Character& curse_user);
     void TickCursedEnergy(Character& curse_user);
     void TickShikigami(Character& curse_user);

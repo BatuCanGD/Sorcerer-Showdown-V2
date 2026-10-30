@@ -8,7 +8,7 @@
                 "Description": "Extremely strong Limitless Technique user."
             },
             "Stats": {
-                "Health": 2000.0,
+                "Health": "Two Thousand",
                 "Strength": 400.0,
                 "Durability": 400.0,
                 "Undefeatable": false

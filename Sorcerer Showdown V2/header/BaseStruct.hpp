@@ -23,6 +23,7 @@ namespace Base {
         double max_health{1.0};
         double durability{1.0};
         double strength{1.0};
+        int stun_timer{0};
         bool is_stunned{false};
         bool is_invulnerable{false};
     };

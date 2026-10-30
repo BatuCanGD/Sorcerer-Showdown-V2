@@ -38,8 +38,8 @@ const std::vector<Character> SetupSystem::GetCharacterList(bool get_custom) {
     list.push_back(Create::Char::Toji());
     list.push_back(Create::Char::Maki());
     if (get_custom){
-        for (auto& c : Json::LoadCharacters()){
-            list.push_back(std::move(*c));
+        for (const auto& c : Json::LoadEntity<Character>()){
+            list.push_back(c);
         }
     }
     return list;

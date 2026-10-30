@@ -27,6 +27,17 @@ void ResourceHandler::TickAll(Battlefield& bf){
     }
 }
 
+void ResourceHandler::TickStun(Character &c){
+    auto& st = c.state;
+    if (c.state.is_stunned){
+        st.stun_timer++;
+        if (st.stun_timer >= 3){
+            st.is_stunned = false;
+            st.stun_timer = 0;
+        }
+    }
+}
+
 void ResourceHandler::TickOutput(Character &crs){
     auto& cr = crs.curseUser;
     cr->output.current_output = std::max(cr->output.current_output - cr->output.output_cooldown_amount * SorcerySystem::OutputStatusMultiplier(cr->output.status), 0.0);
