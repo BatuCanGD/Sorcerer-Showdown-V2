@@ -19,10 +19,29 @@ void JsonModify::ModifyShikigami(const nlohmann::json &j, Shikigami& c){
     }
 }
 
+std::vector<Shikigami> JsonGet::GetShikigami(const nlohmann::json& j){
+    static const auto& m = UMaps::GetSKMap();
+    std::vector<Shikigami> t;
+    if (Json::ContainsArray(j, "Shikigami")){
+        for (const auto& c : j.at("Shikigami").get<std::vector<std::string>>()){
+            const auto b = m.find(c);
+            if (b != m.end()){
+                t.push_back(b->second);
+            }else{
+                for (const auto& sc : Json::LoadEntity<Shikigami>()){
+                    if (sc.id.name == c){
+                        t.push_back(sc);
+                    }
+                }
+            }
+
+        }
+    }
+    return t;
+}
+
 ActiveAbility JsonGet::GetActiveAbility(std::string_view sv) {
-    static const UMap<ActiveAbility> m {
-        {"Technique Bypassing", ActiveAbility::TechniqueBypass}
-    };
+    static const auto& m = UMaps::GetAAMap();
     for (const auto& c : m){
         if (c.first == sv){
             return c.second;
@@ -31,12 +50,7 @@ ActiveAbility JsonGet::GetActiveAbility(std::string_view sv) {
     return ActiveAbility::None;
 }
 SupportType JsonGet::GetSupportType(std::string_view sv) {
-    static const UMap<SupportType> m {
-        {"Strength", SupportType::Offense},
-        {"Durability", SupportType::Defense},
-        {"Cursed Energy Regeneration", SupportType::CursedEnergyRegen},
-        {"Output", SupportType::Output}
-    };
+    static const auto& m = UMaps::GetSPTMap();
     for (const auto& c : m){
         if (c.first == sv){
             return c.second;

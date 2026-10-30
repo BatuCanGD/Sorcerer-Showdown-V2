@@ -257,33 +257,33 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
 
 void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> target, const Base::DecisionMaker &iq) {
     auto& c = chr.curseUser;
+
     auto& tech = c->jujutsu.technique;
-    if (!tech){
-        return;
-    }
+    if (!tech)return;
+    else if (tech->abilities.empty()) return;
+
     auto* ab = TechniqueSystem::GetAbility(*tech, static_cast<TechniqueSystem::AbilityType>(get_random<std::uint8_t>(0, 3)));
-    const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, chr);
     
-    if (!enough_ce){
+    if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, chr))){
         return;
     }
 
-    int c_amount{};
+    int chant_percentage{};
     switch(iq.fighting_style){
         case FightingStyle::Aggressive:{
-            c_amount = 33;
+            chant_percentage = 33;
             break;
         }
         case FightingStyle::Defensive:{
-            c_amount = 67;
+            chant_percentage = 67;
             break;
         }
         case FightingStyle::Mixed:{
-            c_amount = get_random<int>(1, 100);
+            chant_percentage = get_random<int>(1, 100);
             break;
         }
     }
-    while(get_random<int>(1, 100) >= c_amount && ab->chant_amount < 5) {
+    while(get_random<int>(1, 100) >= chant_percentage && ab->chant_amount < 5) {
         TechniqueSystem::ChantAbility(*ab, chr);
     }
 

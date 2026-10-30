@@ -15,3 +15,37 @@ void JsonModify::ModifyCursedTool(const nlohmann::json &j, CursedTool& c){
         c.given_effect = JsonGet::GetStatusEffect(Json::GetValue<std::string_view>(st, "Inflicted Effect"));
     }
 }
+
+std::vector<CursedTool> JsonGet::GetInventory(const nlohmann::json& j) {
+    static const auto& m = UMaps::GetCTMap();
+    std::vector<CursedTool> t;
+    if (Json::ContainsArray(j, "Inventory")){
+        for (const auto& c : j.at("Inventory").get<std::vector<std::string>>()){
+            const auto b = m.find(c);
+            if (b != m.end()){
+                t.push_back(b->second);
+            }else{
+                for(const auto& tl : Json::LoadEntity<CursedTool>()){
+                    if (tl.identity.name == c){
+                        t.push_back(tl);
+                    }
+                }
+            }
+        }
+    }
+    return t;
+}
+
+std::optional<CursedTool> JsonGet::GetCursedTool(std::string_view sv){
+    static const auto& m = UMaps::GetCTMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEntity<CursedTool>()){
+        if (c.identity.name == sv) return c;
+    }
+    return std::nullopt;
+}
+

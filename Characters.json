@@ -8,7 +8,7 @@
                 "Description": "Extremely strong Limitless Technique user."
             },
             "Stats": {
-                "Health": "Two Thousand",
+                "Health": 2000.0,
                 "Strength": 400.0,
                 "Durability": 400.0,
                 "Undefeatable": false
@@ -30,7 +30,7 @@
             },
             "Sorcery": {
                 "Jujutsu": {
-                    "Technique": "Limitless",
+                    "Technique": "Limited",
                     "Domain": "Unlimited Void",
                     "Neutralizer": "Simple Domain",
                     "Shikigami": [

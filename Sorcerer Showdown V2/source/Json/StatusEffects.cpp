@@ -16,14 +16,21 @@ void JsonModify::ModifyStatusEffect(const nlohmann::json &j, StatusEffect& c) {
     }
 }
 
+std::optional<StatusEffect> JsonGet::GetStatusEffect(std::string_view sv){
+    static const auto& m = UMaps::GetSTMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEntity<StatusEffect>()){
+        if (c.id.name == sv) return c;
+    }
+    return std::nullopt;
+}
+
 EffectForType JsonGet::GetEffectForType(std::string_view sv) {
-    static const UMap<EffectForType> m {
-        {"Health", EffectForType::Health},
-        {"Durability", EffectForType::Durability},
-        {"Strength", EffectForType::Strength},
-        {"Cursed Energy", EffectForType::CursedEnergy},
-        {"Max Output", EffectForType::MaxOutput}
-    };
+    static const auto& m = UMaps::GetEFTMap();
     for (const auto& c : m){
         if (c.first == sv){
             return c.second;

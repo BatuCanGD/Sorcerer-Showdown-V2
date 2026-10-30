@@ -22,11 +22,21 @@ void JsonModify::ModifyDomain(const nlohmann::json &j, Domain& c){
     }
 }
 
+std::optional<Domain> JsonGet::GetDomain(std::string_view sv) {
+    static const auto& m = UMaps::GetDMMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEntity<Domain>()){
+        if (c.identity.name == sv) return c;
+    }
+    return std::nullopt;
+}
+
 SurehitType JsonGet::GetSurehitType(std::string_view sv) {
-    static const UMap<SurehitType> m {
-        {"Basic", SurehitType::Basic},
-        {"Bypass Techniques", SurehitType::Paralyzing},
-    };
+    static const auto& m = UMaps::GetSHMap();
     for (const auto& c : m){
         if (c.first == sv){
             return c.second;
@@ -36,13 +46,7 @@ SurehitType JsonGet::GetSurehitType(std::string_view sv) {
     return SurehitType::Normal;
 }
 Refinement JsonGet::GetRefinement(std::string_view sv) {
-    static const UMap<Refinement> m {
-        {"Absolute", Refinement::Absolue},
-        {"Overwhelming", Refinement::Overwhelming},
-        {"Adept", Refinement::Adept},
-        {"Brittle", Refinement::Brittle},
-        {"Weak", Refinement::Weak}
-    };
+    static const auto& m = UMaps::GetRFMap();
     for (const auto& c : m){
         if (c.first == sv){
             return c.second;

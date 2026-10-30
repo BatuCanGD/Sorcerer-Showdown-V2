@@ -10,15 +10,34 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
     if (j.contains("Abilities") && j.at("Abilities").is_array()){
         for (const auto& jr : j.at("Abilities")){
             TechAbility tb;
-            tb.id.name = Json::GetValue<std::string>(jr, "Name");
-            tb.id.color = Json::GetValue<std::string>(jr, "Color");
-            tb.id.description = Json::GetValue<std::string>(jr, "Description");
-            tb.damage = Json::GetValue<double>(jr, "Damage");
-            tb.damage_type = JsonGet::GetDamageType(Json::GetValue<std::string>(jr, "Damage Type", "Normal"));
-            tb.output = Json::GetValue<double>(jr, "Output");
-            tb.cost = Json::GetValue<double>(jr, "Cost");
-            tb.given_effect = JsonGet::GetStatusEffect(Json::GetValue<std::string>(jr, "Inflicted Effect"));
+            if (jr.contains("Identity")){
+                const auto& jri = jr.at("Identity");
+                tb.id.name = Json::GetValue<std::string>(jri, "Name");
+                tb.id.color = Json::GetValue<std::string>(jri, "Color");
+                tb.id.description = Json::GetValue<std::string>(jri, "Description");
+            }
+            if (jr.contains("Stats")) {
+                const auto& st = jr.at("Stats");
+                tb.damage = Json::GetValue<double>(st, "Damage");
+                tb.damage_type = JsonGet::GetDamageType(Json::GetValue<std::string>(st, "Damage Type", "Normal"));
+                tb.output = Json::GetValue<double>(st, "Output");
+                tb.cost = Json::GetValue<double>(st, "Cost");
+                tb.given_effect = JsonGet::GetStatusEffect(Json::GetValue<std::string>(st, "Inflicted Effect"));
+            }
             c.abilities.push_back(tb);
         }
     }
+}
+
+std::optional<Technique> JsonGet::GetTechnique(std::string_view sv) {
+    static const auto& m = UMaps::GetTCMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEntity<Technique>()){
+        if (c.identity.name == sv) return c;
+    }
+    return std::nullopt;
 }

@@ -8,7 +8,7 @@ StatusEffect Create::Effect::Bleed() {
     constexpr double severity_amount = 25.0;
     constexpr int effect_turn_amount = 3;
 
-    const EntityInfo id = { "Bleeding...", "\x1b[38;5;9m", std::format("Drains {:.1f}HP per turn", severity_amount)};
+    const EntityInfo id = { "Bleeding", "\x1b[38;5;9m", std::format("Drains {:.1f}HP per turn", severity_amount)};
 
     c.id = id;
     c.effect_amount = severity_amount;

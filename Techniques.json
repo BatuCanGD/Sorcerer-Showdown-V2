@@ -1,0 +1,50 @@
+{
+    "Techniques": [
+        {
+        "Identity": {
+            "Name": "Limited",
+            "Color": "\u001b[35m",
+            "Description": "Seen as the worst cursed technique to inherit in the world of jujutsu"
+        },
+        "Abilities": [
+            {
+            "Identity": {
+                "Name": "Orange",
+                "Color": "\u001b[38;5;202m",
+                "Description": "A ball of orange mass, made entirely of cursed energy"
+            },
+            "Stats": {
+                "Damage": 10.0,
+                "Output": 100.0,
+                "Cost": 500.0
+            }
+            },
+            {
+            "Identity": {
+                "Name": "Green",
+                "Color": "\u001b[38;5;10m",
+                "Description": "A ball of green mass, smells like grass"
+            },
+            "Stats": {
+                "Damage": 1.0,
+                "Output": 0.0,
+                "Cost": 0.0
+            }
+            },
+            {
+            "Identity": {
+                "Name": "Yellow",
+                "Color": "\u001b[38;5;220m",
+                "Description": "Blinding and extremely hot ball of yellow mass, speculated to be hot as the sun"
+            },
+            "Stats": {
+                "Damage": 9999.0,
+                "Output": 1000.0,
+                "Cost": 10000.0,
+                "Inflicted Effect": "Bleed"
+            }
+            }
+        ]
+        }
+    ]
+}

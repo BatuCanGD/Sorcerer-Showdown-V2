@@ -17,3 +17,16 @@ void JsonModify::ModifyNeutralizer(const nlohmann::json &j, Neutralizer& c){
         c.neutralizer_type = Json::GetValue<std::string_view>(st, "Type") == "Damage Reducing" ? NeutralizerType::ReducedDamage : NeutralizerType::FullyProtected;
     }
 }
+
+std::optional<Neutralizer> JsonGet::GetNeutralizer(std::string_view sv) {
+    static const auto& m = UMaps::GetNLMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    for (const auto& c : Json::LoadEntity<Neutralizer>()){
+        if (c.identity.name == sv) return c;
+    }
+    return std::nullopt;
+}

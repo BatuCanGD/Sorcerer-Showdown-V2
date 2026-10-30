@@ -27,7 +27,7 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(TechAbility chosen_
 
 TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
     if (tech.abilities.empty()){
-        throw std::runtime_error("How can a technique not have atleast 1 ability");
+        return nullptr;
     }
     switch(type){
         case TechniqueSystem::AbilityType::Strongest: {
@@ -54,7 +54,7 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
         case TechniqueSystem::AbilityType::Random:
             return &tech.abilities[get_random<size_t>(0, tech.abilities.size() - 1)];
     }
-    throw std::runtime_error("couldnt find any fitting technique ability");
+    return nullptr;
 }
 
 double TechniqueSystem::CalculateDamage(const TechAbility& tc, const Character& c) {

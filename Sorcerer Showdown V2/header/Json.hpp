@@ -1,5 +1,7 @@
 #pragma once
 #include "AI.hpp"
+#include "AIEnums.hpp"
+#include "DamageType.hpp"
 #include "General/StatusEffects.hpp"
 #include "Sorcery/Domain.hpp"
 #include "Sorcery/Shikigami.hpp"
@@ -31,8 +33,6 @@ namespace JsonModify{
     void ModifyDomain(const nlohmann::json& j, Domain& t);
     void ModifyNeutralizer(const nlohmann::json& j, Neutralizer& t);
     void ModifyShikigami(const nlohmann::json& j, Shikigami& t);
-    void ModifyInventory(const nlohmann::json& j, std::vector<CursedTool>& t);
-    void ModifyShikigami(const nlohmann::json& j, std::vector<Shikigami>& t);
 }
 
 namespace JsonGet {
@@ -53,6 +53,9 @@ namespace JsonGet {
     std::optional<Technique> GetTechnique(std::string_view sv);
     std::optional<StatusEffect> GetStatusEffect(std::string_view sv);
     std::optional<Domain> GetDomain(std::string_view sv);
+
+    std::vector<CursedTool> GetInventory(const nlohmann::json& j);
+    std::vector<Shikigami> GetShikigami(const nlohmann::json& j);
 }
 
 namespace Json {
@@ -163,4 +166,18 @@ namespace UMaps {
     UMap<Domain> GetDMMap();
     UMap<Neutralizer> GetNLMap();
     UMap<StatusEffect> GetSTMap();
+
+    UMap<SurehitType> GetSHMap();
+    UMap<Refinement> GetRFMap();
+    UMap<DamageType> GetDTMap();
+
+    UMap<FightingStyle> GetFSMap();
+    UMap<ResourceUsage> GetRUMap();
+    UMap<TargetingType> GetTTMap();
+
+    UMap<ActiveAbility> GetAAMap();
+    UMap<SupportType> GetSPTMap();
+    UMap<EffectForType> GetEFTMap();
+
+    UMap<Sorcery::CursedEnergySystem::Efficiency> GetEFMap();
 }
