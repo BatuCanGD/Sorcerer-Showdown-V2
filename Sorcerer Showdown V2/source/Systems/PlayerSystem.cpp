@@ -330,7 +330,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
         Log::Line("{} - {}", ++k, sv);
         sp.push_back(s);
     });
-    auto cr = c.curseUser;
+    auto& cr = c.curseUser;
     if (cr->rct_system.can_use_rct){
         add_p("RCT", SorceryType::RCT);
     }

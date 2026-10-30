@@ -90,10 +90,10 @@ std::variant<Character*, Shikigami*> AI::GetTarget(const Character& user, const 
                         }
                     }
                     targets.push_back(target);
-                    if (const auto& crs = std::get<Character*>(target)->curseUser) {
+                    if (auto& crs = std::get<Character*>(target)->curseUser) {
                         for(auto& s : crs->jujutsu.shikigami){
                             if (s.summon_type == SummonType::Active){
-                                targets.push_back(const_cast<Shikigami*>(&s));
+                                targets.push_back(&s);
                             }
                         }
                     }

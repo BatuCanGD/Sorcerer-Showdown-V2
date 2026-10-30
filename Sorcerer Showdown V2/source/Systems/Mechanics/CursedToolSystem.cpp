@@ -9,13 +9,13 @@ void CursedToolSystem::SwitchTo(Base::Equipment &eq, WeaponChoice wc) {
         auto is_the_one = [wc](const CursedTool* ct)->bool{
             return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && DamageCheck::BypassesTech(ct->damage_type)));
         };
-        if (is_the_one(&*eq.current_tool)){
+        if (eq.current_tool && is_the_one(&*eq.current_tool)){
             return;
         }else if (wc == WeaponChoice::Unequip && eq.current_tool){
             CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Hand, eq.has_access_to_inventory ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
             return;
         }
-        if (is_the_one(&*eq.stored_tool)) {
+        if (eq.stored_tool && is_the_one(&*eq.stored_tool)) {
             CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand);
             return; 
         }

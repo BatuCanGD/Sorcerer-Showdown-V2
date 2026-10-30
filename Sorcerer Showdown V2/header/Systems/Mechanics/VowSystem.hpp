@@ -21,5 +21,5 @@ namespace VowSystem {
     bool DoVow(Character& c, const VowCostSystem& vcs);
     const VowCostSystem GetVowCost(const Character& c, const BindingVow& bv);
     const EntityInfo GenerateVowId(const BindingVow& bv);
-    const BindingVow CreateVow(Character& j, const Base::DecisionMaker& bq);
+    const BindingVow CreateVow(const Character& j, const Base::DecisionMaker& bq);
 }

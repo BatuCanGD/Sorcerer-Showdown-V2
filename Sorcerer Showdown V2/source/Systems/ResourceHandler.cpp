@@ -12,6 +12,7 @@
 void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){
         const auto ef = EffectSystem::ApplyEffects(*c);
+        ResourceHandler::TickStun(*c);
         if (c->curseUser.has_value()){
             VowSystem::ApplyVows(*c);
             ResourceHandler::TickCursedEnergy(*c);

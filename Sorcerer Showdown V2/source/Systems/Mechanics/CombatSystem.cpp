@@ -129,8 +129,8 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
     DamageStruct ds{};
     if (std::holds_alternative<Character*>(attacked)) {
         auto& chr = std::get<Character*>(attacked);
-        const auto& dss = CharacterSystem::Damage(*chr, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
-        if (!dss.attack_blocked){
+        ds = CharacterSystem::Damage(*chr, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+        if (!ds.attack_blocked){
             if (chosen_ct.given_effect) {
                 chr->state.status_effects.push_back(*chosen_ct.given_effect);
             }

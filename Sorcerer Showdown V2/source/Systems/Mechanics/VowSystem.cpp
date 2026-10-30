@@ -136,7 +136,7 @@ const EntityInfo VowSystem::GenerateVowId(const BindingVow& bv) {
 
     return {name,color , desc};
 }
-const BindingVow VowSystem::CreateVow(Character& c, const Base::DecisionMaker& bq) {
+const BindingVow VowSystem::CreateVow(const Character& c, const Base::DecisionMaker& bq) {
     BindingVow vow{};
     SacrificeType gain{};
     SacrificeType loss{};
@@ -196,6 +196,5 @@ const BindingVow VowSystem::CreateVow(Character& c, const Base::DecisionMaker& b
     vow.loss = loss;
     vow.identity = VowSystem::GenerateVowId(vow);
 
-    c.curseUser->jujutsu.binding_vows.push_back(vow);
     return vow;
 }
