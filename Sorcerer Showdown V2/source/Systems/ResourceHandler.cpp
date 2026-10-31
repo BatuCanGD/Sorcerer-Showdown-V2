@@ -20,6 +20,7 @@ void ResourceHandler::TickAll(Battlefield& bf){
             ResourceHandler::TickChant(*c);
             ResourceHandler::TickRCT(*c);
             ResourceHandler::TickTraits(*c);
+            ResourceHandler::TickReinforcement(c->curseUser);
             ResourceHandler::TickCursedEnergy(c->curseUser);
             ResourceHandler::TickAmp(c->curseUser);
             ResourceHandler::TickTechBarrier(c->curseUser);
@@ -42,7 +43,6 @@ void ResourceHandler::TickStun(Character &c){
 }
 
 void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c){
-    if (!c.has_value()) return;
     if (auto& t = c->jujutsu.technique){
         if (TechniqueSystem::HasBarrier(*t)){
             const double cost = SorcerySystem::ApplySpendingMultiplier(TechniqueSystem::GetBarrierCost(*t), *c);
@@ -53,6 +53,15 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
             }
         }
     }
+}
+void ResourceHandler::TickReinforcement(std::optional<Sorcery::CurseUserSystem> &c){
+    const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyReinforcementCost(c->ce_system.reinforcement_amount), *c);
+    if (c->ce_system.cursed_energy < cost){
+        c->ce_system.reinforcement_amount = 0.0;
+    }else{
+        c->ce_system.cursed_energy -= cost;
+    }
+
 }
 
 void ResourceHandler::TickOutput(std::optional<Sorcery::CurseUserSystem>&crs){
@@ -68,9 +77,6 @@ void ResourceHandler::TickCursedEnergy(std::optional<Sorcery::CurseUserSystem>& 
     crs->ce_system.cursed_energy = std::min(crs->ce_system.cursed_energy + crs->ce_system.regeneration_amount, crs->ce_system.max_cursed_energy);
 }
 void ResourceHandler::TickAmp(std::optional<Sorcery::CurseUserSystem>&crs){
-    if (!crs.has_value()){
-        return;
-    }
     auto& amp = crs->amplification;
     if (amp.can_use_amp && amp.is_active){
         auto& c = crs->ce_system;
@@ -106,9 +112,6 @@ void ResourceHandler::TickRCT(Character& crs) {
     crs.state.health = std::min(crs.state.health + output, crs.state.max_health);
 }
 void ResourceHandler::TickOutputStatus(std::optional<Sorcery::CurseUserSystem>& crs){
-    if (!crs.has_value()){
-        return;
-    }
     auto& op = crs->output;
     if (op.status == Sorcery::OutputSystem::Status::Regular){
         return;
