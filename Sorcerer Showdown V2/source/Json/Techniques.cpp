@@ -7,6 +7,7 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
         c.identity.color = Json::GetValue<std::string>(id, "Color", "\x1b[38;5;117m");
         c.identity.description = Json::GetValue<std::string>(id, "Description");
     }
+    c.barrier.can_use_barrier = Json::GetValue<bool>(j, "Barrier", false);
     if (j.contains("Abilities") && j.at("Abilities").is_array()){
         for (const auto& jr : j.at("Abilities")){
             TechAbility tb;
@@ -16,6 +17,7 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
                 tb.id.color = Json::GetValue<std::string>(jri, "Color");
                 tb.id.description = Json::GetValue<std::string>(jri, "Description");
             }
+
             if (jr.contains("Stats")) {
                 const auto& st = jr.at("Stats");
                 tb.damage = Json::GetValue<double>(st, "Damage");

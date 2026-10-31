@@ -35,7 +35,9 @@ UMap<Technique> UMaps::GetTCMap() {
     return {
         {"Limitless", Create::Tech::Limitless()},
         {"Shrine", Create::Tech::Shrine()},
-        {"Idle Transfiguration", Create::Tech::IdleTransfiguration()}
+        {"Idle Transfiguration", Create::Tech::IdleTransfiguration()},
+        {"Disaster Plants", Create::Tech::DisasterPlants()},
+        {"Disaster Flames", Create::Tech::DisasterFlames()}
     };
 }
 
@@ -43,7 +45,9 @@ UMap<Domain> UMaps::GetDMMap() {
     return {
         {"Unlimited Void", Create::Dmn::UnlimitedVoid()},
         {"Malevolent Shrine", Create::Dmn::MalevolentShrine()},
-        {"Self Embodiment Of Perfection", Create::Dmn::SelfEmbodimentOfPerfection()}
+        {"Self Embodiment Of Perfection", Create::Dmn::SelfEmbodimentOfPerfection()},
+        {"Coffin Of The Iron Mountain", Create::Dmn::CoffinOfTheIronMountain()},
+        {"Shining Sea Of Growing Branches", Create::Dmn::ShiningSeaOfGrowingBranches()}
     };
 }
 
@@ -127,6 +131,6 @@ UMap<TargetingType> UMaps::GetTTMap() {
 UMap<SurehitType> UMaps::GetSHMap() {
     return {
         {"Basic", SurehitType::Basic},
-        {"Bypass Techniques", SurehitType::Paralyzing},
+        {"Paralyzing", SurehitType::Paralyzing},
     };
 }

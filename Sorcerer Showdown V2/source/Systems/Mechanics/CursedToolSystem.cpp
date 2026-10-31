@@ -3,6 +3,8 @@
 #include "../../../header/General/CursedTool.hpp"
 #include "../../../header/Utilities/Random.hpp"
 
+#include <stdexcept>
+
 void CursedToolSystem::SwitchTo(Base::Equipment &eq, WeaponChoice wc) {
     const bool& has_inv = eq.has_access_to_inventory;    
     if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
