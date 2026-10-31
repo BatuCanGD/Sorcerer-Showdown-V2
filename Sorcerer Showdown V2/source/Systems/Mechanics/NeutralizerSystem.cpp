@@ -11,7 +11,7 @@ void NeutralizerSystem::HandleLifeTime(Character &c, Neutralizer &n) {
         Reset(n);
         return;
     }
-    const double cost = SorcerySystem::ApplySpendingMultiplier(n.cost, c);
+    const double cost = SorcerySystem::ApplySpendingMultiplier(n.cost, *c.curseUser);
     auto& cr = c.curseUser;
     if (cr->ce_system.cursed_energy < cost){
         Reset(n);

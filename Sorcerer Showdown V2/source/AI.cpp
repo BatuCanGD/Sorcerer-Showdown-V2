@@ -185,7 +185,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
     switch(fs){
         case FightingStyle::Aggressive: {
             if (domain) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (!domain->is_active && enough_ce){
                     if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
                         domain->is_active = true;
@@ -195,7 +195,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 }
             }
             if (neutral) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, *c);
                 if (enough_ce){
                     if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
@@ -208,7 +208,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
         }
         case FightingStyle::Defensive: {
             if (domain) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (!domain->is_active && enough_ce){
                     if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
                         domain->is_active = true;
@@ -218,7 +218,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 }
             }
             if (neutral) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, *c);
                 if (enough_ce){
                     if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
@@ -231,7 +231,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
         }
         case FightingStyle::Mixed: {
             if (domain) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (enough_ce){
                     if (!domain->is_active && (domain_users == 1  || get_random<std::uint8_t>(1, 50) >= 25)) {
                         domain->is_active = true;
@@ -241,7 +241,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 }
             }
             if (neutral) {
-                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, chr);
+                const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(neutral->cost, *c);
                 if (enough_ce){
                     if ((domain && !domain->is_active &&  domain_users == 1) || domain_users == 1) {
                         neutral->is_active = true;
@@ -273,7 +273,7 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
 
     auto* ab = TechniqueSystem::GetAbility(*tech, static_cast<TechniqueSystem::AbilityType>(get_random<std::uint8_t>(0, 3)));
     
-    if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, chr))){
+    if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, *c))){
         return;
     }
 

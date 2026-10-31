@@ -77,7 +77,7 @@ void DomainSystem::HandleLifetime(Character &c, Domain &d) {
     if (!d.is_active) {
         return;
     }
-    const double cost = SorcerySystem::ApplySpendingMultiplier(d.cost, c);
+    const double cost = SorcerySystem::ApplySpendingMultiplier(d.cost, *c.curseUser);
     auto& cr = c.curseUser;
     if (cr->ce_system.cursed_energy < cost) {
         ResetDomain(d);
