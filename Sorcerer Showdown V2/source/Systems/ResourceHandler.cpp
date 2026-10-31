@@ -48,9 +48,8 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
             const double cost = SorcerySystem::ApplySpendingMultiplier(TechniqueSystem::GetBarrierCost(*t), *c);
             if (c->ce_system.cursed_energy < cost) {
                 t->barrier.is_active = false;
-            }else{
-                c->ce_system.cursed_energy -= cost;
             }
+            c->ce_system.cursed_energy -= cost;
         }
     }
 }
