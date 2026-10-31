@@ -370,7 +370,13 @@ void UserControl::ForRCT(Character& c){
     const double prv = rct;
     rct = std::max(get_input<double>(), 0.0);
 
-    Log::Line("New cost: {:.1f} CE per turn", SorcerySystem::ApplyRCTCost(rct));
+    auto& cr = c.curseUser;
+    const double new_cost = SorcerySystem::ApplyRCTCost(rct);
+    if (new_cost > cr->ce_system.cursed_energy){
+        Log::Line("New cost: Will consume all of your Cursed Energy");
+    }else{
+        Log::Line("New cost: {:.1f} CE per turn", new_cost);
+    }
     if (!UserControl::GetConfirmation()){
         rct = prv;
     }
@@ -384,7 +390,13 @@ void UserControl::ForReinforcement(Character& c){
     const double prv = rf;
     rf = std::max(get_input<double>(), 0.0);
 
-    Log::Line("New cost: {:.1f} CE per turn", SorcerySystem::ApplyReinforcementCost(rf));
+    auto& cr = c.curseUser;
+    const double new_cost = SorcerySystem::ApplyReinforcementCost(rf);
+    if (new_cost > cr->ce_system.cursed_energy){
+        Log::Line("New cost: Will consume all of your Cursed Energy");
+    }else{
+        Log::Line("New cost: {:.1f} CE per turn", new_cost);
+    }
     if (!UserControl::GetConfirmation()){
         rf = prv;
     }
