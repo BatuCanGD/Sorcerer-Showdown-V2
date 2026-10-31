@@ -55,13 +55,12 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
     }
 }
 void ResourceHandler::TickReinforcement(std::optional<Sorcery::CurseUserSystem> &c){
+    if (c->ce_system.reinforcement_amount <= 0.0) return;
     const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyReinforcementCost(c->ce_system.reinforcement_amount), *c);
     if (c->ce_system.cursed_energy < cost){
         c->ce_system.reinforcement_amount = 0.0;
-    }else{
-        c->ce_system.cursed_energy -= cost;
     }
-
+    c->ce_system.cursed_energy = std::max(c->ce_system.cursed_energy - cost, 0.0);
 }
 
 void ResourceHandler::TickOutput(std::optional<Sorcery::CurseUserSystem>&crs){
@@ -102,13 +101,13 @@ void ResourceHandler::TickChant(Character &crs){
 }
 void ResourceHandler::TickRCT(Character& crs) {
     auto& cr = crs.curseUser;
-    if (!cr->rct_system.can_use_rct) return;
+    if (!cr->rct_system.can_use_rct || cr->rct_system.rct_output <= 0.0) return;
     double& output = cr->rct_system.rct_output;
     const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), *cr);
-    if (cost > cr->ce_system.cursed_energy){
-        return;
+    if (cr->ce_system.cursed_energy < cost){
+        output = 0.0;
     }
-    cr->ce_system.cursed_energy -= cost;
+    cr->ce_system.cursed_energy = std::max(cr->ce_system.cursed_energy - cost, 0.0);
     crs.state.health = std::min(crs.state.health + output, crs.state.max_health);
 }
 void ResourceHandler::TickOutputStatus(std::optional<Sorcery::CurseUserSystem>& crs){

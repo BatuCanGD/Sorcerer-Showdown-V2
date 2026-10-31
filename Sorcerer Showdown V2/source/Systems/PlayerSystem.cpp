@@ -363,7 +363,8 @@ void UserControl::ForAmplification(Character &c){
 }
 void UserControl::ForRCT(Character& c){
     double& rct = c.curseUser->rct_system.rct_output;
-    Log::Line("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, SorcerySystem::ApplyRCTCost(rct));
+    const double old_cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(rct), *c.curseUser);
+    Log::Line("Total RCT output: {:.1f} | Cost: {:.1f} CE per turn", rct, old_cost);
     Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
     Log::Line("Enter Output Amount: ");
@@ -383,7 +384,8 @@ void UserControl::ForRCT(Character& c){
 }
 void UserControl::ForReinforcement(Character& c){
     double& rf = c.curseUser->ce_system.reinforcement_amount;
-    Log::Line("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, SorcerySystem::ApplyReinforcementCost(rf));
+    const double old_cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyReinforcementCost(rf), *c.curseUser);
+    Log::Line("Total Reinforcement Usage: {:.1f} | Cost: {:.1f} CE per turn", rf, old_cost);
     Log::Line("1 - Set | 2 - Return");
     if (get_input<int>() != 1) return;
     Log::Line("Enter Reinforcement Amount: ");
@@ -391,7 +393,7 @@ void UserControl::ForReinforcement(Character& c){
     rf = std::max(get_input<double>(), 0.0);
 
     auto& cr = c.curseUser;
-    const double new_cost = SorcerySystem::ApplyReinforcementCost(rf);
+    const double new_cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyReinforcementCost(rf), *c.curseUser);
     if (new_cost > cr->ce_system.cursed_energy){
         Log::Line("New cost: Will consume all of your Cursed Energy");
     }else{

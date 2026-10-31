@@ -36,7 +36,7 @@ namespace Sorcery {
         double cursed_energy{1.0};
         double max_cursed_energy{1.0};
         double regeneration_amount{1.0};
-        double reinforcement_amount{1.0};
+        double reinforcement_amount{0.0};
         std::uint8_t bf_chance{1}; 
         enum class Efficiency : std::uint8_t { Wasteful, Rough, Unstable, Stable, Precise, Expert, Extreme, Peak };
         Efficiency efficiency{Efficiency::Stable};
