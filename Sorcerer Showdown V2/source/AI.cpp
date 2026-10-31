@@ -259,8 +259,17 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
     auto& c = chr.curseUser;
 
     auto& tech = c->jujutsu.technique;
-    if (!tech)return;
-    else if (tech->abilities.empty()) return;
+    if (!tech) {
+        return;
+    }
+    if (tech->barrier.can_use_barrier && !tech->barrier.is_active){
+        if (c->ce_system.cursed_energy >= TechniqueSystem::GetBarrierCost(*tech)){
+            TechniqueSystem::SetBarrier(*c, true);
+        }
+    }
+    if (tech->abilities.empty()) {
+        return;
+    }
 
     auto* ab = TechniqueSystem::GetAbility(*tech, static_cast<TechniqueSystem::AbilityType>(get_random<std::uint8_t>(0, 3)));
     

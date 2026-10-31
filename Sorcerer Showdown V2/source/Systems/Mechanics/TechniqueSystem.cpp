@@ -57,12 +57,28 @@ TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {
     return nullptr;
 }
 
+double TechniqueSystem::GetBarrierCost(const Technique &tech){
+    return 125.0 * (tech.abilities.empty() ? 0.5 : tech.abilities.size());
+}
+
 double TechniqueSystem::CalculateDamage(const TechAbility& tc, const Character& c) {
     return tc.damage * (tc.chant_amount > 0 ? 1.0 + tc.chant_amount / 2.0 : 1.0) * SorcerySystem::OutputStatusMultiplier(c.curseUser->output.status);
 }
 
+void TechniqueSystem::SetBarrier(Sorcery::CurseUserSystem& cr, bool t){
+    if (auto& c = cr.jujutsu.technique) {
+        if (!c->barrier.can_use_barrier) {
+            return;
+        }
+        if (cr.ce_system.cursed_energy < GetBarrierCost(*c)) {
+            return;
+        }
+        c->barrier.is_active = t;
+    }
+}
+
 TechAbility& TechniqueSystem::ChooseAbility(Technique& tech) {
-    Log::TechniqueInfo(tech, Log::CTLogType::Both, Log::LogDetailType::Detailed);
+    Log::TechniqueInfo(tech, Log::CTLogType::Abilities);
     size_t i = get_input<size_t>() - 1;
     while(i >= tech.abilities.size()) {
         Log::Error("Invalid Choice");

@@ -1,19 +1,24 @@
 #pragma once
-
+#include <optional>
 struct Character;
-
 struct Battlefield;
 struct StatusEffect;
+
+namespace Sorcery {
+    struct CurseUserSystem;
+}
 
 namespace ResourceHandler {
     void TickAll(Battlefield& bf);
     void TickStun(Character& c);
-    void TickTraits(Character& curse_user);
-    void TickCursedEnergy(Character& curse_user);
-    void TickShikigami(Character& curse_user);
-    void TickChant(Character& curse_user);
-    void TickAmp(Character& curse_user);
-    void TickRCT(Character& curse_user);
-    void TickOutputStatus(Character& curse_user);
-    void TickOutput(Character& curse_user);
+    void TickTraits(Character& c);
+    void TickShikigami(Character& c);
+    void TickChant(Character& c);
+    void TickRCT(Character& c);
+
+    void TickCursedEnergy(std::optional<Sorcery::CurseUserSystem>& c);
+    void TickTechBarrier(std::optional<Sorcery::CurseUserSystem>& c);
+    void TickAmp(std::optional<Sorcery::CurseUserSystem>& c);
+    void TickOutputStatus(std::optional<Sorcery::CurseUserSystem>& c);
+    void TickOutput(std::optional<Sorcery::CurseUserSystem>& c);
 }

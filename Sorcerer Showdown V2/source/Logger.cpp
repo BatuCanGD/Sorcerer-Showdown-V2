@@ -49,7 +49,7 @@ void Log::CharacterPresentation(const Character &c){
     Log::Line();
 }
 
-void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type, const LogDetailType info_type){
+void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type){
     const bool log_name      = log_type == CTLogType::Name       || log_type == CTLogType::Both;
     const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
 

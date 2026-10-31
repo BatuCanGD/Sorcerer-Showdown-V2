@@ -2,7 +2,6 @@
 #include "../../../header/DamageType.hpp"
 #include "../../../header/General/CursedTool.hpp"
 #include "../../../header/Utilities/Random.hpp"
-
 #include <stdexcept>
 
 void CursedToolSystem::SwitchTo(Base::Equipment &eq, WeaponChoice wc) {

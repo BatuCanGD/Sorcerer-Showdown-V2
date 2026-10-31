@@ -8,6 +8,7 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
         c.identity.description = Json::GetValue<std::string>(id, "Description");
     }
     c.barrier.can_use_barrier = Json::GetValue<bool>(j, "Barrier", false);
+    c.barrier.is_active = c.barrier.can_use_barrier;
     if (j.contains("Abilities") && j.at("Abilities").is_array()){
         for (const auto& jr : j.at("Abilities")){
             TechAbility tb;
