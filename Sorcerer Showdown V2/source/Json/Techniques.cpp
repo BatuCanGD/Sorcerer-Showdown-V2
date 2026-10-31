@@ -18,7 +18,6 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
                 tb.id.color = Json::GetValue<std::string>(jri, "Color");
                 tb.id.description = Json::GetValue<std::string>(jri, "Description");
             }
-
             if (jr.contains("Stats")) {
                 const auto& st = jr.at("Stats");
                 tb.damage = Json::GetValue<double>(st, "Damage");

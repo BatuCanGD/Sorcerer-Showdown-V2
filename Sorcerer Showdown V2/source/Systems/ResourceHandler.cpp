@@ -59,8 +59,9 @@ void ResourceHandler::TickOutput(std::optional<Sorcery::CurseUserSystem>&crs){
     crs->output.current_output = std::max(crs->output.current_output - crs->output.output_cooldown_amount * SorcerySystem::OutputStatusMultiplier(crs->output.status), 0.0);
 }
 void ResourceHandler::TickTraits(Character &crs){
-    if (crs.curseUser->traits.passive_healing){
-        crs.state.health = std::min(crs.state.health + 35.0, crs.state.max_health);
+    auto& cr = crs.curseUser;
+    if (cr->traits.passive_healing){
+        crs.state.health = std::min(crs.state.health + (crs.state.max_health * 0.025 + (cr->ce_system.cursed_energy / 250.0)), crs.state.max_health);
     }
 }
 void ResourceHandler::TickCursedEnergy(std::optional<Sorcery::CurseUserSystem>& crs){
@@ -73,7 +74,7 @@ void ResourceHandler::TickAmp(std::optional<Sorcery::CurseUserSystem>&crs){
     auto& amp = crs->amplification;
     if (amp.can_use_amp && amp.is_active){
         auto& c = crs->ce_system;
-        const double cost = c.max_cursed_energy * 0.01;
+        const double cost = c.max_cursed_energy * 0.025;
         if (c.cursed_energy < cost){
             amp.is_active = false;
         }else{
