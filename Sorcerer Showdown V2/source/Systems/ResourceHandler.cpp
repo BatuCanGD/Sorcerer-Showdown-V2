@@ -45,11 +45,11 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
     if (!c.has_value()) return;
     if (auto& t = c->jujutsu.technique){
         if (TechniqueSystem::HasBarrier(*t)){
-            const double cost = TechniqueSystem::GetBarrierCost(*t);
-            if (c->ce_system.cursed_energy > cost) {
-                c->ce_system.cursed_energy -= cost;
-            }else{
+            const double cost = SorcerySystem::ApplySpendingMultiplier(TechniqueSystem::GetBarrierCost(*t), *c);
+            if (c->ce_system.cursed_energy < cost) {
                 t->barrier.is_active = false;
+            }else{
+                c->ce_system.cursed_energy -= cost;
             }
         }
     }
@@ -74,7 +74,7 @@ void ResourceHandler::TickAmp(std::optional<Sorcery::CurseUserSystem>&crs){
     auto& amp = crs->amplification;
     if (amp.can_use_amp && amp.is_active){
         auto& c = crs->ce_system;
-        const double cost = c.max_cursed_energy * 0.025;
+        const double cost = SorcerySystem::ApplySpendingMultiplier(c.max_cursed_energy * 0.025, *crs);
         if (c.cursed_energy < cost){
             amp.is_active = false;
         }else{
@@ -98,7 +98,7 @@ void ResourceHandler::TickRCT(Character& crs) {
     auto& cr = crs.curseUser;
     if (!cr->rct_system.can_use_rct) return;
     double& output = cr->rct_system.rct_output;
-    const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), crs);
+    const double cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(output), *cr);
     if (cost > cr->ce_system.cursed_energy){
         return;
     }

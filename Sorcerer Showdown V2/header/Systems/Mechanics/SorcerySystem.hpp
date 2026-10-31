@@ -4,7 +4,7 @@
 
 
 namespace SorcerySystem {
-    double ApplySpendingMultiplier(double amount, const Character& c);
+    double ApplySpendingMultiplier(double amount, const Sorcery::CurseUserSystem& c);
     double OutputStatusMultiplier(Sorcery::OutputSystem::Status st) noexcept;
     double EfficiencyMultiplier(Sorcery::CursedEnergySystem::Efficiency type) noexcept;
     

@@ -3,10 +3,9 @@
 #include <cmath>
 
 
-double SorcerySystem::ApplySpendingMultiplier(double amount, const Character& c) {
-    auto& cr = c.curseUser;
-    amount *= SorcerySystem::EfficiencyMultiplier(cr->ce_system.efficiency);
-    if (cr->traits.six_eyes) amount = SorcerySystem::ApplySixEyes(amount);
+double SorcerySystem::ApplySpendingMultiplier(double amount, const Sorcery::CurseUserSystem& c) {
+    amount *= SorcerySystem::EfficiencyMultiplier(c.ce_system.efficiency);
+    if (c.traits.six_eyes) amount = SorcerySystem::ApplySixEyes(amount);
     return amount;
 }
 
