@@ -372,7 +372,7 @@ void UserControl::ForRCT(Character& c){
     rct = std::max(get_input<double>(), 0.0);
 
     auto& cr = c.curseUser;
-    const double new_cost = SorcerySystem::ApplyRCTCost(rct);
+    const double new_cost = SorcerySystem::ApplySpendingMultiplier(SorcerySystem::ApplyRCTCost(rct), *c.curseUser);
     if (new_cost > cr->ce_system.cursed_energy){
         Log::Line("New cost: Will consume all of your Cursed Energy");
     }else{

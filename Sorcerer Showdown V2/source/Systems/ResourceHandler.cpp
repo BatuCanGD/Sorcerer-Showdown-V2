@@ -82,9 +82,8 @@ void ResourceHandler::TickAmp(std::optional<Sorcery::CurseUserSystem>&crs){
         const double cost = SorcerySystem::ApplySpendingMultiplier(c.max_cursed_energy * 0.025, *crs);
         if (c.cursed_energy < cost){
             amp.is_active = false;
-        }else{
-            c.cursed_energy -= cost;
         }
+        c.cursed_energy = std::max(c.cursed_energy - cost, 0.0);
     }
 }
 void ResourceHandler::TickShikigami(Character& crs){
