@@ -1,0 +1,16 @@
+{
+    "Cursed Tools": [
+        {
+            "Identity": { 
+                "Name": "Venom Dagger", 
+                "Color": "\u001b[38;5;22m", 
+                "Description": "A dagger coated in something nasty." 
+            },
+            "Stats": { 
+                "Damage": 70.0, 
+                "Damage Type": "Bypass Reinforcement", 
+                "Inflicted Effect": "Scorch" 
+            }
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "Domains": [
+        {
+            "Identity": { 
+                "Name": "Hollow Furnace", 
+                "Color": "\u001b[38;5;202m", 
+                "Description": "A furnace of nothing." 
+            },
+            "Type": "Open",
+            "Stats": {
+                "Health": 400.0,
+                "Durability": 60.0,
+                "Damage": 90.0,
+                "Cost": 250.0,
+                "Range": 80,
+                "Damage Type": "Bypass Techniques",
+                "Surehit Type": "Basic",
+                "Refinement": "Adept"
+            }
+        }
+    ]
+}

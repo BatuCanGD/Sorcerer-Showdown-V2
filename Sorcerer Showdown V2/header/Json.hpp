@@ -130,8 +130,8 @@ namespace Json {
             static_assert(false, "Unsupported JSON entity type!");
         }
 
-        Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string());
-        std::ifstream file(fl);
+        Log::Line("Looking for {} in: {}", fl, std::filesystem::current_path().string() + "/Json");
+        std::ifstream file("Json/" + fl);
 
         if (!file.is_open()) {
             Log::Error("Could not find {}!", fl);
@@ -145,7 +145,6 @@ namespace Json {
             return {};
         }
         std::vector<T> v;
-        
         if (data.contains(js) && data[js].is_array()) {
             v.reserve(data[js].size());
             for (const auto& charData : data[js]) {

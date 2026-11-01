@@ -1,0 +1,15 @@
+{
+    "Shikigami": [
+        {
+            "Identity": { "Name": "Cinder Hound", "Color": "\u001b[38;5;166m", "Description": "A hound made of embers." },
+            "Stats": {
+                "Health": 300.0,
+                "Durability": 35.0,
+                "Health Regeneration Speed": 20.0,
+                "Cost": 150.0,
+                "Support Type": "Strength",
+                "Activation Ability": "Technique Bypassing"
+            }
+        }
+    ]
+}

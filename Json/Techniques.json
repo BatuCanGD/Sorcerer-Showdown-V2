@@ -46,6 +46,42 @@
             }
             }
         ]
+        },
+                {
+            "Identity": { 
+                "Name": "Ember Arts", 
+                "Color": "\u001b[38;5;202m", 
+                "Description": "Sparks and cinders." 
+            },
+            "Barrier": false,
+            "Abilities": [
+                {
+                    "Identity": { 
+                        "Name": "Spark", 
+                        "Color": "\u001b[38;5;208m", 
+                        "Description": "A small burst." 
+                    },
+                    "Stats": { 
+                        "Damage": 40.0, 
+                        "Output": 20.0, 
+                        "Cost": 60.0 
+                    }
+                },
+                {
+                    "Identity": { 
+                        "Name": "Cinder Lance", 
+                        "Color": "\u001b[38;5;196m", 
+                        "Description": "Pierces reinforcement." 
+                    },
+                    "Stats": {
+                        "Damage": 150.0,
+                        "Damage Type": "Bypass Reinforcement",
+                        "Output": 90.0,
+                        "Cost": 400.0,
+                        "Inflicted Effect": "Scorch"
+                    }
+                }
+            ]
         }
     ]
 }

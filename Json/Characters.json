@@ -54,6 +54,51 @@
                     "Six Eyes": true
                 }
             }
+        },
+        {
+            "Type": "Curse User",
+            "Identity": { 
+                "Name": "Unusual Sorcerer", 
+                "Color": "\u001b[38;5;117m"
+            },
+            "Stats": { 
+                "Health": 800.0, 
+                "Strength": 60.0, 
+                "Durability": 40.0, 
+                "Undefeatable": false 
+            },
+            "Brain": {
+                "Fighting Style": "Defensive",
+                "Resource Usage": "Conservative",
+                "Targeted Type": "Character",
+                "Targeting Type": "Lowest HP"
+            },
+            "Equipment": {
+                "Held Tool": "Venom Dagger",
+                "Inventory Access": true,
+                "Inventory": ["Venom Dagger", "Playful Cloud"]
+            },
+            "Sorcery": {
+                "Jujutsu": {
+                    "Technique": "Ember Arts",
+                    "Domain": "Hollow Furnace",
+                    "Neutralizer": "Ash Veil",
+                    "Shikigami": ["Cinder Hound"]
+                },
+                "Cursed Energy": { 
+                    "Amount": 3000.0, 
+                    "Regen Amount": 90.0, 
+                    "Blackflash Chance": 10, 
+                    "Efficiency": "Expert" 
+                },
+                "Cursed Energy Output": { "Maximum": 120.0 },
+                "Domain Amplification": true,
+                "Reverse Cursed Technique": false,
+                "Traits": { 
+                    "Passive Healing": true, 
+                    "Six Eyes": false 
+                }
+            }
         }
     ]
 }

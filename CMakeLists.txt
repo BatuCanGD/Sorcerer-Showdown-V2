@@ -17,11 +17,7 @@ add_executable(SorcererShowdownV2 ${SOURCES})
 target_include_directories(SorcererShowdownV2 PRIVATE "${HEADER_DIR}")
 target_link_libraries(SorcererShowdownV2 PRIVATE nlohmann_json::nlohmann_json)
 
-file(GLOB JSON_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.json")
-foreach(json_file IN LISTS JSON_FILES)
-    file(RELATIVE_PATH rel_path "${CMAKE_CURRENT_SOURCE_DIR}" "${json_file}")
-    configure_file("${json_file}" "${CMAKE_CURRENT_BINARY_DIR}/${rel_path}" COPYONLY)
-endforeach()
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Json/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/Json")
 
 if(MSVC)
     target_compile_options(SorcererShowdownV2 PRIVATE 

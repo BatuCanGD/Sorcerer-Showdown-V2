@@ -1,0 +1,17 @@
+{
+    "Neutralizers": [
+        {
+            "Identity": { 
+                "Name": "Ash Veil", 
+                "Color": "\u001b[38;5;250m", 
+                "Description": "A veil of ash." 
+            },
+            "Stats": { 
+                "Health": 300.0, 
+                "Durability": 50.0, 
+                "Cost": 40.0, 
+                "Type": "Damage Reducing" 
+            }
+        }
+    ]
+}

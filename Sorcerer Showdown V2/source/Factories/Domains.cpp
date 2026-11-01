@@ -35,7 +35,7 @@ Domain Create::Dmn::MalevolentShrine() {
 
 Domain Create::Dmn::SelfEmbodimentOfPerfection() {
     Domain c{};
-    c.identity = {"Self Embodiment of Perfection", "\x1b[35m", "A domain that allows the manipulation of any entities soul inside the domain without requiring technique activation"};
+    c.identity = {"Self Embodiment Of Perfection", "\x1b[35m", "A domain that allows the manipulation of any entities soul inside the domain without requiring technique activation"};
     c.damage_type = DamageType::BypassAll;
     c.damage = 250.0;
     c.cost = 1000.0;
@@ -50,7 +50,7 @@ Domain Create::Dmn::SelfEmbodimentOfPerfection() {
 
 Domain Create::Dmn::ShiningSeaOfGrowingBranches() {
     Domain c{};
-    c.identity = {"Coffin of The Iron Mountain", "\x1b[38;5;217m", ""};
+    c.identity = {"Shining Sea Of Growing Branches", "\x1b[38;5;217m", ""};
     c.damage = 155.0;
     c.cost = 1000.0;
     c.damage_type = DamageType::BypassTech;
@@ -64,7 +64,7 @@ Domain Create::Dmn::ShiningSeaOfGrowingBranches() {
 }
 Domain Create::Dmn::CoffinOfTheIronMountain() {
     Domain c{};
-    c.identity = {"Coffin of The Iron Mountain", "\x1b[38;5;202m", ""};
+    c.identity = {"Coffin Of The Iron Mountain", "\x1b[38;5;202m", ""};
     c.damage = 265.0;
     c.cost = 1000.0;
     c.damage_type = DamageType::BypassTech;
