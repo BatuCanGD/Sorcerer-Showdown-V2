@@ -20,7 +20,7 @@ struct AttackStruct;
 struct DamageStruct;
 
 namespace Log {
-    enum class CTLogType      : std::uint8_t { Name, Abilities, Both };
+    enum class CursedTechniqueLog      : std::uint8_t { Name, ReqPassAbilities, AllAbilities, Both };
     enum class SurehitHit     : std::uint8_t { Person, Neutralizer };
 
     void WriteMessage(bool newline, std::string_view sv, std::format_args ags);
@@ -40,7 +40,7 @@ namespace Log {
     }
 
     void CharacterPresentation(const Character& c);
-    void TechniqueInfo(const Technique& ct, const CTLogType log_type = CTLogType::Name);
+    void TechniqueInfo(const Technique& ct, const Character* c = nullptr, const CursedTechniqueLog log_type = CursedTechniqueLog::Name);
     void DomainSurehit(const SurehitStruct st, const SurehitHit ht = SurehitHit::Person);
     void Attack(const std::variant<AttackStruct, ToolStruct> ats, const Character& c1, const std::variant<Character*, Shikigami*> c2);
     void TechniqueAttack(const TechniqueStruct tc);

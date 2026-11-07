@@ -479,7 +479,7 @@ void UserControl::DoTechnique(Character& c, Battlefield& bf) {
     auto& tc = cr->jujutsu.technique;
     
     if (tc->barrier.can_use_barrier){
-        Log::TechniqueInfo(*tc, Log::CTLogType::Name);
+        Log::TechniqueInfo(*tc, nullptr,Log::CursedTechniqueLog::Name);
         Log::Line("[{}]", tc->barrier.is_active ? "Barrier Active" : "Barrier Inactive");
 
         Log::Line("1 - Set Barrier | 2 - Use Ability | 3 - Return");
@@ -492,11 +492,11 @@ void UserControl::DoTechnique(Character& c, Battlefield& bf) {
         }
     }
 
-    auto& ability = TechniqueSystem::ChooseAbility(*tc);
+    auto& ability = TechniqueSystem::ChooseAbility(c, *tc);
     Log::Line("1 - Use Ability | 2 - Chant");
     if (get_input<int>() == 1){
         auto cd = UserControl::GetTarget(c, bf);
-        const auto result = CombatSystem::ResolveTechnique(c, ability, cd);
+        const auto result = CombatSystem::ResolveTechnique(c, ability, cd, bf);
         Log::TechniqueAttack(result);
     }else{
         TechniqueSystem::ChantAbility(ability, c);

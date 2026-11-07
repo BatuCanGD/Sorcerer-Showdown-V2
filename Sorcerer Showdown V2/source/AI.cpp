@@ -132,10 +132,10 @@ std::variant<Character*, Shikigami*> AI::GetTarget(const Character& user, const 
     return target;
 }
 
-void AI::DoFighting(Character& user, std::variant<Character*, Shikigami*> target, const Battlefield& bf, const Base::DecisionMaker& iq) { // possible technique/domain use
+void AI::DoFighting(Character& user, std::variant<Character*, Shikigami*> target, Battlefield& bf, const Base::DecisionMaker& iq) { // possible technique/domain use
     if (user.curseUser.has_value()){
         AI::DF_UseDomain(user, bf, iq.fighting_style);
-        AI::DF_UseTechnique(user, target, iq);
+        AI::DF_UseTechnique(user, target, bf, iq);
     }
     AI::DF_Attack(user, target);
 }
@@ -255,7 +255,7 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
     }
 }
 
-void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> target, const Base::DecisionMaker &iq) {
+void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> target, Battlefield& bf, const Base::DecisionMaker &iq) {
     auto& c = chr.curseUser;
 
     auto& tech = c->jujutsu.technique;
@@ -292,11 +292,12 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
             break;
         }
     }
-    while(get_random<int>(1, 100) >= chant_percentage && ab->chant_amount < 5) {
+    std::uint8_t times_chanted = 0;
+    while(get_random<int>(1, 100) >= chant_percentage && ab->chant_amount < 5 && ++times_chanted < 3) {
         TechniqueSystem::ChantAbility(*ab, chr);
     }
 
-    Log::TechniqueAttack(CombatSystem::ResolveTechnique(chr, *ab, target));
+    Log::TechniqueAttack(CombatSystem::ResolveTechnique(chr, *ab, target, bf));
 }
 void AI::DRM_UseBindingVow(Character &chr, const std::variant<Character*, Shikigami*> tr, const Battlefield &bf, const ResourceUsage &iq) {
     auto& c = chr.curseUser;

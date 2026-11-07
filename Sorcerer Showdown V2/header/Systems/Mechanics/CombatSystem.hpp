@@ -4,6 +4,7 @@
 
 struct Character;
 
+struct Battlefield;
 struct Shikigami;
 struct Battlefield;
 struct StatusEffect;
@@ -29,20 +30,27 @@ struct DamageStruct final {
     bool attack_blocked;
 };
 
+enum class TechStructFailReason : std::uint8_t {
+    None,
+    Blocked,
+    Output,
+    CursedEnergy,
+    CEandOutput,
+    Requirement
+};
+
 struct TechniqueStruct final {
     const TechAbility* used_ability;
     const Character* user;
     const std::variant<Character*, Shikigami*> target;
     double damage;
-    bool blocked;
-    bool enough_output;
-    bool enough_ce;
+    TechStructFailReason fail_reason;
 };
 
 namespace CombatSystem {
     DamageStruct ResolveDamage(const std::variant<Character*, Shikigami*> c, DamageType type, double amount);
     AttackStruct ResolveAttacking(Character& attacker, std::variant<Character*, Shikigami*> attacked);
     ToolStruct ResolveCursedTool(Character& attacker, std::variant<Character*, Shikigami*> attacked);
-    TechniqueStruct ResolveTechnique(Character& attacker, TechAbility& tc, std::variant<Character*, Shikigami*> attacked);
+    TechniqueStruct ResolveTechnique(Character& attacker, TechAbility& tc, std::variant<Character*, Shikigami*> attacked, Battlefield& bf);
     void ResolveDomain(Character& attacker, Battlefield& bf);
 };

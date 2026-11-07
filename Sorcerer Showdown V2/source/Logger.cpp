@@ -49,9 +49,9 @@ void Log::CharacterPresentation(const Character &c){
     Log::Line();
 }
 
-void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type){
-    const bool log_name      = log_type == CTLogType::Name       || log_type == CTLogType::Both;
-    const bool log_abilities = log_type == CTLogType::Abilities  || log_type == CTLogType::Both;
+void Log::TechniqueInfo(const Technique &ct, const Character* ch, const CursedTechniqueLog log_type){
+    const bool log_name             = log_type == CursedTechniqueLog::Name                || log_type == CursedTechniqueLog::Both;
+    const bool log_abilities        = log_type == CursedTechniqueLog::AllAbilities || log_type == CursedTechniqueLog::ReqPassAbilities || log_type == CursedTechniqueLog::Both;
 
     if (log_name){
         Log::Line("TECHNIQUE: [{}]", GetInfo::Name(ct.identity));
@@ -60,8 +60,15 @@ void Log::TechniqueInfo(const Technique &ct, const CTLogType log_type){
         Log::Line("ABILITIES");
         size_t i = 0;
         for (const auto& c : ct.abilities){
-            Log::Line("{}:[{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", 
-                ++i, GetInfo::Name(c.id), c.damage, c.output, c.cost);
+            if (log_type == CursedTechniqueLog::ReqPassAbilities && ch){
+                if (TechniqueSystem::MeetsRequirements(c, *ch).first){
+                    Log::Line("{}:[{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", ++i, GetInfo::Name(c.id), c.damage, c.output, c.cost);
+                }else{
+                    Log::Line("{}:[{}] Requirements not met", ++i, GetInfo::Name(c.id));     
+                }
+            }else{
+                Log::Line("{}:[{}] Damage: {:.1f} | Output Cost: {:.1f} | CE Cost: {:.1f}", ++i, GetInfo::Name(c.id), c.damage, c.output, c.cost);
+            }
         }
     }
 }
@@ -81,21 +88,22 @@ void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
 }
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
-    if (!tc.enough_ce || !tc.enough_output){
-        Log::Line("{} tried to use {} but it couldn't be actived due to insufficient {}", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id), tc.enough_output ? "Cursed Energy" : "Output");
-        return;
-    }
-    if (tc.used_ability){
-        if (std::holds_alternative<Character*>(tc.target)) {
-            auto& c = std::get<Character*>(tc.target);
-            if (tc.blocked) {
-                Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique", GetInfo::Name(tc.user->identity), GetInfo::Name(c->identity), GetInfo::Name(tc.used_ability->id));
-            }else {
-                Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(c->identity), tc.damage);
-            }
+    if (tc.fail_reason == TechStructFailReason::Requirement){
+        Log::Line("{} tried to use {} but it couldn't be activated due to not reaching the required requirements!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+    }else if (tc.fail_reason == TechStructFailReason::CEandOutput){
+        Log::Line("{} tried to use {} but it couldn't be activated due to insufficient CE and Output!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+    }else if (tc.fail_reason == TechStructFailReason::CursedEnergy || tc.fail_reason == TechStructFailReason::Output){
+        Log::Line("{} tried to use {} but it couldn't be actived due to insufficient {}!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id), tc.fail_reason == TechStructFailReason::CursedEnergy ? "Cursed Energy" : "Output");
+    }else if (tc.fail_reason == TechStructFailReason::Blocked){
+        Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique!", GetInfo::Name(tc.user->identity), GetInfo::Name(std::get<Character*>(tc.target)->identity), GetInfo::Name(tc.used_ability->id));
+    }else if (tc.used_ability){
+        if (tc.used_ability->attack_type == AttackType::Singular){
+            Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::holds_alternative<Character*>(tc.target) ? std::get<Character*>(tc.target)->identity : std::get<Shikigami*>(tc.target)->id), tc.damage); 
         }else{
-            Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::get<Shikigami*>(tc.target)->id), tc.damage);
+            Log::Line("{} used {}! Everyone on the battlefield got affected!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
         }
+    }else{
+        Log::Error("tc.used_ability doesnt exist, this shouldnt be possible");
     }
 }
 void Log::TechniqueChant(const Character& cu, const TechAbility& tc){

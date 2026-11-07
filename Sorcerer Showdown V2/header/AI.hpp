@@ -17,7 +17,7 @@ namespace AI {
 
     void DF_Attack(Character& c, std::variant<Character*, Shikigami*> target);
     void DF_UseDomain(Character& c, const Battlefield& bf, const FightingStyle& fs);
-    void DF_UseTechnique(Character& c, std::variant<Character*, Shikigami*> target, const Base::DecisionMaker& bq);
+    void DF_UseTechnique(Character& c, std::variant<Character*, Shikigami*> target, Battlefield& bf, const Base::DecisionMaker& bq);
 
     void DRM_UseShikigami(Character& c, const ResourceUsage& rs);
     void DRM_UseBindingVow(Character& c, const std::variant<Character*, Shikigami*> tr, const Battlefield& bf, const ResourceUsage& iq);
@@ -25,7 +25,7 @@ namespace AI {
     void DRM_UseRCT(Character& c, const ResourceUsage& rs);
     void DRM_UseTools(Character& c, const std::variant<Character*, Shikigami*> tr);
 
-    void DoFighting(Character& user, std::variant<Character*, Shikigami*> target, const Battlefield& bf, const Base::DecisionMaker& iq);
+    void DoFighting(Character& user, std::variant<Character*, Shikigami*> target, Battlefield& bf, const Base::DecisionMaker& iq);
     void DoResourceManagement(Character& user, const std::variant<Character*, Shikigami*> tr ,const Battlefield& bf, const ResourceUsage& ru);
 
     void Fight(Character& user, Battlefield& bf);
