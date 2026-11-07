@@ -94,7 +94,7 @@ void ResourceHandler::TickChant(Character &crs){
     auto& cr = crs.curseUser;
     if (!cr->jujutsu.technique) return;
     for (auto& c : cr->jujutsu.technique->abilities) {
-        if (c.chant_amount > 0) c.chant_amount = std::max(c.chant_amount - 2, 0);
+        if (c.chant_amount > 0) c.chant_amount--;
     }
 }
 void ResourceHandler::TickRCT(Character& crs) {
