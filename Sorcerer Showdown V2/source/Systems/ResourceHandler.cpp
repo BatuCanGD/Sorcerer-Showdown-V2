@@ -49,7 +49,7 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
             if (c->ce_system.cursed_energy < cost) {
                 t->barrier.is_active = false;
             }
-            c->ce_system.cursed_energy -= cost;
+            c->ce_system.cursed_energy = std::max(c->ce_system.cursed_energy - cost, 0.0);
         }
     }
 }

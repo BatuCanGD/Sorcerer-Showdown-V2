@@ -143,9 +143,16 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
 
     DamageStruct ds{};
     TSFailReason reason{};
+
+    const auto& damage = TechniqueSystem::CalculateDamage(chosen_ct, attacker);
+
+    if (chosen_ct.chant_amount > 0) {
+        chosen_ct.chant_amount = 0;
+    }
     if (chosen_ct.attack_type == AttackType::AreaOfEffect) {
         for (auto& cc : bf.battlefield){
-            ds = CharacterSystem::Damage(*cc, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+            if (cc.get() == &attacker) continue;
+            ds = CharacterSystem::Damage(*cc, damage, chosen_ct.damage_type);
             if (!ds.attack_blocked && chosen_ct.given_effect){
                 cc->state.status_effects.push_back(*chosen_ct.given_effect);
             }
@@ -153,7 +160,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
     }else{    
         if (std::holds_alternative<Character*>(attacked)) {
             auto& chr = std::get<Character*>(attacked);
-            ds = CharacterSystem::Damage(*chr, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+            ds = CharacterSystem::Damage(*chr, damage, chosen_ct.damage_type);
             if (!ds.attack_blocked){
                 if (chosen_ct.given_effect) {
                     chr->state.status_effects.push_back(*chosen_ct.given_effect);
@@ -162,7 +169,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
                 reason = TSFailReason::Blocked;
             }
         }else {
-            ds = ShikigamiSystem::Damage(*std::get<Shikigami*>(attacked), TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
+            ds = ShikigamiSystem::Damage(*std::get<Shikigami*>(attacked), damage, chosen_ct.damage_type);
         }
         return {&chosen_ct, &attacker, attacked, ds.damage, reason};
     }
