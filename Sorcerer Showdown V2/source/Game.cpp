@@ -20,18 +20,20 @@ struct Skippy final {
 };
 
 bool announce_end(Battlefield& bf, const playerchoices& pc){
-    auto& b = bf.battlefield;
-    if (b.size() < 2){
-        if (b.size() != 0){
-            auto& chr = b[0];
-            Log::Line("{} is the last fighter standing!", GetInfo::Name(chr->identity));
-            if (pc.user_character == chr.get()){
-                Log::Line("You Win!");
-            }else{
-                Log::Line("You Lose!");
-            }
-        }else{
+    const auto& size = bf.battlefield.size();
+    if (size < 2) {
+        if (size == 0){
             Log::Line("No one is left standing alive!");
+        }else{
+            auto* chr = bf.battlefield[0].get();
+            Log::Line("{} is the last fighter standing!", GetInfo::Name(chr->identity));
+            if (pc.user_character){
+                if (pc.user_character == chr){
+                    Log::Line("You Win!!!");
+                }else{
+                    Log::Line("You Lose!!!");
+                }
+            }
         }
         return false;
     }
@@ -43,7 +45,7 @@ bool endgame() {
     return get_input<int>() == 1;
 }
 
-bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) { // final checklist: Improve logging and finish the AI Implementation
+bool rungameloop(Battlefield& bf, const playerchoices& pc, const Skippy& sp) {
     for(size_t idx = 0; idx < bf.battlefield.size(); ++idx){
         auto* c = bf.battlefield[idx].get();
         if (c->state.health <= 0.0) continue;

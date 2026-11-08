@@ -1,7 +1,11 @@
 {
     "Shikigami": [
         {
-            "Identity": { "Name": "Cinder Hound", "Color": "\u001b[38;5;166m", "Description": "A hound made of embers." },
+            "Identity": { 
+                "Name": "Cinder Hound", 
+                "Color": "\u001b[38;5;166m", 
+                "Description": "A hound made of embers." 
+            },
             "Stats": {
                 "Health": 300.0,
                 "Durability": 35.0,

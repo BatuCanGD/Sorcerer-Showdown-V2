@@ -88,23 +88,40 @@ void Log::Effects(const std::vector<StatusEffect>& v, const Character& p) {
 }
 
 void Log::TechniqueAttack(const TechniqueStruct tc){
-    if (tc.fail_reason == TechStructFailReason::Requirement){
-        Log::Line("{} tried to use {} but it couldn't be activated due to not reaching the required requirements!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
-    }else if (tc.fail_reason == TechStructFailReason::CEandOutput){
-        Log::Line("{} tried to use {} but it couldn't be activated due to insufficient CE and Output!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
-    }else if (tc.fail_reason == TechStructFailReason::CursedEnergy || tc.fail_reason == TechStructFailReason::Output){
-        Log::Line("{} tried to use {} but it couldn't be actived due to insufficient {}!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id), tc.fail_reason == TechStructFailReason::CursedEnergy ? "Cursed Energy" : "Output");
-    }else if (tc.fail_reason == TechStructFailReason::Blocked){
-        Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique!", GetInfo::Name(tc.user->identity), GetInfo::Name(std::get<Character*>(tc.target)->identity), GetInfo::Name(tc.used_ability->id));
-    }else if (tc.used_ability){
-        if (tc.used_ability->attack_type == AttackType::Singular){
-            Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::holds_alternative<Character*>(tc.target) ? std::get<Character*>(tc.target)->identity : std::get<Shikigami*>(tc.target)->id), tc.damage); 
-        }else{
-            Log::Line("{} used {}! Everyone on the battlefield got affected!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+    if (tc.fail_reason != TSFailReason::None) {
+        switch(tc.fail_reason){
+            case TSFailReason::Requirement:
+                Log::Line("{} tried to use {} but it couldn't be activated due to not reaching the predefined requirements!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+                break;
+            case TSFailReason::CEandOutput:
+                Log::Line("{} tried to use {} but it couldn't be activated due to insufficient CE and Output!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+                break;
+            case TSFailReason::CursedEnergy:
+                Log::Line("{} tried to use {} but it couldn't be actived due to insufficient Cursed Energy!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
+                break;
+            case TSFailReason::Output:
+                Log::Line("{} tried to use {} but it couldn't be actived due to insufficient Output!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
+                break;
+            case TSFailReason::Blocked:
+                Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique!", GetInfo::Name(tc.user->identity), GetInfo::Name(std::get<Character*>(tc.target)->identity), GetInfo::Name(tc.used_ability->id));
+                break;
+            default:
+                Log::Error("Missing TSFailReason case");
         }
-    }else{
-        Log::Error("tc.used_ability doesnt exist, this shouldnt be possible");
+        return;
     }
+
+    if (!tc.used_ability){
+        Log::Error("tc.used_ability doesnt exist, this shouldnt be possible");
+        return;
+    }
+
+    if (tc.used_ability->attack_type == AttackType::Singular){
+        Log::Line("{} used {} on {}, it dealt {:.1f} damage!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id), GetInfo::Name(std::holds_alternative<Character*>(tc.target) ? std::get<Character*>(tc.target)->identity : std::get<Shikigami*>(tc.target)->id), tc.damage); 
+    }else{
+        Log::Line("{} used {}! Everyone on the battlefield got affected!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
+    }
+
 }
 void Log::TechniqueChant(const Character& cu, const TechAbility& tc){
     switch(get_random<int>(0, 10)){

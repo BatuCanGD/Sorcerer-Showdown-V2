@@ -27,65 +27,39 @@ std::pair<bool, double> TechniqueSystem::ResolveCursedEnergy(const TechAbility& 
 }
 
 std::pair<bool, ReqFailReason> TechniqueSystem::MeetsRequirements(const TechAbility& tc, const Character& user) {
-    if (!tc.requirement || (tc.requirement->chant_req == ChantReq::Zero && tc.requirement->stat_req == StatReq::None)){
+    auto& req = tc.requirement;
+    if (!tc.requirement || (req->chant_req == 0 && req->stat_req == RequiredStat::None)){
         return {true, ReqFailReason::None};
     }
-    auto& req = tc.requirement;
-
-    switch(req->chant_req) {
-        default: [[fallthrough]];
-        case ChantReq::Zero:
-            break;
-        case ChantReq::One:
-        case ChantReq::Two:
-        case ChantReq::Three:
-        case ChantReq::Four:
-        case ChantReq::Five:
-            if (tc.chant_amount < static_cast<int>(req->chant_req)) {
-                return {false, ReqFailReason::ChantLevelNotMet};
-            }
+    if (req->chant_req > 0 && tc.chant_amount < req->chant_req){
+        return {false, ReqFailReason::ChantLevelNotMet};
     }
-
-    auto& crs = user.curseUser;
-    bool passed = true;
-
-    switch(req->stat_req) {
-        default: [[fallthrough]];
-        case StatReq::None:
-            break;
-        case StatReq::HealthHigh:
-            if (user.state.health < user.state.max_health * 0.75) {
-                passed = false;
-            }
-            break;
-        case StatReq::HealthMid:
-            if (user.state.health > user.state.max_health * 0.75 || user.state.health < user.state.max_health * 0.25) {
-                passed = false;
-            }
-            break;
-        case StatReq::HealthLow:
-            if (user.state.health > user.state.max_health * 0.25) {
-                passed = false;
-            }
-            break;
-        case StatReq::CursedEnergyHigh:
-            if (crs->ce_system.cursed_energy < crs->ce_system.max_cursed_energy * 0.75) {
-                passed = false;
-            }
-            break;
-        case StatReq::CursedEnergyMid:
-            if (crs->ce_system.cursed_energy > crs->ce_system.max_cursed_energy * 0.75 || crs->ce_system.cursed_energy < crs->ce_system.max_cursed_energy * 0.25) {
-                passed = false;
-            }
-            break;
-        case StatReq::CursedEnergyLow:
-            if (crs->ce_system.cursed_energy > crs->ce_system.cursed_energy * 0.25) {
-                passed = false;
-            }
-            break;
-        
+    if (req->stat_req != RequiredStat::None) {
+        bool passed = true;
+        switch(req->stat_req) {
+            case RequiredStat::HealthHigh:
+                if (user.state.health < user.state.max_health * 0.75) {
+                    passed = false;
+                }
+                break;
+            case RequiredStat::HealthMid:
+                if (user.state.health > user.state.max_health * 0.75 || user.state.health < user.state.max_health * 0.25) {
+                    passed = false;
+                }
+                break;
+            case RequiredStat::HealthLow:
+                if (user.state.health > user.state.max_health * 0.25) {
+                    passed = false;
+                }
+                break;
+            default: 
+                break;
+        }
+        if (!passed){
+            return {false, ReqFailReason::StatNotMet};
+        }
     }
-    return {passed, passed ? ReqFailReason::None : ReqFailReason::StatNotMet};
+    return {true, ReqFailReason::None};
 }
 
 TechAbility* TechniqueSystem::GetAbility(Technique &tech, AbilityType type) {

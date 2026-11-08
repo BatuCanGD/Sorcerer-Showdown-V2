@@ -25,6 +25,14 @@ void JsonModify::ModifyTechnique(const nlohmann::json &j, Technique& c){
                 tb.output = Json::GetValue<double>(st, "Output");
                 tb.cost = Json::GetValue<double>(st, "Cost");
                 tb.given_effect = JsonGet::GetStatusEffect(Json::GetValue<std::string>(st, "Inflicted Effect"));
+                tb.attack_type = Json::GetValue<std::string_view>(st, "Type") == "Area of Effect" ? AttackType::AreaOfEffect : AttackType::Singular;
+            }
+            if (jr.contains("Requirements")){
+                const auto& rs = jr.at("Requirements");
+                TechRequirement reqs;
+                reqs.chant_req = std::clamp<int>(Json::GetValue<int>(rs, "Chant Amount"), 0, 5);
+                reqs.stat_req = JsonGet::GetRequiredStat(Json::GetValue<std::string_view>(rs, "Required Stat Amount"));
+                tb.requirement = reqs;
             }
             c.abilities.push_back(tb);
         }
@@ -42,4 +50,14 @@ std::optional<Technique> JsonGet::GetTechnique(std::string_view sv) {
         if (c.identity.name == sv) return c;
     }
     return std::nullopt;
+}
+
+RequiredStat JsonGet::GetRequiredStat(std::string_view sv) {
+    static const auto& m = UMaps::GetRSMap();
+    for (const auto& c : m) {
+        if (c.first == sv){
+            return c.second;
+        }
+    }
+    return RequiredStat::None;
 }

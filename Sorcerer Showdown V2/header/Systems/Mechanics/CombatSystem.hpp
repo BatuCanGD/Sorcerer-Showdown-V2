@@ -30,7 +30,7 @@ struct DamageStruct final {
     bool attack_blocked;
 };
 
-enum class TechStructFailReason : std::uint8_t {
+enum class TSFailReason : std::uint8_t {
     None,
     Blocked,
     Output,
@@ -44,7 +44,7 @@ struct TechniqueStruct final {
     const Character* user;
     const std::variant<Character*, Shikigami*> target;
     double damage;
-    TechStructFailReason fail_reason;
+    TSFailReason fail_reason;
 };
 
 namespace CombatSystem {

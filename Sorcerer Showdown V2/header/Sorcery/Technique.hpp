@@ -10,28 +10,16 @@ enum class AttackType : std::uint8_t {
     Singular,
     AreaOfEffect
 };
-
-enum class ChantReq : std::uint8_t {
-    Zero,
-    One,
-    Two,
-    Three,
-    Four,
-    Five
-};
-enum class StatReq : std::uint8_t {
+enum class RequiredStat : std::uint8_t {
     None,
     HealthLow,
     HealthMid,
-    HealthHigh,
-    CursedEnergyLow,
-    CursedEnergyMid,
-    CursedEnergyHigh
+    HealthHigh
 };
 
 struct TechRequirement final {
-    StatReq stat_req{StatReq::None};
-    ChantReq chant_req{ChantReq::Zero};
+    RequiredStat stat_req{RequiredStat::None};
+    std::uint8_t chant_req{0};
 };
 
 struct TechAbility final {

@@ -92,6 +92,14 @@ UMap<SupportType> UMaps::GetSPTMap() {
     };
 }
 
+UMap<RequiredStat> UMaps::GetRSMap() {
+    return {
+        {"High Health", RequiredStat::HealthHigh},
+        {"Mid Health", RequiredStat::HealthMid},
+        {"Low Health", RequiredStat::HealthLow}
+    };
+}
+
 UMap<ActiveAbility> UMaps::GetAAMap() {
     return {
         {"Technique Bypassing", ActiveAbility::TechniqueBypass}

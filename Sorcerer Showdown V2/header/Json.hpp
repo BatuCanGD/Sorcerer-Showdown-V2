@@ -6,6 +6,7 @@
 #include "Sorcery/Domain.hpp"
 #include "Sorcery/Shikigami.hpp"
 #include "Logger.hpp"
+#include "Sorcery/Technique.hpp"
 #include "SorceryStruct.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -46,6 +47,7 @@ namespace JsonGet {
     ActiveAbility GetActiveAbility(std::string_view sv);
     SupportType GetSupportType(std::string_view sv);
     EffectForType GetEffectForType(std::string_view sv);
+    RequiredStat GetRequiredStat(std::string_view sv);
     Sorcery::CursedEnergySystem::Efficiency GetEfficiency(std::string_view sv);
 
     std::optional<CursedTool> GetCursedTool(std::string_view sv);
@@ -166,6 +168,7 @@ namespace UMaps {
     UMap<Neutralizer> GetNLMap();
     UMap<StatusEffect> GetSTMap();
 
+    UMap<RequiredStat> GetRSMap();
     UMap<SurehitType> GetSHMap();
     UMap<Refinement> GetRFMap();
     UMap<DamageType> GetDTMap();

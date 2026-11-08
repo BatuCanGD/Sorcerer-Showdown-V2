@@ -17,7 +17,7 @@ Technique Create::Tech::Limitless() {
     constexpr double red_damage     = 175.0, red_cost       = 650.0, red_output     = 120.0;
     constexpr double purple_damage  = 300.0, purple_cost    = 1250.0,purple_output  = 200.0;
     constexpr double uhp_damage     = 750.0, uhp_cost       = 2000.0,uhp_output     = 300.0;
-    const auto uhp_req = TechRequirement{.chant_req = ChantReq::Four};
+    const auto uhp_req = TechRequirement{.chant_req = 4};
 
     const TechAbility blue    = {blue_id, {}, {},blue_damage, blue_cost, blue_output}; 
     const TechAbility red     = {red_id, {}, {},red_damage, red_cost, red_output}; 
@@ -51,7 +51,7 @@ Technique Create::Tech::Shrine() {
     constexpr double spiderweb_damage = 25.0, spiderweb_cost = 500.0, spiderweb_output = 100.0;
     constexpr double wcs_damage = 1000.0, wcs_cost = 2500.0, wcs_output = 200.0;
 
-    const auto wcs_req = TechRequirement{.chant_req = ChantReq::Four};
+    const auto wcs_req = TechRequirement{.chant_req = 4};
 
 
     const TechAbility dismantle = {dismantle_id, {}, {},dismantle_damage, dismantle_cost, dismantle_output};

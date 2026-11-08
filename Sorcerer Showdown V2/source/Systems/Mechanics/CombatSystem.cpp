@@ -50,7 +50,9 @@ ToolStruct CombatSystem::ResolveCursedTool(Character &attacker, std::variant<Cha
         const auto msg = CharacterSystem::Damage(*c, current_tool->damage, current_tool->damage_type);
         if (!msg.attack_blocked && effect)  {
             for (const auto& at : c->state.status_effects){
-                if (at.id.name == effect->id.name) return {&*current_tool, msg.damage };
+                if (at.id.name == effect->id.name) {
+                    return {&*current_tool, msg.damage };
+                }
             }
             c->state.status_effects.push_back(*effect);
         }
@@ -117,20 +119,22 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, std::variant<Ch
 TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility& chosen_ct, std::variant<Character*, Shikigami*> attacked, Battlefield& bf){
     const auto [can_be_used, fail_reason] = TechniqueSystem::MeetsRequirements(chosen_ct, attacker);
     if (!can_be_used){
-        return {&chosen_ct, &attacker, attacked, 0.0, TechStructFailReason::Requirement};
+        return {&chosen_ct, &attacker, attacked, {}, TSFailReason::Requirement};
     }
     
     const auto [enough_output, output] = TechniqueSystem::ResolveOutput(chosen_ct , attacker);
     const auto [enough_ce, ce] = TechniqueSystem::ResolveCursedEnergy(chosen_ct, attacker);
 
     if (!enough_output || !enough_ce) {
+        TSFailReason reason{};
         if (!enough_output && !enough_ce){
-            return{&chosen_ct, &attacker, attacked, 0.0 , TechStructFailReason::CEandOutput};
+            reason = TSFailReason::CEandOutput;            
         }else if (!enough_output){
-            return{&chosen_ct, &attacker, attacked, 0.0 , TechStructFailReason::Output};
+            reason = TSFailReason::Output;
         }else{
-            return {&chosen_ct, &attacker, attacked, 0.0 , TechStructFailReason::CursedEnergy};
+            reason = TSFailReason::CursedEnergy;
         }
+        return {&chosen_ct, &attacker, attacked, {} , reason};
     }
     auto& crs = attacker.curseUser;
 
@@ -138,7 +142,7 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
     crs->output.current_output += output;
 
     DamageStruct ds{};
-    TechStructFailReason reason{};
+    TSFailReason reason{};
     if (chosen_ct.attack_type == AttackType::AreaOfEffect) {
         for (auto& cc : bf.battlefield){
             ds = CharacterSystem::Damage(*cc, TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
@@ -155,14 +159,14 @@ TechniqueStruct CombatSystem::ResolveTechnique(Character& attacker, TechAbility&
                     chr->state.status_effects.push_back(*chosen_ct.given_effect);
                 }
             }else{
-                reason = TechStructFailReason::Blocked;
+                reason = TSFailReason::Blocked;
             }
         }else {
             ds = ShikigamiSystem::Damage(*std::get<Shikigami*>(attacked), TechniqueSystem::CalculateDamage(chosen_ct, attacker), chosen_ct.damage_type);
         }
         return {&chosen_ct, &attacker, attacked, ds.damage, reason};
     }
-    return{&chosen_ct, &attacker, attacked, 0.0, TechStructFailReason::None};
+    return{&chosen_ct, &attacker, attacked, {}, TSFailReason::None};
 }
 
 void CombatSystem::ResolveDomain(Character &attacker, Battlefield& bf) {
