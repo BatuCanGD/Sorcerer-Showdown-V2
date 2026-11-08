@@ -14,7 +14,7 @@ Welcome to MODDING.md for Sorcerer Showdown V2. This is a lengthy guide on how t
 
 # 1. Project Structure
 
-All code lives in `Sorcerer Showdown V2/`. Headers are in `header/`; sources are in `source/` and mirror the header layout, plus two source-only folders (`Factories/` and `Json/`) and `main/`.
+All code lives in `Sorcerer Showdown V2/`. Headers are in `header/`; sources are in `source/` and mirror the header layout, plus two source-only folders (`Factories/` and `Json/`) and `main/`. Do not confuse `source/Json/` (the loader code) with the top-level `Json/` folder in the repository root, which holds the sample JSON data files.
 
 ## The Character Model
 
@@ -86,7 +86,7 @@ General systems that drive a battle.
 | `BattlefieldSystem.hpp` | Battlefield events: domain interaction between fighters, dead characters and shikigami, spawning, and whether the fight can continue. |
 | `CharacterSystem.hpp` | Applying damage to a character, the basic attack, and cloning characters (used when adding them to the battlefield). |
 | `PlayerSystem.hpp` | The `UserControl` namespace: builds the player's action menu and handles each action. |
-| `ResourceHandler.hpp` | Per-round ticking: stun, cursed energy, technique barrier upkeep, traits, shikigami, chants, amplification, RCT and output. |
+| `ResourceHandler.hpp` | Per-round ticking: stun, reinforcement upkeep, cursed energy regeneration, technique barrier upkeep, traits, shikigami, chants, amplification, RCT and output. |
 | `SetupSystem.hpp` | The pre-fight setup menu: roster list, adding and removing fighters, choosing your character and the JSON toggle. |
 | `Stringet.hpp` | A small header for string conversion (enum to string, `"X/Y"` formatting). |
 
@@ -94,14 +94,14 @@ General systems that drive a battle.
 
 | File | Description |
 |------|-------------|
-| `CombatSystem.hpp` | Resolves attacks, cursed tool attacks, technique usage and domain expansions, and calculates the damage actually taken. |
+| `CombatSystem.hpp` | Resolves attacks, cursed tool attacks, technique usage (requirement checks, single target and Area of Effect) and domain expansions, and calculates the damage actually taken. |
 | `CursedToolSystem.hpp` | Held, stored and inventory weapon handling, and choosing a weapon by criteria (highest damage, effect inducing, technique bypassing, etc.). |
 | `DomainSystem.hpp` | Domain surehit damage, clashing (refinement first, then attrition), upkeep cost and resetting. |
 | `EffectSystem.hpp` | How status effects are applied and ticked (`ResourceHandler` uses it for ticking). |
 | `NeutralizerSystem.hpp` | Neutralizer upkeep, being damaged and resetting (Simple Domain, Falling Blossom Emotion, etc.). |
 | `ShikigamiSystem.hpp` | Shikigami damage, ticking, support boosts to the owner and shadow-state handling. |
-| `SorcerySystem.hpp` | Cursed energy cost multipliers (efficiency, output status, Six Eyes, RCT, reinforcement) and burnout. |
-| `TechniqueSystem.hpp` | Output and cursed energy checks, technique damage, ability selection, chants, and the barrier (upkeep cost, checks and toggling). |
+| `SorcerySystem.hpp` | The cursed energy spending multiplier (`ApplySpendingMultiplier`: efficiency tier plus Six Eyes), output status multipliers, RCT and reinforcement cost formulas, and burnout. |
+| `TechniqueSystem.hpp` | Output and cursed energy checks, ability requirement checks (`MeetsRequirements`), technique damage (including the chant multiplier), ability selection, chants, and the barrier (upkeep cost, checks and toggling). |
 | `VowSystem.hpp` | Binding vow generation, naming, cost calculation and application. |
 
 ## General Folder (`header/General/`)
@@ -123,7 +123,7 @@ The structs that curse users own.
 | `Domain.hpp` | The `Domain` struct plus `DomainType`, `SurehitType` and `Refinement`. |
 | `Neutralizer.hpp` | The `Neutralizer` struct plus `NeutralizerType`. |
 | `Shikigami.hpp` | The `Shikigami` struct plus `SummonType`, `SupportType` and `ActiveAbility`. |
-| `Technique.hpp` | The `Technique` struct alongside `TechAbility` and `TechBarrier`. |
+| `Technique.hpp` | The `Technique` struct alongside `TechAbility`, `TechRequirement`, `TechBarrier`, `AttackType` and `RequiredStat`. |
 
 ## Source-Only Folders (`source/`)
 
@@ -211,7 +211,7 @@ list.push_back(Create::Char::MyChar());
 
 The JSON route lets you create and configure characters without modifying any C++ code.
 
-1. Create (or edit) `Characters.json` in the folder you run the game from. The repository root already contains a sample, and CMake copies it into `build/` when you configure.
+1. Create (or edit) `Characters.json` in a `Json` folder inside the folder you run the game from. The repository's `Json/` folder already contains samples, and CMake copies the whole folder to `build/Json/` when you configure.
 2. Start the game and pick **Load JSON** in the setup menu. It toggles `[Custom Characters Enabled]`.
 3. Your characters now appear at the end of the roster list.
 
@@ -294,7 +294,7 @@ Every field is explained in the [JSON Reference](#3-json-reference).
 
 ## 3.1 Files and Root Keys
 
-Each entity type has its own file, and the file's array lives under a root key. All files are optional, and all of them must be in the folder you run the game from. The console prints `Looking for <file> in: <folder>` whenever one is read.
+Each entity type has its own file, and the file's array lives under a root key. All files are optional, and all of them must be inside a `Json` folder in the folder you run the game from (so `Json/Characters.json`, not `Characters.json`). The console prints `Looking for <file> in: <folder>/Json` whenever one is read.
 
 | File | Root key | Entity |
 |------|----------|--------|
@@ -306,7 +306,7 @@ Each entity type has its own file, and the file's array lives under a root key. 
 | `CursedTools.json` | `"Cursed Tools"` | Cursed tools |
 | `StatusEffects.json` | `"Status Effects"` | Status effects |
 
-The repository root ships working samples of `Characters.json`, `Techniques.json` and `StatusEffects.json`: the *Limitless Sorcerer* character uses the *Limited* technique, whose *Yellow* ability inflicts the *Obliteration* status effect. It is a good example of entities referencing each other.
+The repository's `Json/` folder ships working samples of all seven files: the *Limitless Sorcerer* character uses the *Limited* technique, whose *Yellow* ability inflicts the *Obliteration* status effect. It is a good example of entities referencing each other.
 
 ## 3.2 How Names Are Resolved
 
@@ -389,16 +389,31 @@ Only read for `"Type": "Curse User"`. Every value is looked up by name (see [3.2
 | `Cursed Energy` → `Efficiency` | see below | `"Stable"` | Cursed energy cost multiplier tier. |
 | `Cursed Energy Output` → `Maximum` | number | `100.0` | Maximum output potential. |
 
-`Efficiency` values, from worst to best: `"Wasteful"`, `"Rough"`, `"Unstable"`, `"Stable"`, `"Precise"`, `"Expert"`, `"Extreme"`, `"Peak"`.
+`Efficiency` values, from worst to best, with the multiplier each applies to the character's cursed energy spending:
+
+| Efficiency | Multiplier |
+|------------|------------|
+| `"Wasteful"` | 2.25x |
+| `"Rough"` | 1.75x |
+| `"Unstable"` | 1.30x |
+| `"Stable"` (default) | 1.00x |
+| `"Precise"` | 0.80x |
+| `"Expert"` | 0.70x |
+| `"Extreme"` | 0.55x |
+| `"Peak"` | 0.40x |
+
+The multiplier is applied by `SorcerySystem::ApplySpendingMultiplier(amount, curseUser)`, which takes the character's `CurseUserSystem` component. It is used for technique ability costs, domain, neutralizer, barrier, Domain Amplification and reinforcement upkeep, and RCT, and the AI uses it for its affordability checks. Efficiency also scales the output an ability adds, in `TechniqueSystem::ResolveOutput`. When you write your own cursed energy costs in C++, route them through `ApplySpendingMultiplier` so they respect Efficiency and Six Eyes.
 
 ### Sorcery: Abilities and Traits
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| `Domain Amplification` | bool | `false` | Whether the character can use Domain Amplification. |
+| `Domain Amplification` | bool | `false` | Whether the character can use Domain Amplification. While active it costs 2.5% of the character's maximum cursed energy per round, and switches off by itself (spending whatever cursed energy is left) if they can't pay. |
 | `Reverse Cursed Technique` | bool | `false` | Whether the character can use RCT. |
-| `Traits` → `Passive Healing` | bool | `false` | Heals passively (the Cursed Spirits' trait). |
-| `Traits` → `Six Eyes` | bool | `false` | Reduces cursed energy costs. |
+| `Traits` → `Passive Healing` | bool | `false` | Heals passively each round (the Cursed Spirits' trait). See the healing formula below. |
+| `Traits` → `Six Eyes` | bool | `false` | Multiplies all cursed energy spending by a further 0.05x, on top of Efficiency. |
+
+**Passive Healing formula.** Each round a character with the trait heals `2.5% of max health + current cursed energy / 250`, capped at max health. The cursed energy used is the amount the character has when the round ticks (before that round's regeneration), so a character who has spent most of their cursed energy still heals, but only about 2.5% of their max health. For example, a character with 550 max health and 4000 cursed energy heals 29.75 per round.
 
 ## 3.5 Other Entity Fields
 
@@ -414,9 +429,9 @@ A technique is a name plus a list of abilities. The character's AI and the playe
 | `Barrier` | bool | `false` | **Top level**, next to `Identity`. Gives the technique a Limitless-style barrier that blocks incoming hits unless they bypass techniques (`Bypass Techniques` or `Bypass All`). A technique loaded with `true` starts with its barrier **active**. See the barrier upkeep note below. |
 | `Abilities` | array | | The technique's abilities (below). |
 
-**Barrier upkeep.** An active barrier costs cursed energy every round: `125 x the number of abilities` (62.5 if the technique has none). If the character cannot cover the cost, the barrier switches off by itself. Players can toggle it from the *Technique* menu (it needs enough cursed energy to cover one round of upkeep), and the AI turns it back on whenever it can afford to. Because the cost scales with the ability count, a technique with many abilities is expensive to keep protected.
+**Barrier upkeep.** An active barrier costs cursed energy every round: `125 x the number of abilities` (62.5 if the technique has none). If the character cannot cover the cost, the barrier switches off by itself and the remaining cursed energy is spent (it never drops below 0). Players can toggle it from the *Technique* menu (switching it on needs enough cursed energy to cover one round of upkeep, switching it off always works), and the AI turns it back on whenever it can afford to. Because the cost scales with the ability count, a technique with many abilities is expensive to keep protected.
 
-Each entry in `Abilities` has its own `Identity` and a `Stats` object:
+Each entry in `Abilities` has its own `Identity`, a `Stats` object and an optional `Requirements` object:
 
 | Key (inside `Stats`) | Type | Default | Description |
 |----------------------|------|---------|-------------|
@@ -425,6 +440,16 @@ Each entry in `Abilities` has its own `Identity` and a `Stats` object:
 | `Output` | number | `0.0` | Output the ability needs and adds. |
 | `Cost` | number | `0.0` | Cursed energy cost. |
 | `Inflicted Effect` | status effect name | none | Status effect applied on an unblocked hit. |
+| `Type` | `"Area of Effect"`, anything else | single target | `"Area of Effect"` hits every other character on the battlefield (shikigami are not targeted) instead of one target. |
+
+`Requirements` sits **next to** `Stats`, not inside it, and is optional. An ability whose requirements are not met cannot be used, and the player's Technique menu lists it as *Requirements not met*.
+
+| Key (inside `Requirements`) | Type | Default | Description |
+|-----------------------------|------|---------|-------------|
+| `Chant Amount` | integer | `0` | Chant level the ability needs before it can be used. Values are clamped to 0-5. |
+| `Required Stat Amount` | see [3.6](#36-accepted-values) | none | A threshold a character's stat must be in. |
+
+**Chanting.** Every ability keeps its own chant level (0-5). Chanting adds 1, the ability's damage is multiplied by `1 + chant / 2` while the level is above 0 (level 4 is 3x, level 5 is 3.5x), the level falls by 1 every round, and it resets to 0 once the ability is successfully used. A chant level is runtime state, so it cannot be set from JSON. An ability that lists `"Chant Amount": 4` in its requirements has to be chanted up to level 4 before it can be used.
 
 ### Domains (`Domains.json`)
 
@@ -495,6 +520,21 @@ What each damage type does:
 | `Bypass Reinforcement` | Block it | Ignored | Reduces it |
 | `Bypass All` | Ignored | Ignored | Ignored |
 
+### Technique Ability Settings
+
+| Setting | Accepted values | Default |
+|---------|-----------------|---------|
+| `Type` | `"Area of Effect"`, anything else | single target |
+| `Required Stat Amount` | `"High Health"`, `"Mid Health"`, `"Low Health"` | none |
+
+Each value names a stat to check and the threshold that stat must meet for the ability to be usable. Right now every value checks the user's health as a share of their maximum health, but the list is meant to grow. To add a new one, add it to the `RequiredStat` enum in `Technique.hpp`, to `UMaps::GetRSMap()` in `UMaps.cpp` (so JSON can name it), and to the check in `TechniqueSystem::MeetsRequirements`.
+
+| Value | Stat checked | The ability can be used when it is |
+|-------|--------------|------------------------------------|
+| `"High Health"` | Health, as a share of max health | 75% or more |
+| `"Mid Health"` | Health, as a share of max health | between 25% and 75% (inclusive) |
+| `"Low Health"` | Health, as a share of max health | 25% or less |
+
 ### Domain Settings
 
 | Setting | Accepted values | Default |
@@ -527,7 +567,7 @@ Any other value falls back to `"Normal"`.
 
 ## 3.7 Full Example Set
 
-A small mod where every file references the others. Put all of these next to the game, enable **Load JSON**, and *Test Sorcerer* appears in the roster with every piece resolved.
+A small mod where every file references the others. Put all of these in the game's `Json` folder, enable **Load JSON**, and *Test Sorcerer* appears in the roster with every piece resolved.
 
 <details>
 <summary><code>Characters.json</code></summary>
@@ -592,6 +632,11 @@ A small mod where every file references the others. Put all of these next to the
                         "Cost": 400.0,
                         "Inflicted Effect": "Scorch"
                     }
+                },
+                {
+                    "Identity": { "Name": "Cinder Nova", "Color": "\u001b[38;5;160m", "Description": "Engulfs the whole battlefield." },
+                    "Stats": { "Damage": 200.0, "Output": 120.0, "Cost": 600.0, "Type": "Area of Effect" },
+                    "Requirements": { "Chant Amount": 2, "Required Stat Amount": "Low Health" }
                 }
             ]
         }
@@ -720,12 +765,20 @@ Technique Create::Tech::MyTechnique() {
 
     const EntityInfo id       = {"My Technique", "\x1b[38;5;45m", "A custom technique."};
     const EntityInfo slash_id = {"Slash", "\x1b[38;5;9m", "A quick slash."};
+    const EntityInfo nova_id  = {"Nova", "\x1b[38;5;196m", "Hits every other character on the battlefield."};
 
     c.identity = id;
 
-    // damage, cost, output
-    const TechAbility slash = {slash_id, {}, 75.0, 35.0, 17.5};
+    // id, given_effect, requirement, damage, cost, output
+    const TechAbility slash = {slash_id, {}, {}, 75.0, 35.0, 17.5};
+
+    // Needs chant level 3 and at least 75% health. The fields after output are
+    // chant_amount (leave empty), attack_type and damage_type.
+    const auto nova_req = TechRequirement{.stat_req = RequiredStat::HealthHigh, .chant_req = 3};
+    const TechAbility nova = {nova_id, {}, nova_req, 300.0, 900.0, 150.0, {}, AttackType::AreaOfEffect, DamageType::BypassTech};
+
     c.abilities.push_back(slash);
+    c.abilities.push_back(nova);
 
     // true allows a Limitless-style barrier. It starts switched off unless you also
     // set c.barrier.is_active = true (Limitless does). Active barriers cost cursed
@@ -735,7 +788,7 @@ Technique Create::Tech::MyTechnique() {
 }
 ```
 
-`TechAbility` fields, in order: `id`, `given_effect`, `damage`, `cost`, `output`, `chant_amount`, `damage_type`. Look at `Factories/Techniques.cpp` for more elaborate examples.
+`TechAbility` fields, in order: `id`, `given_effect`, `requirement`, `damage`, `cost`, `output`, `chant_amount`, `attack_type`, `damage_type`. `TechRequirement` has `stat_req` (`RequiredStat::None`, `HealthLow`, `HealthMid` or `HealthHigh`) and `chant_req` (0-5). Look at `Factories/Techniques.cpp` for more elaborate examples, such as Limitless's *Unlimited Hollow Purple* and Shrine's *World Cutting Slash*, which both need chant level 4.
 
 ## Built-in Names Usable from JSON
 
@@ -756,8 +809,8 @@ Every technique and domain declared in `Creator.hpp` is registered. If you add y
 
 # 5. Testing Your Mod
 
-- **Run the game from the folder that contains your JSON files.** The game reads files from the current working directory, and prints where it is looking.
-- **New JSON files in the repository root** are copied into `build/` when CMake configures, so re-run `cmake -S . -B build` after adding one. Edits to the files that were already copied also trigger the copy on the next build. Or just drop the file into the folder you run from.
+- **Run the game from the folder that contains your `Json` folder.** The game reads `Json/<file>.json` relative to the current working directory, and prints where it is looking.
+- **Changes to the repository's `Json/` folder** are copied to `build/Json/` only when CMake configures (a plain build does not copy them), so re-run `cmake -S . -B build` after adding or editing a sample file. Or edit the files directly in `build/Json/` while you test.
 - **Remember to toggle Load JSON** in the setup menu, otherwise only the built-in roster is shown.
 - **Use View Character Information** in the setup menu to check that technique, domain and tool names all resolved.
 
@@ -765,7 +818,7 @@ Every technique and domain declared in `Creator.hpp` is registered. If you add y
 
 | Symptom | Likely cause |
 |---------|--------------|
-| `Could not find Characters.json!` | You are running the game from a different folder than the one containing the file. |
+| `Could not find Characters.json!` | The game cannot find `Json/Characters.json` relative to the folder you run it from. Check that the `Json` folder is there and the file is inside it. |
 | `JSON Parse Error: ...` | The file is not valid JSON (trailing comma, missing quote, etc.). The whole file is ignored. |
 | Custom characters do not appear | **Load JSON** is not toggled on, or `"Characters"` is misspelled as the root key. |
 | A technique, domain, tool or shikigami is missing in game | The name does not match exactly (names are case sensitive), or it refers to your own C++ factory that is not registered in `UMaps.cpp`. |

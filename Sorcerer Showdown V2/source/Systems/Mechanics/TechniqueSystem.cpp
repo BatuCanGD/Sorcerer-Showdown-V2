@@ -107,7 +107,7 @@ void TechniqueSystem::SetBarrier(Sorcery::CurseUserSystem& cr, bool t){
         if (!c->barrier.can_use_barrier) {
             return;
         }
-        if (cr.ce_system.cursed_energy < GetBarrierCost(*c)) {
+        if (cr.ce_system.cursed_energy < SorcerySystem::ApplySpendingMultiplier(GetBarrierCost(*c), cr)) {
             if (!t){
                 c->barrier.is_active = t;
             }

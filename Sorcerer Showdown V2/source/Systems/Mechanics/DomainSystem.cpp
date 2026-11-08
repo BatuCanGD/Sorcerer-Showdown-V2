@@ -80,7 +80,7 @@ void DomainSystem::HandleLifetime(Character &c, Domain &d) {
     const double cost = SorcerySystem::ApplySpendingMultiplier(d.cost, *c.curseUser);
     auto& cr = c.curseUser;
     if (cr->ce_system.cursed_energy < cost) {
-        ResetDomain(d);
+        ResetDomain(d, &c);
     }else{
         cr->ce_system.cursed_energy -= cost;
     }

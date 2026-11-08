@@ -273,10 +273,6 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
 
     auto* ab = TechniqueSystem::GetAbility(*tech, static_cast<TechniqueSystem::AbilityType>(get_random<std::uint8_t>(0, 3)));
     
-    if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, *c))){
-        return;
-    }
-
     int chant_percentage{};
     switch(iq.fighting_style){
         case FightingStyle::Aggressive:{
@@ -295,6 +291,13 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
     std::uint8_t times_chanted = 0;
     while(get_random<int>(1, 100) >= chant_percentage && ab->chant_amount < 5 && ++times_chanted < 3) {
         TechniqueSystem::ChantAbility(*ab, chr);
+    }
+
+    if (!TechniqueSystem::MeetsRequirements(*ab, chr).first) {
+        return;
+    }
+    if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, *c))){
+        return;
     }
 
     Log::TechniqueAttack(CombatSystem::ResolveTechnique(chr, *ab, target, bf));
