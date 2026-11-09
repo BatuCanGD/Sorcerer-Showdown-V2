@@ -68,7 +68,7 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, Character& owner) {
     const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
     const double cost = SorcerySystem::ApplySpendingMultiplier(sk.cost * mult - 1.0, *owner.curseUser);
     auto& crs = owner.curseUser->ce_system;
-    crs.cursed_energy = std::max(crs.cursed_energy - cost, 0.0);
+
     if (crs.cursed_energy < cost) {
         if (!sk.rollback.undone){
             ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.rollback);
@@ -77,6 +77,7 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, Character& owner) {
         sk.summon_type = SummonType::Shadow;
         return;
     }
+    crs.cursed_energy = std::max(crs.cursed_energy - cost, 0.0);
 
     if (sk.rollback.undone){
         sk.rollback.undone = false;
