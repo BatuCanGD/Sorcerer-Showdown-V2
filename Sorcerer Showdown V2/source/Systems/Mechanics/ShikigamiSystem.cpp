@@ -13,41 +13,52 @@ DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, DamageType dt)
 }
 
 void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, SavedValue& sv, const double mult){
-    const double amount = sv.value * mult;
-    
-    switch(st){
-        case SupportType::Offense:
-                if (!sv.saved){
-                    sv.value = owner.state.strength; 
+    if (!sv.saved){
+        switch(st){
+            case SupportType::Offense:
+                sv.value = owner.state.strength;
+                break;
+            case SupportType::Defense:
+                sv.value = owner.state.durability;
+                break;
+            case SupportType::Output:
+                if (auto& crs = owner.curseUser){
+                    sv.value = crs->output.max_output_potential;
                 }
-                owner.state.strength = amount;
-            break;
-        case SupportType::Defense:
-                if (!sv.saved){
-                    sv.value = owner.state.durability; 
+                break;
+            case SupportType::CursedEnergyRegen:
+                if (auto& crs = owner.curseUser) {
+                    sv.value = crs->ce_system.regeneration_amount;
                 }
-                owner.state.durability = amount;
-            break;
-        case SupportType::Output:
-            if (auto& crs = owner.curseUser){
-                if (!sv.saved){
-                    sv.value = crs->output.max_output_potential; 
-                }
-                crs->output.max_output_potential = amount;
-            }
-            break;
-        case SupportType::CursedEnergyRegen:
-            if (auto& crs = owner.curseUser){
-                if (!sv.saved){
-                    sv.value = crs->ce_system.regeneration_amount; 
-                }
-                crs->ce_system.regeneration_amount = amount;
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
+        }
+        sv.saved = true;
     }
-    sv.saved = true;
+    const double amount = sv.value * mult;
+    if (sv.saved){
+        switch(st){
+            case SupportType::Offense:
+                    owner.state.strength = amount;
+                break;
+            case SupportType::Defense:
+                    owner.state.durability = amount;
+                break;
+            case SupportType::Output:
+                if (auto& crs = owner.curseUser){
+                    crs->output.max_output_potential = amount;
+                }
+                break;
+            case SupportType::CursedEnergyRegen:
+                if (auto& crs = owner.curseUser) {
+                    crs->ce_system.regeneration_amount = amount;
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 
