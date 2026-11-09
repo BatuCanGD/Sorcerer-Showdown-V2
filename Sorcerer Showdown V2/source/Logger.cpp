@@ -97,10 +97,10 @@ void Log::TechniqueAttack(const TechniqueStruct tc){
                 Log::Line("{} tried to use {} but it couldn't be activated due to insufficient CE and Output!", GetInfo::Name(tc.user->identity), GetInfo::Name(tc.used_ability->id));
                 break;
             case TSFailReason::CursedEnergy:
-                Log::Line("{} tried to use {} but it couldn't be actived due to insufficient Cursed Energy!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
+                Log::Line("{} tried to use {} but it couldn't be activated due to insufficient Cursed Energy!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
                 break;
             case TSFailReason::Output:
-                Log::Line("{} tried to use {} but it couldn't be actived due to insufficient Output!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
+                Log::Line("{} tried to use {} but it couldn't be activated due to insufficient Output!", GetInfo::Name(tc.user->identity),GetInfo::Name(tc.used_ability->id));
                 break;
             case TSFailReason::Blocked:
                 Log::Line("{0} tried to use {2} on {1}. It was blocked by {1}'s Technique!", GetInfo::Name(tc.user->identity), GetInfo::Name(std::get<Character*>(tc.target)->identity), GetInfo::Name(tc.used_ability->id));

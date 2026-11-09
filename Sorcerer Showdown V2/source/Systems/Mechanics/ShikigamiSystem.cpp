@@ -64,10 +64,12 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, Character& owner) {
             return;
         }
     }
+    const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
+    owner.curseUser->ce_system.cursed_energy = std::max(owner.curseUser->ce_system.cursed_energy - sk.cost * mult - 1.0, 0.0);
+
     if (sk.rollback.undone){
         sk.rollback.undone = false;
     }
-    const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
     ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.rollback, mult);
 }
 
