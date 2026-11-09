@@ -33,6 +33,7 @@ Character Create::Char::Toji() {
     c.identity = id;
     c.state = stats;
     c.brain = brain;
+    c.base_traits.physically_gifted = true;
     c.equipment.has_access_to_inventory = true;
     c.equipment.inventory.push_back(Create::Tool::InvertedSpearOfHeaven());
     c.equipment.inventory.push_back(Create::Tool::SplitSoulKatana());
@@ -55,6 +56,7 @@ Character Create::Char::Maki() {
     c.identity = id;
     c.state = stats;
     c.brain = brain;
+    c.base_traits.physically_gifted = true;
     c.equipment.has_access_to_inventory = true;
     c.equipment.inventory.push_back(Create::Tool::SplitSoulKatana());
 
@@ -96,7 +98,7 @@ Character Create::Char::Mahito() {
     crs.output.output_cooldown_amount = output_regen;
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
-    crs.traits.passive_healing = true;
+    crs.sorcery_traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
     c.curseUser.emplace(std::move(crs));
@@ -139,7 +141,7 @@ Character Create::Char::Jogo() {
     crs.output.output_cooldown_amount = output_regen;
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
-    crs.traits.passive_healing = true;
+    crs.sorcery_traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
     c.curseUser.emplace(std::move(crs));
@@ -182,7 +184,7 @@ Character Create::Char::Hanami() {
     crs.output.output_cooldown_amount = output_regen;
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
-    crs.traits.passive_healing = true;
+    crs.sorcery_traits.passive_healing = true;
     crs.amplification.can_use_amp = true;
 
     c.curseUser.emplace(std::move(crs));
@@ -227,7 +229,7 @@ Character Create::Char::Gojo() {
     crs.jujutsu.neutralizer = neutralizer;
     crs.jujutsu.technique = technique;
     crs.amplification.can_use_amp = true;
-    crs.traits.six_eyes = true;
+    crs.sorcery_traits.six_eyes = true;
     crs.rct_system.can_use_rct = true;
 
     c.curseUser.emplace(std::move(crs));

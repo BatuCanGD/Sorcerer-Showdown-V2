@@ -46,6 +46,10 @@ void JsonModify::ModifyBaseValues(const nlohmann::json& j, Character& c) {
         c.brain.targeted_type  = JsonGet::GetTargetedTypes(Json::GetValue<std::string_view>(style, "Targeted Type", "Mixed"));
         c.brain.targeting_type = JsonGet::GetTargetingType(Json::GetValue<std::string_view>(style, "Targeting Type", "Random"));
     }
+    if (j.contains("Traits")) {
+        const auto& tr = j.at("Traits");
+        c.base_traits.physically_gifted = Json::GetValue<bool>(tr, "Physically Gifted", false);
+    }
     if (j.contains("Equipment")){
         const auto& eq = j.at("Equipment");
         c.equipment.current_tool = JsonGet::GetCursedTool(Json::GetValue<std::string_view>(eq, "Held Tool"));
@@ -81,8 +85,8 @@ void JsonModify::ModifySorceryValues(const nlohmann::json& son, Character& crs) 
             c->rct_system.can_use_rct = Json::GetValue<bool>(j, "Reverse Cursed Technique");
             if (j.contains("Traits")){
                 const auto& tr = j.at("Traits");
-                c->traits.passive_healing = Json::GetValue<bool>(tr, "Passive Healing", false);
-                c->traits.six_eyes = Json::GetValue<bool>(tr, "Six Eyes", false);
+                c->sorcery_traits.passive_healing = Json::GetValue<bool>(tr, "Passive Healing", false);
+                c->sorcery_traits.six_eyes = Json::GetValue<bool>(tr, "Six Eyes", false);
             }  
         }
     }

@@ -541,9 +541,17 @@ void UserControl::DoDomain(Character& c) {
             Log::Line("1 - Activate | 2 - Deactivate\n=>");
             int pch = get_input<int>();
             if (pch == 1){
-                domain->is_active = true;
+                if (DomainSystem::ActivateDomain(*domain, c)){
+                    Log::Line("Domain Activated Succesfully");
+                }else{
+                    Log::Line("You cannot Activate your domain");
+                }
             }else if (pch == 2){
-                domain->is_active = false;
+                if (DomainSystem::DeactivateDomain(*domain, c)){
+                    Log::Line("Domain Deactivated Successfully");
+                }else{
+                    Log::Line("You cannot deactivate a non-active domain");
+                }
             }
             break;
         }

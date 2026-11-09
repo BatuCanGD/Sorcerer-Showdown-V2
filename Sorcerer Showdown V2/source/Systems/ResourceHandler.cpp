@@ -1,5 +1,6 @@
 #include "../../header/Systems/ResourceHandler.hpp"
 #include "../../header/Character.hpp"
+#include "../../header/Systems/CharacterSystem.hpp"
 #include "../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../header/Systems/Mechanics/ShikigamiSystem.hpp"
 #include "../../header/Systems/Mechanics/TechniqueSystem.hpp"
@@ -14,12 +15,12 @@ void ResourceHandler::TickAll(Battlefield& bf){
     for (auto& c : bf.battlefield){ // ordering doesnt matter
         const auto ef = EffectSystem::ApplyEffects(*c);
         ResourceHandler::TickStun(*c);
+        ResourceHandler::TickTraits(*c);
         if (c->curseUser.has_value()){
             VowSystem::ApplyVows(*c);
             ResourceHandler::TickShikigami(*c);
             ResourceHandler::TickChant(*c);
             ResourceHandler::TickRCT(*c);
-            ResourceHandler::TickTraits(*c);
             ResourceHandler::TickReinforcement(c->curseUser);
             ResourceHandler::TickCursedEnergy(c->curseUser);
             ResourceHandler::TickAmp(c->curseUser);
@@ -65,10 +66,15 @@ void ResourceHandler::TickReinforcement(std::optional<Sorcery::CurseUserSystem> 
 void ResourceHandler::TickOutput(std::optional<Sorcery::CurseUserSystem>&crs){
     crs->output.current_output = std::max(crs->output.current_output - crs->output.output_cooldown_amount * SorcerySystem::OutputStatusMultiplier(crs->output.status), 0.0);
 }
-void ResourceHandler::TickTraits(Character &crs){
-    auto& cr = crs.curseUser;
-    if (cr->traits.passive_healing){
-        crs.state.health = std::min(crs.state.health + (crs.state.max_health * 0.025 + (cr->ce_system.cursed_energy / 250.0)), crs.state.max_health);
+void ResourceHandler::TickTraits(Character &c){
+    const auto& bs = c.base_traits;
+    if (bs.physically_gifted){
+        c.state.health = std::min(CharacterSystem::GetPhysicallyGiftedAddon(c, c.state.health), c.state.max_health);
+    }
+    if (const auto& cr = c.curseUser){
+        if (cr->sorcery_traits.passive_healing){
+            c.state.health = std::min(c.state.health + (c.state.max_health * 0.025 + (cr->ce_system.cursed_energy / 250.0)), c.state.max_health);
+        }
     }
 }
 void ResourceHandler::TickCursedEnergy(std::optional<Sorcery::CurseUserSystem>& crs){

@@ -8,5 +8,6 @@ struct Character final {
     Base::Equipment equipment;
     EntityInfo identity;
     Base::State state;
+    Base::Traits base_traits;
     Base::DecisionMaker brain;
 };

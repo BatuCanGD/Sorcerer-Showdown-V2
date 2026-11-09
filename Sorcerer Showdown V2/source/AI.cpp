@@ -188,10 +188,10 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (!domain->is_active && enough_ce){
                     if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
-                        domain->is_active = true;
+                        DomainSystem::ActivateDomain(*domain, chr);
                     }
                 }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 15){
-                    domain->is_active = false;
+                    DomainSystem::DeactivateDomain(*domain, chr);
                 }
             }
             if (neutral) {
@@ -211,10 +211,10 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (!domain->is_active && enough_ce){
                     if (domain_users == 1 || get_random<std::uint8_t>(1, 100) >= 60) {
-                        domain->is_active = true;
+                        DomainSystem::ActivateDomain(*domain, chr);
                     }
                 }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 3){
-                    domain->is_active = false;
+                    DomainSystem::DeactivateDomain(*domain, chr);
                 }
             }
             if (neutral) {
@@ -234,10 +234,10 @@ void AI::DF_UseDomain(Character &chr, const Battlefield &bf, const FightingStyle
                 const bool enough_ce = c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(domain->cost, *c);
                 if (enough_ce){
                     if (!domain->is_active && (domain_users == 1  || get_random<std::uint8_t>(1, 50) >= 25)) {
-                        domain->is_active = true;
+                        DomainSystem::ActivateDomain(*domain, chr);
                     }
                 }else if (domain->is_active && !enough_ce && get_random<std::uint8_t>(1, 25) >= 9){
-                    domain->is_active = false;
+                    DomainSystem::DeactivateDomain(*domain, chr);
                 }
             }
             if (neutral) {

@@ -76,6 +76,9 @@ double DomainSystem::GetDomainDamage(const Domain &d1, const Domain &d2) {
 void DomainSystem::HandleLifetime(Character &c, Domain &d) {
     if (!d.is_active) {
         return;
+    }else if (c.curseUser->output.status == Sorcery::OutputSystem::Status::BurntOut){
+        ResetDomain(d, &c);
+        return;
     }
     const double cost = SorcerySystem::ApplySpendingMultiplier(d.cost, *c.curseUser);
     auto& cr = c.curseUser;
@@ -84,6 +87,27 @@ void DomainSystem::HandleLifetime(Character &c, Domain &d) {
     }else{
         cr->ce_system.cursed_energy -= cost;
     }
+}
+
+bool DomainSystem::ActivateDomain(Domain& d, Character& c) {
+    if (d.is_active){
+        return true;
+    }else if (c.curseUser->output.status == Sorcery::OutputSystem::Status::BurntOut){
+        return false;
+    }
+
+    if (c.curseUser->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(d.cost, *c.curseUser)){
+        d.is_active = true;
+        return true;
+    }
+    return false;
+}
+bool DomainSystem::DeactivateDomain(Domain& d, Character& c) {
+    if (!d.is_active){
+        return false;
+    }
+    DomainSystem::ResetDomain(d, &c);
+    return true;
 }
 
 SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){    

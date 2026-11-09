@@ -40,6 +40,10 @@ namespace DomainSystem {
     SurehitStruct HandleSureHit(Character& c, const Domain& dm); 
     double GetDomainDamage(const Domain& d1, const Domain& d2);
     void HandleLifetime(Character& c, Domain& d);
+
+    bool ActivateDomain(Domain& d, Character& c);
+    bool DeactivateDomain(Domain& d, Character& c);
+    
     bool HandleDamage(Domain& dm, const double d, Character* crs = nullptr);
     void ResetDomain(Domain& domain, Character* crs = nullptr);
 };

@@ -33,4 +33,7 @@ namespace Base {
         std::optional<CursedTool> current_tool;
         bool has_access_to_inventory{false};
     };
+    struct Traits final {
+        bool physically_gifted{false}; // fancy way of saying passive healing + strength scaling
+    };
 }

@@ -5,7 +5,7 @@
 
 double SorcerySystem::ApplySpendingMultiplier(double amount, const Sorcery::CurseUserSystem& c) {
     amount *= SorcerySystem::EfficiencyMultiplier(c.ce_system.efficiency);
-    if (c.traits.six_eyes) amount = SorcerySystem::ApplySixEyes(amount);
+    if (c.sorcery_traits.six_eyes) amount = SorcerySystem::ApplySixEyes(amount);
     return amount;
 }
 

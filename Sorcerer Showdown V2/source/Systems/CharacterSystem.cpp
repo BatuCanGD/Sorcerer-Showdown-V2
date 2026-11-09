@@ -20,6 +20,9 @@ std::variant<AttackStruct, ToolStruct> CharacterSystem::Attack(Character& c, std
     }
     return CombatSystem::ResolveAttacking(c, cc);
 }
+double CharacterSystem::GetPhysicallyGiftedAddon(Character& chr, double value) {
+    return value + ((chr.state.strength / 5.5) + (chr.state.durability / 4.0));
+}
 bool CharacterSystem::HPMoreThanMax(const Character& c, double d) {
     return c.state.health >= c.state.max_health * d;
 }
