@@ -47,7 +47,7 @@ void CursedToolSystem::SwitchTo(Base::Equipment &e, WeaponChoice wc) {
             }
             else if (has_inv){
                 for (const auto& c : e.inventory){
-                    if (c.given_effect){
+                    if (DamageCheck::BypassesTech(c.damage_type)){
                         SwitchWeapons(e, WeaponPlacement::Inventory, WeaponPlacement::Hand, WeaponChoice::TechniqueBypassing);
                         break;
                     }
