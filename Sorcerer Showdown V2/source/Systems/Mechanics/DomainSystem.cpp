@@ -115,7 +115,7 @@ bool DomainSystem::DeactivateDomain(Domain& d, Character& c) {
 SurehitStruct DomainSystem::HandleSureHit(Character &c, const Domain& dm){    
     const double damage = CalculateHitDamage(dm, c);
     const auto& x = CharacterSystem::Damage(c, damage, dm.damage_type);
-    if (dm.surehit_type == SurehitType::Paralyzing)c.state.is_stunned = true;
+    if (dm.surehit_type == SurehitType::Paralyzing && !x.attack_blocked) c.state.is_stunned = true;
     return{x.damage, &c, &dm};
 }
 
