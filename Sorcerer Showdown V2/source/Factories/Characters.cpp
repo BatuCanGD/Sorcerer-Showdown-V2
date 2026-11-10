@@ -249,10 +249,10 @@ Character Create::Char::Sukuna() {
     const Base::State stats {.health = health, .max_health = health, .durability = durability, .strength = strength};
 
     constexpr double cursed_energy = 10000.0;
-    constexpr double regen_amount = 200.0;
-    constexpr double max_output = 80.0;
+    constexpr double regen_amount = 1200.0;
+    constexpr double max_output = 120.0;
     constexpr double output_regen = 20.0;
-    constexpr auto ce_efficiency = Sorcery::CursedEnergySystem::Efficiency::Extreme;
+    constexpr auto ce_efficiency = Sorcery::CursedEnergySystem::Efficiency::Peak;
 
     const Technique technique{Create::Tech::Shrine()};
     const Domain domain{Create::Dmn::MalevolentShrine()};

@@ -2,6 +2,7 @@
 #include "../../../header/Systems/Mechanics/CombatSystem.hpp"
 #include "../../../header/Systems/Mechanics/SorcerySystem.hpp"
 #include "../../../header/Systems/CharacterSystem.hpp"
+#include "../../../header/Logger.hpp"
 #include "../../../header/Character.hpp"
 #include "../../../header/Sorcery/Domain.hpp"
 #include <stdexcept>
@@ -97,6 +98,7 @@ bool DomainSystem::ActivateDomain(Domain& d, Character& c) {
     }
 
     if (c.curseUser->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(d.cost, *c.curseUser)){
+        Log::Line("Domain Expansion: {}", GetInfo::Name(d.identity));
         d.is_active = true;
         return true;
     }

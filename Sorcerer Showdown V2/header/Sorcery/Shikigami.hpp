@@ -33,7 +33,7 @@ struct ShikigamiStats final {
 struct SavedValue final {
     double value{};
     bool saved{};
-    bool undone{};
+    bool applied{};
 };
 
 struct Shikigami final {

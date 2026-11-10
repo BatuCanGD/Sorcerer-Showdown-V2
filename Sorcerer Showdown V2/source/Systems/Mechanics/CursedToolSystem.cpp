@@ -4,38 +4,67 @@
 #include "../../../header/Utilities/Random.hpp"
 #include <stdexcept>
 
-void CursedToolSystem::SwitchTo(Base::Equipment &eq, WeaponChoice wc) {
-    const bool& has_inv = eq.has_access_to_inventory;    
-    if (wc == WeaponChoice::EffectInducing || wc == WeaponChoice::TechniqueBypassing){
-        auto is_the_one = [wc](const CursedTool* ct)->bool{
-            return ct && ((wc == WeaponChoice::EffectInducing && ct->given_effect) || (wc == WeaponChoice::TechniqueBypassing && DamageCheck::BypassesTech(ct->damage_type)));
-        };
-        if (eq.current_tool && is_the_one(&*eq.current_tool)){
-            return;
-        }else if (wc == WeaponChoice::Unequip && eq.current_tool){
-            CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Hand, eq.has_access_to_inventory ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
-            return;
-        }
-        if (eq.stored_tool && is_the_one(&*eq.stored_tool)) {
-            CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand);
-            return; 
-        }
-        if (has_inv){
-            for (const auto& r : eq.inventory){
-                if (is_the_one(&r)){
-                    CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Inventory, WeaponPlacement::Hand, wc);
-                    return;
+void CursedToolSystem::SwitchTo(Base::Equipment &e, WeaponChoice wc) {
+    const bool& has_inv = e.has_access_to_inventory;    
+    switch (wc){
+        case CursedToolSystem::WeaponChoice::EffectInducing:
+            if (e.current_tool && e.current_tool->given_effect) {
+                break;
+            }
+            else if (e.stored_tool && e.stored_tool->given_effect){
+                SwitchWeapons(e, WeaponPlacement::Offhand, WeaponPlacement::Hand);
+            }
+            else if (has_inv){
+                for (const auto& c : e.inventory){
+                    if (c.given_effect){
+                        SwitchWeapons(e, WeaponPlacement::Inventory, WeaponPlacement::Hand, WeaponChoice::EffectInducing);
+                        break;
+                    }
                 }
             }
-        }
-    }else if (wc == WeaponChoice::HighestDamage) {
-        if (!has_inv){
-            CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
-        }else{
-            CursedToolSystem::SwitchWeapons(eq, !eq.inventory.empty() ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
-        }
-    }else{
-        CursedToolSystem::SwitchWeapons(eq, WeaponPlacement::Hand, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand , WeaponChoice::None); 
+            break;
+        case CursedToolSystem::WeaponChoice::HighestDamage:
+            if (has_inv){
+                SwitchWeapons(e, WeaponPlacement::Inventory, WeaponPlacement::Hand, WeaponChoice::HighestDamage);
+            }else{
+                if (e.current_tool && e.stored_tool){
+                    if (e.current_tool->damage > e.stored_tool->damage){
+                        break;
+                    }else{
+                        SwitchWeapons(e, WeaponPlacement::Offhand, WeaponPlacement::Hand);
+                    }
+                }else if (e.stored_tool){
+                    SwitchWeapons(e, WeaponPlacement::Offhand, WeaponPlacement::Hand);
+                }
+            }
+            break;
+        case CursedToolSystem::WeaponChoice::TechniqueBypassing:
+            if (e.current_tool && DamageCheck::BypassesTech(e.current_tool->damage_type)) {
+                break;
+            }
+            else if (e.stored_tool && DamageCheck::BypassesTech(e.stored_tool->damage_type)){
+                SwitchWeapons(e, WeaponPlacement::Offhand, WeaponPlacement::Hand);
+            }
+            else if (has_inv){
+                for (const auto& c : e.inventory){
+                    if (c.given_effect){
+                        SwitchWeapons(e, WeaponPlacement::Inventory, WeaponPlacement::Hand, WeaponChoice::TechniqueBypassing);
+                        break;
+                    }
+                }
+            }
+            break;
+        case CursedToolSystem::WeaponChoice::Random:
+            SwitchWeapons(e, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand);
+            break;
+        case CursedToolSystem::WeaponChoice::Unequip:
+            if (e.current_tool){
+                SwitchWeapons(e, WeaponPlacement::Hand, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand);
+            }
+            break;
+        default: [[fallthrough]]; 
+        case CursedToolSystem::WeaponChoice::None:
+            break;
     }
 }
 

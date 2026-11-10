@@ -13,6 +13,9 @@ DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, DamageType dt)
 }
 
 void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, SavedValue& sv, const double mult){
+    if (sv.applied){
+        return;
+    }
     if (!sv.saved){
         switch(st){
             case SupportType::Offense:
@@ -40,10 +43,10 @@ void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, Sav
     if (sv.saved){
         switch(st){
             case SupportType::Offense:
-                    owner.state.strength = amount;
+                owner.state.strength = amount;
                 break;
             case SupportType::Defense:
-                    owner.state.durability = amount;
+                owner.state.durability = amount;
                 break;
             case SupportType::Output:
                 if (auto& crs = owner.curseUser){
@@ -59,6 +62,7 @@ void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, Sav
                 break;
         }
     }
+    sv.applied = true;
 }
 
 
@@ -69,30 +73,26 @@ void ShikigamiSystem::TickShikigami(Shikigami& sk, Character& owner) {
     if (sk.summon_type != SummonType::Active){
         sk.stats.health = std::min(sk.stats.health + sk.stats.regen_speed, sk.stats.max_health);
         if (sk.summon_type == SummonType::Shadow){
-            if (!sk.rollback.undone){
+            if (sk.rollback.applied){
                 ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.rollback);
-                sk.rollback.undone = true;
+                sk.rollback.applied = false;
             }
             return;
         }
     }
     const double mult = sk.summon_type == SummonType::Support ? 1.25 : 2.0;
-    const double cost = SorcerySystem::ApplySpendingMultiplier(sk.cost * mult - 1.0, *owner.curseUser);
+    const double cost = SorcerySystem::ApplySpendingMultiplier(sk.cost * (mult - 1.0), *owner.curseUser);
     auto& crs = owner.curseUser->ce_system;
 
     if (crs.cursed_energy < cost) {
-        if (!sk.rollback.undone){
+        if (sk.rollback.applied){
             ShikigamiSystem::HandleShadow(owner, sk.support_type, sk.rollback);
-            sk.rollback.undone = true;
+            sk.rollback.applied = false;
         }
         sk.summon_type = SummonType::Shadow;
         return;
     }
     crs.cursed_energy = std::max(crs.cursed_energy - cost, 0.0);
-
-    if (sk.rollback.undone){
-        sk.rollback.undone = false;
-    }
     ShikigamiSystem::HandleSupport(owner, sk.support_type, sk.rollback, mult);
 }
 

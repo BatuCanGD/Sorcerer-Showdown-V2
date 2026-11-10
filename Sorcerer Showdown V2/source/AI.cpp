@@ -367,13 +367,14 @@ void AI::DRM_UseReinforcement(Character &c, const ResourceUsage &rs) {
     double val{0.0};
     switch(rs){
         case ResourceUsage::AllOut:
-            if (SorcerySystem::CEMoreThanMax(c, 0.40) && !CharacterSystem::HPMoreThanMax(c, 0.40)){
+            if (!CharacterSystem::HPMoreThanMax(c, 0.50) && (SorcerySystem::CEMoreThanMax(c, 0.10) || c.curseUser->output.status == Sorcery::OutputSystem::Status::BurntOut)){
                 val = 135.0;
             }else if (SorcerySystem::CEMoreThanMax(c, 0.20) && !CharacterSystem::HPMoreThanMax(c, 0.33)){
                 val = 90.0;
             }else if (!CharacterSystem::HPMoreThanMax(c, 0.25)){
-                val = 60.0;
+                val = 60.0 ;
             }
+            val += get_random<double>(-55.0, 55.0);
             break;
         case ResourceUsage::Mixed:
             if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.25, 0.75)) && !CharacterSystem::HPMoreThanMax(c, get_random<double>(0.60, 0.90))){
@@ -383,6 +384,7 @@ void AI::DRM_UseReinforcement(Character &c, const ResourceUsage &rs) {
             }else if (!CharacterSystem::HPMoreThanMax(c, get_random<double>(0.01, 0.30))){
                 val = get_random<double>(20.0, 80.0);
             }
+            val += get_random<double>(-30.0, 30.0);
             break;
         case ResourceUsage::Conservative:
             if (SorcerySystem::CEMoreThanMax(c, 0.60) && !CharacterSystem::HPMoreThanMax(c, 0.55)){
@@ -392,9 +394,10 @@ void AI::DRM_UseReinforcement(Character &c, const ResourceUsage &rs) {
             }else if (!CharacterSystem::HPMoreThanMax(c, 0.30)){
                 val = 35.0;
             }
+            val += get_random<double>(-35.0, 20.0);
             break;
     }
-    c.curseUser->ce_system.reinforcement_amount = val;
+    c.curseUser->ce_system.reinforcement_amount = std::max(val, 0.0);
 }
 void AI::DRM_UseRCT(Character &c, const ResourceUsage &rs) {
     if (!c.curseUser->rct_system.can_use_rct){
@@ -410,6 +413,7 @@ void AI::DRM_UseRCT(Character &c, const ResourceUsage &rs) {
             }else if (!CharacterSystem::HPMoreThanMax(c, 0.25)){
                 val = 65.0;
             }
+            val += get_random<double>(-55.0, 55.0);
             break;
         case ResourceUsage::Mixed:
             if (SorcerySystem::CEMoreThanMax(c, get_random<double>(0.25, 0.75)) && !CharacterSystem::HPMoreThanMax(c, get_random<double>(0.60, 0.90))){
@@ -419,6 +423,7 @@ void AI::DRM_UseRCT(Character &c, const ResourceUsage &rs) {
             }else if (!CharacterSystem::HPMoreThanMax(c, get_random<double>(0.01, 0.30))){
                 val = get_random<double>(10.0, 50.0);
             }
+            val += get_random<double>(-55.0, 55.0);
             break;
         case ResourceUsage::Conservative:
             if (SorcerySystem::CEMoreThanMax(c, 0.60) && !CharacterSystem::HPMoreThanMax(c, 0.55)){
@@ -428,9 +433,10 @@ void AI::DRM_UseRCT(Character &c, const ResourceUsage &rs) {
             }else if (!CharacterSystem::HPMoreThanMax(c, 0.30)){
                 val = 50.0;
             }
+            val += get_random<double>(-55.0, 55.0);
             break;
     }
-    c.curseUser->rct_system.rct_output = val;
+    c.curseUser->rct_system.rct_output = std::max(val, 0.0);
 }
 void AI::DRM_UseTools(Character &c, const std::variant<Character*, Shikigami*> tar) {
     auto& eq = c.equipment;
