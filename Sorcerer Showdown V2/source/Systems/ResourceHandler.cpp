@@ -69,7 +69,7 @@ void ResourceHandler::TickOutput(std::optional<Sorcery::CurseUserSystem>&crs){
 void ResourceHandler::TickTraits(Character &c){
     const auto& bs = c.base_traits;
     if (bs.physically_gifted){
-        c.state.health = std::min(CharacterSystem::GetPhysicallyGiftedAddon(c, c.state.health), c.state.max_health);
+        c.state.health = std::min(c.state.health + CharacterSystem::GetPhysicallyGiftedAddon(c), c.state.max_health);
     }
     if (const auto& cr = c.curseUser){
         if (cr->sorcery_traits.passive_healing){

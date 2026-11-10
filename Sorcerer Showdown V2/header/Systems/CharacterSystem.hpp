@@ -12,7 +12,7 @@ struct Character;
 namespace CharacterSystem {
     DamageStruct Damage(Character& damaged, double amount, DamageType dmg_type = DamageType::Normal);
     std::variant<AttackStruct, ToolStruct> Attack(Character& attacker, std::variant<Character*, Shikigami*> attacked);
-    double GetPhysicallyGiftedAddon(Character& chr, double value);
+    double GetPhysicallyGiftedAddon(Character& chr);
     bool HPMoreThanMax(const Character& c, double d);
     std::unique_ptr<Character> Clone(const Character& c);
 }
