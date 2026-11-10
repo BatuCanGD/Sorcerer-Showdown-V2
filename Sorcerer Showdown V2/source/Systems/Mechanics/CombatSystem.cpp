@@ -24,11 +24,13 @@ DamageStruct CombatSystem::ResolveDamage(const std::variant<Character*, Shikigam
         }
         DamageStruct ds{.negated_damage = amount};
         double reinforcement = 0.0;
-        if (c->base_traits.physically_gifted){
-            reinforcement += CharacterSystem::GetPhysicallyGiftedAddon(*c);
-        }
-        else if (crs && type != DamageType::BypassAll && type != DamageType::BypassRein) { // so that physically gifted cant be stacked
-            reinforcement += crs->ce_system.reinforcement_amount / 1.75;
+        if (type != DamageType::BypassAll && type != DamageType::BypassRein) {
+            if (c->base_traits.physically_gifted){
+                reinforcement += CharacterSystem::GetPhysicallyGiftedAddon(*c);
+            }
+            else if (crs) { // so that physically gifted cant be stacked
+                reinforcement += crs->ce_system.reinforcement_amount / 1.75;
+            }
         }
 
         const double durability = type != DamageType::BypassAll ? c->state.durability : 0.0;

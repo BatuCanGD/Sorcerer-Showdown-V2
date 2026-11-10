@@ -17,9 +17,9 @@
 std::pair<std::vector<Action>, std::vector<std::string>> UserControl::GetChoices(const Character& c) {
     std::vector<Action> ac;
     std::vector<std::string> sc;
-    int t{0};
+    std::uint8_t t{0};
     auto add_ch = [&](std::string_view sv, Action a) {
-        sc.push_back(std::format("{}:{}", ++t, sv));
+        sc.push_back(std::format("{}:{}", static_cast<int>(++t), sv));
         ac.push_back(a);
     };
 
