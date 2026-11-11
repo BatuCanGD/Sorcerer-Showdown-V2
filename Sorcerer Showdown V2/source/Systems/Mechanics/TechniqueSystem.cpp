@@ -128,7 +128,7 @@ TechAbility& TechniqueSystem::ChooseAbility(const Character& c, Technique& tech)
 }
 
 bool TechniqueSystem::HasBarrier(const Technique &tech){
-    return tech.barrier.status != TechBarrier::Status::Unusable;
+    return tech.barrier.status == TechBarrier::Status::Active;
 }
 
 void TechniqueSystem::ChantAbility(TechAbility &tech, const Character& cu){
