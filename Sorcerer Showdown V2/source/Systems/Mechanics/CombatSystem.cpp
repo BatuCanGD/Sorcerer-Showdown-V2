@@ -190,7 +190,7 @@ void CombatSystem::ResolveDomain(Character &attacker, Battlefield& bf) {
 
     for (const auto& c : bf.battlefield) {
         if (c.get() == &attacker) continue;
-        const bool does_hit = DomainSystem::CalculateActualHit(*domain, *c);
+        const bool does_hit = !c->base_traits.physically_gifted && DomainSystem::CalculateActualHit(*domain, *c);
         if (does_hit){
             Log::DomainSurehit(DomainSystem::HandleSureHit(*c, *domain));
         }
