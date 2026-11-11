@@ -476,6 +476,10 @@ void UserControl::DoTechnique(Character& c, Battlefield& bf) {
         Log::Line("You do not have a technique");
         return;
     }
+    if (cr->amplification.status != Sorcery::AmplificationSystem::Status::Unusable && cr->amplification.type != Sorcery::AmplificationSystem::Type::AlongsideTechnique){
+        Log::Line("You cannot use your technique alongside domain amplification");
+        return;
+    }
     auto& tc = cr->jujutsu.technique;
     
     if (tc->barrier.status != TechBarrier::Status::Unusable){
