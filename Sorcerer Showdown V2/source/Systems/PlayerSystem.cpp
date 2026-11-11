@@ -334,7 +334,7 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
     if (cr->rct_system.can_use_rct){
         add_p("RCT", SorceryType::RCT);
     }
-    if (cr->amplification.can_use_amp){
+    if (cr->amplification.status != Sorcery::AmplificationSystem::Status::Unusable){
         add_p("Amplification", SorceryType::Amplification);
     }
     add_p("Reinforcement", SorceryType::Reinforcement);
@@ -343,16 +343,16 @@ const std::vector<UserControl::SorceryType> UserControl::GetSorceryChoices(const
 }
 
 void UserControl::ForAmplification(Character &c){
-    bool& amp = c.curseUser->amplification.is_active;
-    Log::Line("Amplification Status: [{}]", amp ? "Active" : "Inactive");
+    auto& amp = c.curseUser->amplification.status;
+    Log::Line("Amplification Status: [{}]", amp == Sorcery::AmplificationSystem::Status::Active ? "Active" : "Inactive");
     Log::Line("1 - Enable | 2 - Disable | 3 - Return");
     int g = get_input<int>();
     switch(g){
         case 1:
-            amp = true;
+            amp = Sorcery::AmplificationSystem::Status::Active;
             break;
         case 2:
-            amp = false;
+            amp = Sorcery::AmplificationSystem::Status::Inactive;
             break;
         case 3:
             return;
@@ -478,9 +478,9 @@ void UserControl::DoTechnique(Character& c, Battlefield& bf) {
     }
     auto& tc = cr->jujutsu.technique;
     
-    if (tc->barrier.can_use_barrier){
+    if (tc->barrier.status != TechBarrier::Status::Unusable){
         Log::TechniqueInfo(*tc, nullptr,Log::CursedTechniqueLog::Name);
-        Log::Line("[{}]", tc->barrier.is_active ? "Barrier Active" : "Barrier Inactive");
+        Log::Line("[{}]", tc->barrier.status == TechBarrier::Status::Active ? "Barrier Active" : "Barrier Inactive");
 
         Log::Line("1 - Set Barrier | 2 - Use Ability | 3 - Return");
         int ch = get_input<int>();

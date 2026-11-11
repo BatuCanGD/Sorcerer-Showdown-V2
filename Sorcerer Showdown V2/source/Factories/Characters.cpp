@@ -99,7 +99,7 @@ Character Create::Char::Mahito() {
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
     crs.sorcery_traits.passive_healing = true;
-    crs.amplification.can_use_amp = true;
+    crs.amplification.status = Sorcery::AmplificationSystem::Status::Inactive;
 
     c.curseUser.emplace(std::move(crs));
 
@@ -142,7 +142,7 @@ Character Create::Char::Jogo() {
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
     crs.sorcery_traits.passive_healing = true;
-    crs.amplification.can_use_amp = true;
+    crs.amplification.status = Sorcery::AmplificationSystem::Status::Inactive;
 
     c.curseUser.emplace(std::move(crs));
 
@@ -185,7 +185,7 @@ Character Create::Char::Hanami() {
     crs.jujutsu.domain = domain;
     crs.jujutsu.technique = technique;
     crs.sorcery_traits.passive_healing = true;
-    crs.amplification.can_use_amp = true;
+    crs.amplification.status = Sorcery::AmplificationSystem::Status::Inactive;
 
     c.curseUser.emplace(std::move(crs));
 
@@ -228,7 +228,7 @@ Character Create::Char::Gojo() {
     crs.jujutsu.domain = domain;
     crs.jujutsu.neutralizer = neutralizer;
     crs.jujutsu.technique = technique;
-    crs.amplification.can_use_amp = true;
+    crs.amplification.status = Sorcery::AmplificationSystem::Status::Inactive;
     crs.sorcery_traits.six_eyes = true;
     crs.rct_system.can_use_rct = true;
 
@@ -275,7 +275,7 @@ Character Create::Char::Sukuna() {
     crs.jujutsu.technique = technique;
     crs.jujutsu.shikigami.push_back(Create::Shk::Mahoraga());
     crs.jujutsu.shikigami.push_back(Create::Shk::Agito());
-    crs.amplification.can_use_amp = true;
+    crs.amplification.status = Sorcery::AmplificationSystem::Status::Inactive;
     crs.rct_system.can_use_rct = true;
 
     c.curseUser.emplace(std::move(crs));

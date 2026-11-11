@@ -151,20 +151,15 @@ void AI::DoResourceManagement(Character& user, const std::variant<Character*, Sh
 
 void AI::DF_Attack(Character &c, std::variant<Character*, Shikigami*> target) {
     if (std::holds_alternative<Character*>(target)) {
-        auto& tr = std::get<Character*>(target);
-        if (auto& chr = c.curseUser) {
-            if (chr->amplification.can_use_amp){
-                bool& amp = chr->amplification.is_active;
-                if (const auto& cc = tr->curseUser){
-                    if (const auto& tech = cc->jujutsu.technique){
-                        if (tech->barrier.can_use_barrier && tech->barrier.is_active) {
-                            amp = true;
-                        }else if (amp){
-                            amp = false;
-                        }
-                    }
+        if (auto& chr = c.curseUser; chr && chr->amplification.status != Sorcery::AmplificationSystem::Status::Unusable) {
+            auto& amp = chr->amplification.status;
+            if (const auto& cc = std::get<Character*>(target)->curseUser){
+                if (const auto& tech = cc->jujutsu.technique; tech && tech->barrier.status == TechBarrier::Status::Active){
+                    amp = Sorcery::AmplificationSystem::Status::Active;
+                }else if (amp == Sorcery::AmplificationSystem::Status::Active){
+                    amp = Sorcery::AmplificationSystem::Status::Inactive;
                 }
-            } // this is scarily visible on the visual studio scroll bar
+            }
         }
     }
     Log::Attack(CharacterSystem::Attack(c,target), c, target);
@@ -262,7 +257,8 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
     if (!tech) {
         return;
     }
-    if (tech->barrier.can_use_barrier && !tech->barrier.is_active){
+
+    if (tech->barrier.status == TechBarrier::Status::Inactive){
         if (c->ce_system.cursed_energy >= TechniqueSystem::GetBarrierCost(*tech)){
             TechniqueSystem::SetBarrier(*c, true);
         }
@@ -294,6 +290,9 @@ void AI::DF_UseTechnique(Character &chr, std::variant<Character*, Shikigami*> ta
     }
 
     if (!TechniqueSystem::MeetsRequirements(*ab, chr).first) {
+        return;
+    }    
+    if (c->amplification.status == Sorcery::AmplificationSystem::Status::Active && c->amplification.type != Sorcery::AmplificationSystem::Type::AlongsideTechnique){
         return;
     }
     if (!(c->ce_system.cursed_energy >= SorcerySystem::ApplySpendingMultiplier(ab->cost, *c))){
@@ -330,7 +329,7 @@ void AI::DRM_UseShikigami(Character &chr, const ResourceUsage &rs){
         default:
         case ResourceUsage::AllOut: {     
             if (SorcerySystem::CEMoreThanMax(chr, 0.45)){
-                type = SummonType::Active;  
+                type = SummonType::Active;
             }else if (SorcerySystem::CEMoreThanMax(chr, 0.15)){
                 type = SummonType::Support;
             }else{
@@ -350,7 +349,7 @@ void AI::DRM_UseShikigami(Character &chr, const ResourceUsage &rs){
         }
         case ResourceUsage::Conservative: {
             if (SorcerySystem::CEMoreThanMax(chr, 0.65)){
-                type = SummonType::Active;  
+                type = SummonType::Active;
             }else if (SorcerySystem::CEMoreThanMax(chr, 0.40)){
                 type = SummonType::Support;
             }else{
@@ -443,22 +442,85 @@ void AI::DRM_UseTools(Character &c, const std::variant<Character*, Shikigami*> t
     if ((!eq.current_tool && !eq.stored_tool && (!eq.has_access_to_inventory || eq.inventory.empty()))){
         return;
     }
-    if (std::holds_alternative<Character*>(tar)) {
-        auto& tr = std::get<Character*>(tar);
-        if (const auto& cr = tr->curseUser){
-            if (const auto& t = cr->jujutsu.technique) {
-                if (TechniqueSystem::HasBarrier(*t)){
-                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
-                    return;
+    const bool is_human = std::holds_alternative<Character*>(tar);
+    switch(c.brain.fighting_style){
+        case FightingStyle::Aggressive:
+            if (is_human){
+                auto* tr = std::get<Character*>(tar);
+                if (const auto& cr = tr->curseUser){
+                    if (const auto& t = cr->jujutsu.technique) {
+                        if (TechniqueSystem::HasBarrier(*t)){
+                            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
+                            return;
+                        }
+                    }
+                }
+                if (tr->state.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+                }
+            }else{
+                auto* tr = std::get<Shikigami*>(tar);
+                if (tr->stats.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
                 }
             }
-        }
-        if (tr->state.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
-            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
-        }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
-            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
-        }
+            break;
+        case FightingStyle::Defensive:
+            if (is_human){
+                auto* tr = std::get<Character*>(tar);
+                if (const auto& cr = tr->curseUser){
+                    if (const auto& t = cr->jujutsu.technique) {
+                        if (TechniqueSystem::HasBarrier(*t)){
+                            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
+                            return;
+                        }
+                    }
+                }
+                if (tr->state.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+                }
+            }else{
+                auto* tr = std::get<Shikigami*>(tar);
+                if (tr->stats.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+                }
+            }
+            break;
+        case FightingStyle::Mixed:
+            if (is_human){
+                auto* tr = std::get<Character*>(tar);
+                if (const auto& cr = tr->curseUser){
+                    if (const auto& t = cr->jujutsu.technique) {
+                        if (TechniqueSystem::HasBarrier(*t)){
+                            CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::TechniqueBypassing);
+                            return;
+                        }
+                    }
+                }
+                if (tr->state.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+                }
+            }else{
+                auto* tr = std::get<Shikigami*>(tar);
+                if (tr->stats.health > c.state.health || CharacterSystem::HPMoreThanMax(c, 0.70)){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::HighestDamage);
+                }else if (eq.current_tool && eq.current_tool->damage < c.state.strength){
+                    CursedToolSystem::SwitchTo(eq, CursedToolSystem::WeaponChoice::Unequip);
+                }
+            }
+            break;
     }
+
 }
 
 void AI::Fight(Character &user, Battlefield &bf) {

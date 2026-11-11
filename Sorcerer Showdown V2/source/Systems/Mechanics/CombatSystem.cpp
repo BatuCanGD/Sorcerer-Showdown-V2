@@ -86,7 +86,7 @@ AttackStruct CombatSystem::ResolveAttacking(Character &attacker, std::variant<Ch
     bool is_blackflash{false};
 
     if (auto& crs = attacker.curseUser) {
-        if (crs->amplification.can_use_amp && crs->amplification.is_active){
+        if (crs->amplification.status == Sorcery::AmplificationSystem::Status::Active){
             attack_type = DamageType::BypassTech;
         }else if (!crs->jujutsu.shikigami.empty()){
             for (const auto& s : crs->jujutsu.shikigami){

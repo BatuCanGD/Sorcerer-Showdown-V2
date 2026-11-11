@@ -47,7 +47,10 @@
                 "Cursed Energy Output": {
                     "Maximum": 500.0
                 },
-                "Domain Amplification": true,
+                "Domain Amplification": {
+                    "Usable": true,
+                    "Alongside Technique": true
+                },
                 "Reverse Cursed Technique": true,
                 "Traits": {
                     "Passive Healing": true,
@@ -91,8 +94,13 @@
                     "Blackflash Chance": 10, 
                     "Efficiency": "Expert" 
                 },
-                "Cursed Energy Output": { "Maximum": 120.0 },
-                "Domain Amplification": true,
+                "Cursed Energy Output": { 
+                    "Maximum": 120.0 
+                },
+                "Domain Amplification": {
+                    "Usable": true,
+                    "Alongside Technique": true
+                },
                 "Reverse Cursed Technique": false,
                 "Traits": { 
                     "Passive Healing": true, 

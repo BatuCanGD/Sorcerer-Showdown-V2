@@ -34,8 +34,8 @@ struct TechAbility final {
     DamageType damage_type{DamageType::Normal};
 };
 struct TechBarrier final {
-    bool can_use_barrier{false};
-    bool is_active{false};
+    enum class Status : std::uint8_t { Unusable, Inactive, Active};
+    Status status{Status::Unusable};
 };
 
 struct Technique final {

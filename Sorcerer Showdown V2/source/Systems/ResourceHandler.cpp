@@ -48,7 +48,7 @@ void ResourceHandler::TickTechBarrier(std::optional<Sorcery::CurseUserSystem> &c
         if (TechniqueSystem::HasBarrier(*t)){
             const double cost = SorcerySystem::ApplySpendingMultiplier(TechniqueSystem::GetBarrierCost(*t), *c);
             if (c->ce_system.cursed_energy < cost) {
-                t->barrier.is_active = false;
+                t->barrier.status = TechBarrier::Status::Inactive;
             }
             c->ce_system.cursed_energy = std::max(c->ce_system.cursed_energy - cost, 0.0);
         }
@@ -82,11 +82,11 @@ void ResourceHandler::TickCursedEnergy(std::optional<Sorcery::CurseUserSystem>& 
 }
 void ResourceHandler::TickAmp(std::optional<Sorcery::CurseUserSystem>&crs){
     auto& amp = crs->amplification;
-    if (amp.can_use_amp && amp.is_active){
+    if (amp.status == Sorcery::AmplificationSystem::Status::Active){
         auto& c = crs->ce_system;
         const double cost = SorcerySystem::ApplySpendingMultiplier(c.max_cursed_energy * 0.025, *crs);
         if (c.cursed_energy < cost){
-            amp.is_active = false;
+            amp.status = Sorcery::AmplificationSystem::Status::Inactive;
         }
         c.cursed_energy = std::max(c.cursed_energy - cost, 0.0);
     }

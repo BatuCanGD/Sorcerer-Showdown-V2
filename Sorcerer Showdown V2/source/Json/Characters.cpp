@@ -81,7 +81,11 @@ void JsonModify::ModifySorceryValues(const nlohmann::json& son, Character& crs) 
             if (j.contains("Cursed Energy Output")){
                 c->output.max_output_potential = Json::GetValue<double>(j.at("Cursed Energy Output"), "Maximum", 100.0);
             }
-            c->amplification.can_use_amp = Json::GetValue<bool>(j, "Domain Amplification");
+            if (j.contains("Domain Amplification")) {
+                const auto& da = j.at("Domain Amplification");
+                c->amplification.status = Json::GetValue<bool>(da, "Usable") == true ? Sorcery::AmplificationSystem::Status::Inactive : Sorcery::AmplificationSystem::Status::Unusable;
+                c->amplification.type = Json::GetValue<bool>(da, "Alongside Technique", false) == true ? Sorcery::AmplificationSystem::Type::AlongsideTechnique : Sorcery::AmplificationSystem::Type::Normal;
+            }
             c->rct_system.can_use_rct = Json::GetValue<bool>(j, "Reverse Cursed Technique");
             if (j.contains("Traits")){
                 const auto& tr = j.at("Traits");

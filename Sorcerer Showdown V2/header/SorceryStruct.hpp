@@ -17,8 +17,10 @@ namespace Sorcery {
         std::optional<Neutralizer> neutralizer;
     };
     struct AmplificationSystem final {
-        bool can_use_amp{false};
-        bool is_active{false};
+        enum class Status : std::uint8_t { Unusable, Inactive, Active };
+        enum class Type : std::uint8_t { Normal, AlongsideTechnique };
+        Status status{Status::Unusable};
+        Type type{Type::Normal};
     };
     struct OutputSystem final {
         double max_output_potential{100.0};

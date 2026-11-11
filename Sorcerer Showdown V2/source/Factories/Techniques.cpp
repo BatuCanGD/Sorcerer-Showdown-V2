@@ -29,9 +29,7 @@ Technique Create::Tech::Limitless() {
     c.abilities.push_back(purple);
     c.abilities.push_back(uhp);
 
-    c.barrier.can_use_barrier = true;
-    c.barrier.is_active = true;
-
+    c.barrier.status = TechBarrier::Status::Active;
     return c;
 }
 Technique Create::Tech::Shrine() {

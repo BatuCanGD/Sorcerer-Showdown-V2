@@ -104,16 +104,16 @@ double TechniqueSystem::CalculateDamage(const TechAbility& tc, const Character& 
 
 void TechniqueSystem::SetBarrier(Sorcery::CurseUserSystem& cr, bool t){
     if (auto& c = cr.jujutsu.technique) {
-        if (!c->barrier.can_use_barrier) {
+        if (!TechniqueSystem::HasBarrier(*c)) {
             return;
         }
         if (cr.ce_system.cursed_energy < SorcerySystem::ApplySpendingMultiplier(GetBarrierCost(*c), cr)) {
             if (!t){
-                c->barrier.is_active = t;
+                c->barrier.status = TechBarrier::Status::Inactive;
             }
             return;
         }
-        c->barrier.is_active = t;
+        c->barrier.status = t ? TechBarrier::Status::Active : TechBarrier::Status::Inactive;
     }
 }
 
@@ -128,7 +128,7 @@ TechAbility& TechniqueSystem::ChooseAbility(const Character& c, Technique& tech)
 }
 
 bool TechniqueSystem::HasBarrier(const Technique &tech){
-    return tech.barrier.can_use_barrier && tech.barrier.is_active;
+    return tech.barrier.status != TechBarrier::Status::Unusable;
 }
 
 void TechniqueSystem::ChantAbility(TechAbility &tech, const Character& cu){
