@@ -476,7 +476,7 @@ void UserControl::DoTechnique(Character& c, Battlefield& bf) {
         Log::Line("You do not have a technique");
         return;
     }
-    if (cr->amplification.status != Sorcery::AmplificationSystem::Status::Unusable && cr->amplification.type != Sorcery::AmplificationSystem::Type::AlongsideTechnique){
+    if (cr->amplification.status == Sorcery::AmplificationSystem::Status::Active && cr->amplification.type != Sorcery::AmplificationSystem::Type::AlongsideTechnique){
         Log::Line("You cannot use your technique alongside domain amplification");
         return;
     }
