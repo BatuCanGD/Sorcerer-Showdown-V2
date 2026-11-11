@@ -13,9 +13,6 @@ DamageStruct ShikigamiSystem::Damage(Shikigami &s, double amount, DamageType dt)
 }
 
 void ShikigamiSystem::HandleSupport(Character& owner, const SupportType& st, SavedValue& sv, const double mult){
-    if (sv.applied){
-        return;
-    }
     if (!sv.saved){
         switch(st){
             case SupportType::Offense:

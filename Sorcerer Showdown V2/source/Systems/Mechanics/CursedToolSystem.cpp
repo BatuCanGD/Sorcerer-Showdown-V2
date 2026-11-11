@@ -55,7 +55,7 @@ void CursedToolSystem::SwitchTo(Base::Equipment &e, WeaponChoice wc) {
             }
             break;
         case CursedToolSystem::WeaponChoice::Random:
-            SwitchWeapons(e, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand);
+            SwitchWeapons(e, has_inv ? WeaponPlacement::Inventory : WeaponPlacement::Offhand, WeaponPlacement::Hand, WeaponChoice::Random);
             break;
         case CursedToolSystem::WeaponChoice::Unequip:
             if (e.current_tool){
